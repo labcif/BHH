@@ -27,10 +27,9 @@
  *  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *  OTHER DEALINGS IN THE SOFTWARE. 
  */
-package pt.ipleiria.estg.dei;
+package pt.ipleiria.estg.dei.Exemple;
 
 import org.sleuthkit.autopsy.casemodule.Case;
-import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.autopsy.ingest.*;
 import org.sleuthkit.datamodel.BlackboardArtifact;
@@ -38,11 +37,10 @@ import org.sleuthkit.datamodel.BlackboardArtifact.ARTIFACT_TYPE;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
+import pt.ipleiria.estg.dei.Exemple.TestingIngestModuleFactory;
 
 import java.awt.image.BufferedImage;
-import java.sql.*;
 import java.util.ArrayList;
-import java.util.logging.Level;
 
 
 class TestingSourceIngestModule implements DataSourceIngestModule {
@@ -93,63 +91,7 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
             e.printStackTrace();
         }
 
-        BufferedImage resultImage = null;
-        String resultText = "";
-        
-        
-
-
         return ProcessResult.OK;
-        /*
-        try {
-            // Get count of files with .doc extension.
-            FileManager fileManager = Case.getCurrentCaseThrows().getServices().getFileManager();
-            List<AbstractFile> docFiles = fileManager.findFiles(dataSource, "%.doc");
-
-            long fileCount = 0;
-            for (AbstractFile docFile : docFiles) {
-                if (!skipKnownFiles || docFile.getKnown() != TskData.FileKnown.KNOWN) {
-                    ++fileCount;
-                }
-            }
-            progressBar.progress(1);
-
-            // check if we were cancelled
-            if (context.dataSourceIngestIsCancelled()) {
-                return IngestModule.ProcessResult.OK;
-            }
-
-            // Get files by creation time.
-            long currentTime = System.currentTimeMillis() / 1000;
-            long minTime = currentTime - (14 * 24 * 60 * 60); // Go back two weeks.
-            List<AbstractFile> otherFiles = fileManager.findFiles(dataSource, "crtime > " + minTime);
-            for (AbstractFile otherFile : otherFiles) {
-                if (!skipKnownFiles || otherFile.getKnown() != TskData.FileKnown.KNOWN) {
-                    ++fileCount;
-                }
-            }
-            progressBar.progress(1);
-
-            if (context.dataSourceIngestIsCancelled()) {
-                return IngestModule.ProcessResult.OK;
-            }
-
-            // Post a message to the ingest messages in box.
-            String msgText = String.format("Found %d files", fileCount);
-            IngestMessage message = IngestMessage.createMessage(
-                    IngestMessage.MessageType.DATA,
-                    SampleIngestModuleFactory.getModuleName(),
-                    msgText);
-            IngestServices.getInstance().postMessage(message);
-
-            return IngestModule.ProcessResult.OK;
-
-        } catch (TskCoreException | NoCurrentCaseException ex) {
-            IngestServices ingestServices = IngestServices.getInstance();
-            Logger logger = ingestServices.getLogger(SampleIngestModuleFactory.getModuleName());
-            logger.log(Level.SEVERE, "File query failed", ex);
-            return IngestModule.ProcessResult.ERROR;
-        }*/
     }
 
     public void postLog(String msgText){
