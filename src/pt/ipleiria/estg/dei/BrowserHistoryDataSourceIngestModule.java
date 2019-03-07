@@ -1,3 +1,4 @@
+
 /*
  * Sample module in the public domain.  Feel free to use this as a template
  * for your modules.
@@ -37,6 +38,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.openide.util.Exceptions;
 import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.casemodule.Case;
@@ -60,8 +62,13 @@ import org.sleuthkit.datamodel.SleuthkitCase.CaseDbQuery;
 import static org.sleuthkit.datamodel.SleuthkitCase.openCase;
 import org.sleuthkit.datamodel.TskData;
 
+import org.sleuthkit.datamodel.BlackboardArtifact;
+import org.sleuthkit.datamodel.BlackboardArtifact.ARTIFACT_TYPE;
+import org.sleuthkit.datamodel.BlackboardAttribute;
+
 
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
+
     private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
     private IngestJobContext context = null;
 
@@ -82,19 +89,24 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
         
         Case currentCase = Case.getCurrentCase();
         
-        String msgText = "We have a SQLLite DB";//String.format("Found %d files", fileCount);
+        String msgText = "We have a SQLLite DB";
         IngestMessage message = IngestMessage.createMessage(
                 IngestMessage.MessageType.INFO,
                 BrowserHistoryIngestModuleFactory.getModuleName(),
                 msgText);
         IngestServices.getInstance().postMessage(message);
+
         FileManager fileManager = Case.getCurrentCase().getServices().getFileManager();
         Connection connection = null;
         Statement statement = null;
+
         try {
-            Class.forName("org.sqlite.JDBC"); 
-            connection = DriverManager.getConnection("jdbc:sqlite:" + "C:\\Users\\Kevin\\Desktop\\History");
+
+            // Connect to DB
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + "C:\\Users\\"+System.getProperty("user.name")+"\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History"); 
             statement = connection.createStatement();
+
             ResultSet rs;
             rs = statement.executeQuery("SELECT  urls.url as url, count(*) as visit" +
                                         " FROM urls, visits " +
@@ -102,6 +114,13 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                                         " GROUP by urls.url " +
                                         " ORDER By visit_count DESC "
                                         + "LIMIT 5;");
+
+
+            //############################
+            // Comment
+            ArrayList<BlackboardAttribute> attributes = new ArrayList<>();
+            //############################
+
             while (rs.next()) {
                 String txt = String.format("url: " + rs.getString("url") + "| How many time: " + rs.getString("visit"));
                 message = IngestMessage.createMessage(
@@ -110,7 +129,21 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                     txt);
                 IngestServices.getInstance().postMessage(message);
                 logger.log(Level.INFO, txt);
+
+
+                //############################
+                attributes.add(new BlackboardAttribute(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT.getTypeID(), BrowserHistoryIngestModuleFactory.getModuleName(), "Commenting"));
+                // Body
+                attributes.add(new BlackboardAttribute(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_VALUE.getTypeID(), BrowserHistoryIngestModuleFactory.getModuleName(), rs.getString("url") + " | " + rs.getString("visit")));
+                //############################
             }
+
+            //############################
+            BlackboardArtifact artifactIFH = dataSource.newArtifact(BlackboardArtifact.ARTIFACT_TYPE.TSK_INTERESTING_FILE_HIT);
+            artifactIFH.addAttributes(attributes);
+            //############################
+
+
         } catch (ClassNotFoundException | SQLException ex) {
             message = IngestMessage.createMessage(
                     IngestMessage.MessageType.ERROR,
@@ -119,11 +152,10 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             IngestServices.getInstance().postMessage(message);
             logger.log(Level.SEVERE, "Failed to execute query: " +ex.getMessage(), ex); //NON-NLS
             return IngestModule.ProcessResult.ERROR;
+        } catch (TskCoreException e) {
+            e.printStackTrace();
         }
 
-            
-            
-        
         return IngestModule.ProcessResult.OK;
         /*
         try {

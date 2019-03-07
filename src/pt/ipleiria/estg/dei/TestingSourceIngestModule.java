@@ -29,40 +29,25 @@
  */
 package pt.ipleiria.estg.dei;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.logging.Level;
-import org.openide.util.Exceptions;
-import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.casemodule.Case;
-import org.sleuthkit.autopsy.casemodule.NoCurrentCaseException;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
-import org.sleuthkit.autopsy.casemodule.services.Services;
-import org.sleuthkit.autopsy.ingest.DataSourceIngestModuleProgress;
-import org.sleuthkit.autopsy.ingest.IngestModule;
-import org.sleuthkit.datamodel.AbstractFile;
-import org.sleuthkit.datamodel.Content;
-import org.sleuthkit.datamodel.FsContent;
-import org.sleuthkit.datamodel.SleuthkitCase;
-import org.sleuthkit.datamodel.TskCoreException;
 import org.sleuthkit.autopsy.coreutils.Logger;
-import org.sleuthkit.autopsy.ingest.DataSourceIngestModule;
-import org.sleuthkit.autopsy.ingest.IngestJobContext;
-import org.sleuthkit.autopsy.ingest.IngestMessage;
-import org.sleuthkit.autopsy.ingest.IngestModuleIngestJobSettings;
-import org.sleuthkit.autopsy.ingest.IngestServices;
-import org.sleuthkit.datamodel.SleuthkitCase.CaseDbQuery;
-import static org.sleuthkit.datamodel.SleuthkitCase.openCase;
-import org.sleuthkit.datamodel.TskData;
+import org.sleuthkit.autopsy.ingest.*;
+import org.sleuthkit.datamodel.BlackboardArtifact;
+import org.sleuthkit.datamodel.BlackboardArtifact.ARTIFACT_TYPE;
+import org.sleuthkit.datamodel.BlackboardAttribute;
+import org.sleuthkit.datamodel.Content;
+import org.sleuthkit.datamodel.TskCoreException;
+
+import java.awt.image.BufferedImage;
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.logging.Level;
 
 
 class TestingSourceIngestModule implements DataSourceIngestModule {
-    private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
+
+    private Logger logger = Logger.getLogger(TestingIngestModuleFactory.getModuleName());
     private IngestJobContext context = null;
 
     TestingSourceIngestModule() {
@@ -71,7 +56,7 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
     @Override
     public void startUp(IngestJobContext context) throws IngestModuleException {
         this.context = context;
-        
+
     }
 
     @Override
@@ -79,52 +64,42 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
 
         // There are two tasks to do.
         progressBar.switchToDeterminate(2);
-        
+
         Case currentCase = Case.getCurrentCase();
-        
-        String msgText = "We have a SQLLite DB";//String.format("Found %d files", fileCount);
+
+        String msgText = "We have a SQLLite DB";
         IngestMessage message = IngestMessage.createMessage(
                 IngestMessage.MessageType.INFO,
-                BrowserHistoryIngestModuleFactory.getModuleName(),
+                TestingIngestModuleFactory.getModuleName(),
                 msgText);
         IngestServices.getInstance().postMessage(message);
-        FileManager fileManager = Case.getCurrentCase().getServices().getFileManager();
-        Connection connection = null;
-        Statement statement = null;
+
+        ArrayList<BlackboardArtifact> artifacts = null;
+
         try {
-            Class.forName("org.sqlite.JDBC"); 
-            connection = DriverManager.getConnection("jdbc:sqlite:" + "C:\\Users\\Kevin\\Desktop\\History");
-            statement = connection.createStatement();
-            ResultSet rs;
-            rs = statement.executeQuery("SELECT  urls.url as url, count(*) as visit" +
-                                        " FROM urls, visits " +
-                                        " WHERE urls.id = visits.url " +
-                                        " GROUP by urls.url " +
-                                        " ORDER By visit_count DESC "
-                                        + "LIMIT 5;");
-            while (rs.next()) {
-                String txt = String.format("url: " + rs.getString("url") + "| How many time: " + rs.getString("visit"));
-                message = IngestMessage.createMessage(
-                    IngestMessage.MessageType.INFO,
-                    BrowserHistoryIngestModuleFactory.getModuleName(),
-                    txt);
-                IngestServices.getInstance().postMessage(message);
-                logger.log(Level.INFO, txt);
+            artifacts = dataSource.getArtifacts(ARTIFACT_TYPE.TSK_INTERESTING_FILE_HIT);
+
+            for(BlackboardArtifact artifact: artifacts) {
+                for(BlackboardAttribute attribute: artifact.getAttributes(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT)) {
+                    postLog(attribute.getValueString());
+                }
+
+                for(BlackboardAttribute attribute: artifact.getAttributes(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_VALUE)) {
+                    postLog(attribute.getValueString());
+                }
             }
-        } catch (ClassNotFoundException | SQLException ex) {
-            message = IngestMessage.createMessage(
-                    IngestMessage.MessageType.ERROR,
-                    BrowserHistoryIngestModuleFactory.getModuleName(),
-                    ex.getMessage());
-            IngestServices.getInstance().postMessage(message);
-            logger.log(Level.SEVERE, "Failed to execute query: " +ex.getMessage(), ex); //NON-NLS
-            return IngestModule.ProcessResult.ERROR;
+
+        } catch (TskCoreException e) {
+            e.printStackTrace();
         }
 
-            
-            
+        BufferedImage resultImage = null;
+        String resultText = "";
         
-        return IngestModule.ProcessResult.OK;
+        
+
+
+        return ProcessResult.OK;
         /*
         try {
             // Get count of files with .doc extension.
@@ -175,5 +150,10 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
             logger.log(Level.SEVERE, "File query failed", ex);
             return IngestModule.ProcessResult.ERROR;
         }*/
+    }
+
+    public void postLog(String msgText){
+        IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, TestingIngestModuleFactory.getModuleName(),msgText);
+        IngestServices.getInstance().postMessage(message);
     }
 }
