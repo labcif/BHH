@@ -8,10 +8,10 @@ import org.sleuthkit.autopsy.report.ReportProgressPanel;
 import javax.swing.*;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
-    
+
     // Static instance of this report
     private static BrowserHistoryReportModule instance;
-    
+
     @Override
     public void generateReport(String s, ReportProgressPanel reportProgressPanel) {
 
@@ -40,17 +40,17 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
     public String getRelativeFilePath() {
         return "1.0.0";
     }
-    
+
     @Override
     public JPanel getConfigurationPanel() {
         return GeneralReportModule.super.getConfigurationPanel(); //To change body of generated methods, choose Tools | Templates.
     }
-    
+
     // Get the default instance of this report
     public static synchronized BrowserHistoryReportModule getDefault() {
         if (instance == null) {
             instance = new BrowserHistoryReportModule();
         }
         return instance;
-    }   
+    }
 }

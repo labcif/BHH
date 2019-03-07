@@ -27,7 +27,7 @@
  *  ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
  *  OTHER DEALINGS IN THE SOFTWARE. 
  */
-package pt.ipleiria.estg.dei.Exemple;
+package pt.ipleiria.estg.dei.Example;
 
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.coreutils.Logger;
@@ -37,9 +37,8 @@ import org.sleuthkit.datamodel.BlackboardArtifact.ARTIFACT_TYPE;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
-import pt.ipleiria.estg.dei.Exemple.TestingIngestModuleFactory;
+import pt.ipleiria.estg.dei.Example.TestingIngestModuleFactory;
 
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 

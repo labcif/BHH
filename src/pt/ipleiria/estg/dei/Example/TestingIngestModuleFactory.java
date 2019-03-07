@@ -1,11 +1,10 @@
 
-package pt.ipleiria.estg.dei.Exemple;
+package pt.ipleiria.estg.dei.Example;
 
 
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
 import org.sleuthkit.autopsy.ingest.*;
-import pt.ipleiria.estg.dei.Exemple.TestingSourceIngestModule;
 
 /**
  * IMPORTANT TIP: This sample ingest module factory directly implements
