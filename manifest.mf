@@ -1,6 +1,7 @@
 Manifest-Version: 1.0
 AutoUpdate-Show-In-Client: true
 OpenIDE-Module: pt.ipleiria.estg.dei
+OpenIDE-Module-Layer: pt/ipleiria/estg/dei/layer.xml
 OpenIDE-Module-Localizing-Bundle: pt/ipleiria/estg/dei/Bundle.properties
 OpenIDE-Module-Specification-Version: 1.0
 
