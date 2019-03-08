@@ -1,25 +1,20 @@
 package pt.ipleiria.estg.dei;
 
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.ingest.IngestMessage;
 import org.sleuthkit.autopsy.ingest.IngestServices;
 import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
-import pt.ipleiria.estg.dei.Example.BlakboardExampleIngestModuleFactory;
 
 import javax.swing.*;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.logging.Logger;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
     // Static instance of this report
     private static BrowserHistoryReportModule instance;
-    private XWPFDocument ForensicReport_doc = null;
     private FileOutputStream fop = null;
     private File file = null;
 
