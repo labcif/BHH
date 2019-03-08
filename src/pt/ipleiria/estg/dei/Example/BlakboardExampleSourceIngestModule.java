@@ -29,7 +29,6 @@
  */
 package pt.ipleiria.estg.dei.Example;
 
-import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.autopsy.ingest.*;
 import org.sleuthkit.datamodel.BlackboardArtifact;
@@ -37,17 +36,16 @@ import org.sleuthkit.datamodel.BlackboardArtifact.ARTIFACT_TYPE;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
-import pt.ipleiria.estg.dei.Example.TestingIngestModuleFactory;
 
 import java.util.ArrayList;
 
 
-class TestingSourceIngestModule implements DataSourceIngestModule {
+class BlakboardExampleSourceIngestModule implements DataSourceIngestModule {
 
-    private Logger logger = Logger.getLogger(TestingIngestModuleFactory.getModuleName());
+    private Logger logger = Logger.getLogger(BlakboardExampleIngestModuleFactory.getModuleName());
     private IngestJobContext context = null;
 
-    TestingSourceIngestModule() {
+    BlakboardExampleSourceIngestModule() {
     }
 
     @Override
@@ -59,17 +57,7 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
 
-        // There are two tasks to do.
         progressBar.switchToDeterminate(2);
-
-        Case currentCase = Case.getCurrentCase();
-
-        String msgText = "We have a SQLLite DB";
-        IngestMessage message = IngestMessage.createMessage(
-                IngestMessage.MessageType.INFO,
-                TestingIngestModuleFactory.getModuleName(),
-                msgText);
-        IngestServices.getInstance().postMessage(message);
 
         ArrayList<BlackboardArtifact> artifacts = null;
 
@@ -78,11 +66,13 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
 
             for(BlackboardArtifact artifact: artifacts) {
                 for(BlackboardAttribute attribute: artifact.getAttributes(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_COMMENT)) {
-                    postLog(attribute.getValueString());
+                    IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BlakboardExampleIngestModuleFactory.getModuleName(),attribute.getValueString());
+                    IngestServices.getInstance().postMessage(message);
                 }
 
                 for(BlackboardAttribute attribute: artifact.getAttributes(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_VALUE)) {
-                    postLog(attribute.getValueString());
+                    IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BlakboardExampleIngestModuleFactory.getModuleName(),attribute.getValueString());
+                    IngestServices.getInstance().postMessage(message);
                 }
             }
 
@@ -91,10 +81,5 @@ class TestingSourceIngestModule implements DataSourceIngestModule {
         }
 
         return ProcessResult.OK;
-    }
-
-    public void postLog(String msgText){
-        IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, TestingIngestModuleFactory.getModuleName(),msgText);
-        IngestServices.getInstance().postMessage(message);
     }
 }

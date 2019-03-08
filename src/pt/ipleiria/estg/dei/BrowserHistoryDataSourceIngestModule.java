@@ -104,7 +104,8 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
             // Connect to DB
             Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection("jdbc:sqlite:" + "C:\\Users\\"+System.getProperty("user.name")+"\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History"); 
+            String separator = System.getProperty("file.separator");
+            connection = DriverManager.getConnection("jdbc:sqlite:" + "C:"+separator+"Users" + separator + System.getProperty("user.name")+ separator + "AppData" + separator + "Local" + separator + "Google" + separator + "Chrome" + separator + "User Data" + separator + "Default" + separator + "History");
             statement = connection.createStatement();
 
             ResultSet rs;

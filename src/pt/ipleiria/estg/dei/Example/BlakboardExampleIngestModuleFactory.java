@@ -1,6 +1,4 @@
-
 package pt.ipleiria.estg.dei.Example;
-
 
 import org.openide.util.NbBundle;
 import org.openide.util.lookup.ServiceProvider;
@@ -15,11 +13,11 @@ import org.sleuthkit.autopsy.ingest.*;
  */
 
 @ServiceProvider(service = IngestModuleFactory.class) // Sample is discarded at runtime
-public class TestingIngestModuleFactory extends IngestModuleFactoryAdapter {
+public class BlakboardExampleIngestModuleFactory extends IngestModuleFactoryAdapter {
 
 
     static String getModuleName() {
-        return NbBundle.getMessage(TestingIngestModuleFactory.class, "TestingIngestModuleFactory.moduleName");
+        return NbBundle.getMessage(BlakboardExampleIngestModuleFactory.class, "BlakboardExampleIngestModuleFactory.moduleName");
     }
 
     /**
@@ -33,7 +31,7 @@ public class TestingIngestModuleFactory extends IngestModuleFactoryAdapter {
 
     @Override
     public String getModuleDescription() {
-        return NbBundle.getMessage(TestingIngestModuleFactory.class, "TestingIngestModuleFactory.moduleDescription");
+        return NbBundle.getMessage(BlakboardExampleIngestModuleFactory.class, "BlakboardExampleIngestModuleFactory.moduleDescription");
     }
 
 
@@ -66,7 +64,7 @@ public class TestingIngestModuleFactory extends IngestModuleFactoryAdapter {
         if (!(settings instanceof NoIngestModuleIngestJobSettings)) {
             throw new IllegalArgumentException("Expected settings argument to be instanceof SampleModuleIngestJobSettings");
         }
-        return new TestingSourceIngestModule();
+        return new BlakboardExampleSourceIngestModule();
     }
 
 }
