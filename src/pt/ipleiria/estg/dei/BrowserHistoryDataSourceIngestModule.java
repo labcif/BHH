@@ -7,7 +7,6 @@ import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
 import pt.ipleiria.estg.dei.db.GoogleChromeRepository;
-import pt.ipleiria.estg.dei.model.BrowserEnum;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 
 import java.sql.SQLException;
@@ -35,7 +34,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
         progressBar.switchToDeterminate(2);
 
         try {
-            List<GoogleChrome> mostVisitedSite = GoogleChromeRepository.INSTANCE.getMostVisitedSite(BrowserEnum.CHROME);
+            List<GoogleChrome> mostVisitedSite = GoogleChromeRepository.INSTANCE.getMostVisitedSite();
             mostVisitedSite.forEach(site ->
                     IngestServices
                             .getInstance()

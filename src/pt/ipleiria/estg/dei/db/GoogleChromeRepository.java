@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.db;
 
-import pt.ipleiria.estg.dei.model.BrowserEnum;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 
 import java.sql.Connection;
@@ -10,14 +9,16 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import static pt.ipleiria.estg.dei.model.BrowserEnum.CHROME;
+
 public enum GoogleChromeRepository {
     INSTANCE;
 
     GoogleChromeRepository(){
     }
 
-    public  List<GoogleChrome> getMostVisitedSite(BrowserEnum browser) throws SQLException, ClassNotFoundException {
-        Connection connection = ConnectionFactory.getConnection(browser);
+    public  List<GoogleChrome> getMostVisitedSite() throws SQLException, ClassNotFoundException {
+        Connection connection = ConnectionFactory.getConnection(CHROME);
         Statement statement = connection.createStatement();
         List<GoogleChrome> histories = new ArrayList<>();
         ResultSet rs;
