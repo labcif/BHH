@@ -70,7 +70,7 @@ public class GoogleChrome implements Serializable {
     /**
      * This value describes how the URL was loaded in the browser.
      */
-    private long transition;//transition
+    private long transition;
 
     public GoogleChrome(String url, int visitCount){
         this.url = url;
