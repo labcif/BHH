@@ -1,8 +1,9 @@
 package pt.ipleiria.estg.dei.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class GoogleChrome {
+public class GoogleChrome implements Serializable {
 
     /**Primary key used to link all tables*/
     private int id;
