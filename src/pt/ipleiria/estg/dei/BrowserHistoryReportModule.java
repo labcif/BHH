@@ -1,22 +1,31 @@
 package pt.ipleiria.estg.dei;
 
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openide.util.NbBundle;
+import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.ingest.IngestMessage;
 import org.sleuthkit.autopsy.ingest.IngestServices;
 import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
+import org.sleuthkit.datamodel.BlackboardArtifact;
+import org.sleuthkit.datamodel.TskCoreException;
+import pt.ipleiria.estg.dei.exceptions.GenerateReportException;
+import pt.ipleiria.estg.dei.model.GoogleChrome;
+import pt.ipleiria.estg.dei.utils.Utils;
+import pt.ipleiria.estg.dei.utils.report.Generator;
+import pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 
 import javax.swing.*;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
-    // Static instance of this report
     private static BrowserHistoryReportModule instance;
-    private FileOutputStream fop = null;
-    private File file = null;
+    public static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
 
     @Override
     public void generateReport(String reportDir, ReportProgressPanel reportProgressPanel) {
@@ -25,25 +34,52 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         reportProgressPanel.start();
         reportProgressPanel.updateStatusLabel("Adding files...");
 
-
         // Example
-        String content = "Testing 123";
-        // get the content in bytes
-        byte[] contentInBytes = content.getBytes();
-
-
-        //Saving into Assigned Dir
+        StringBuilder sb =new StringBuilder();
+        sb.append("The most used urls are: \n");
+        List<GoogleChrome> visits = new ArrayList<>();
         try {
-            file= new File(reportDir+ System.getProperty("file.separator") + "generatedReport.txt");
-            fop  = new FileOutputStream(file);
 
-            if (!file.exists()) {
-                file.createNewFile();
+            ArrayList<BlackboardArtifact> artifacts = Case.getCurrentCase()
+                    .getSleuthkitCase()
+                    .getBlackboardArtifacts(ARTIFACT_TYPE_BROWSER_HISTORY);
+            artifacts
+                    .get(artifacts.size()-1)
+                    .getAttributes()
+                    .forEach(att -> {
+                        GoogleChrome google = (GoogleChrome) Utils.fromByte(att.getValueBytes());
+                        sb.append(google).append("\n");
+                        visits.add(google);
+                    });
+
+        } catch (TskCoreException e) {
+            e.printStackTrace();
+        }
+
+        File templateFile = new File("src/pt/ipleiria/estg/dei/template/autopsy.jrxml");//TODO: this must be more dynamic
+        Generator generator = new Generator(templateFile);
+
+        Map<String, Object> reportData = new HashMap<>();
+        reportData.put("Title", sb.toString());
+        JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
+        reportData.put("Visits", jrBeanCollectionDataSource);
+
+        generator.setReportData(reportData);
+
+        try {
+            ReportParameterMap reportParameters = new ReportParameterMap();
+                    // Generate the document into a byte array.
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            reportParameters.setOutputStream(byteArrayOutputStream);
+            generator.setReportParameters(reportParameters);
+
+            generator.generateReport();
+
+            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport.pdf")) {//TODO: this file must have a timestamp as a name to not override the ones created before
+                byteArrayOutputStream.writeTo(outputStream);
             }
 
-            fop.write(contentInBytes);
-            fop.close();
-        } catch(IOException e){
+        } catch(IOException | GenerateReportException e){
             IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BrowserHistoryReportModule.getDefault().getName(),"Failed to create report");
             IngestServices.getInstance().postMessage(message);
         }
