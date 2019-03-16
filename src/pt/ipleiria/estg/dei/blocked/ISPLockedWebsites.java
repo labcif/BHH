@@ -16,13 +16,13 @@ public enum  ISPLockedWebsites {
     ISPLockedWebsites() {
     }
 
-    public static HashMap readJsonFromUrl(String url) throws Exception {
-        String jsonText = ISPLockedWebsites.getLockedWebsites(url);
+    public HashMap readJsonFromUrl(String url) throws Exception {
+        String jsonText = getLockedWebsites(url);
         JSONObject json = new JSONObject(jsonText);
         return parseFile(json);
     }
 
-    public static String getLockedWebsites(String urlToRead) throws Exception {
+    public String getLockedWebsites(String urlToRead) throws Exception {
         StringBuilder result = new StringBuilder();
         URL url = new URL(urlToRead);
 
@@ -37,7 +37,7 @@ public enum  ISPLockedWebsites {
         return result.toString();
     }
 
-    public static HashMap parseFile(JSONObject json) throws Exception{
+    public HashMap parseFile(JSONObject json) throws Exception{
         HashMap hm = new HashMap();
         JSONObject arr = json.getJSONObject("domains");
         Iterator<String> domainKeys = arr.keys();

@@ -39,7 +39,7 @@ public enum GoogleChromeRepository {
         return histories;
     }
 
-    public  List<GoogleChrome> getDomainVisitedSites() throws Exception { //Todo this dosen´t solv the problem of multiple urls, but it takes only domains into concideration
+    public  List<GoogleChrome> getDomainVisitedSites() throws Exception { //TODO: this dosen´t solv the problem of multiple urls, but it takes only domains into consideration
         Connection connection = ConnectionFactory.getConnection(CHROME);
         ResultSet rs;
         Statement statement = connection.createStatement();

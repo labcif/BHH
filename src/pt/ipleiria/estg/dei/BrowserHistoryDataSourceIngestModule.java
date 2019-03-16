@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
+import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BLOCKED_HISTORY;
 import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BROWSER_HISTORY;
 
 
@@ -43,8 +44,9 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                             "Serialize class");
 
 
-            BlackboardArtifact.Type urlsMostVisitedType = createArtifactType(blackboard, "Urls most visited");
-            BlackboardArtifact artifact = dataSource.newArtifact(urlsMostVisitedType.getTypeID());
+            BlackboardArtifact.Type urlsMostVisitedType =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BROWSER_HISTORY, "Urls most visited");
+            BlackboardArtifact artifactUrlsMostVisited = dataSource.newArtifact(urlsMostVisitedType.getTypeID());
 
             // Most Visited Sites
             List<GoogleChrome> mostVisitedSite = GoogleChromeRepository.INSTANCE.getMostVisitedSite();
@@ -58,11 +60,12 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                                     Utils.convertToByte(site)))
                     .collect(Collectors.toList());
 
-            artifact.addAttributes(attributesOfMostVisited);
-            blackboard.indexArtifact(artifact);
+            artifactUrlsMostVisited.addAttributes(attributesOfMostVisited);
+            blackboard.indexArtifact(artifactUrlsMostVisited);
 
 
-            BlackboardArtifact.Type blockedUrlsType = createArtifactType(blackboard, "Blocked Urls");
+            BlackboardArtifact.Type blockedUrlsType =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
             BlackboardArtifact blackBoardArtifcatOfBlockedUrls = dataSource.newArtifact(blockedUrlsType.getTypeID());
 
             List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getDomainVisitedSites();
@@ -92,8 +95,5 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
         return IngestModule.ProcessResult.OK;
     }
 
-    private BlackboardArtifact.Type createArtifactType(Blackboard blackboard, String name) throws Blackboard.BlackboardException {
-        return blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BROWSER_HISTORY, name);
-    }
 
 }

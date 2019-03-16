@@ -69,13 +69,15 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             artifacts = Case.getCurrentCase()
                     .getSleuthkitCase()
                     .getBlackboardArtifacts(ARTIFACT_TYPE_BLOCKED_HISTORY);
-            artifacts
-                    .get(artifacts.size()-1)
-                    .getAttributes()
-                    .forEach(att -> {
-                        GoogleChrome google = (GoogleChrome) Utils.fromByte(att.getValueBytes());
-                        sbBlocked.append(google).append("\n");
-                    });
+            if (!artifacts.isEmpty()) {
+                artifacts
+                        .get(artifacts.size()-1)
+                        .getAttributes()
+                        .forEach(att -> {
+                            GoogleChrome google = (GoogleChrome) Utils.fromByte(att.getValueBytes());
+                            sbBlocked.append(google).append("\n");
+                        });
+            }
 
         } catch (TskCoreException e) {
             e.printStackTrace();
