@@ -3,6 +3,8 @@ package pt.ipleiria.estg.dei.db;
 import pt.ipleiria.estg.dei.blocked.ISPLockedWebsites;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -39,7 +41,7 @@ public enum GoogleChromeRepository {
         return histories;
     }
 
-    public  List<GoogleChrome> getDomainVisitedSites() throws Exception { //TODO: this dosen´t solv the problem of multiple urls, but it takes only domains into consideration
+    public  List<GoogleChrome> getBlockedSitesVisited() throws Exception { //TODO: this dosen´t solv the problem of multiple urls, but it takes only domains into consideration
         Connection connection = ConnectionFactory.getConnection(CHROME);
         ResultSet rs;
         Statement statement = connection.createStatement();
@@ -63,6 +65,24 @@ public enum GoogleChromeRepository {
                 int visitNumber = Integer.parseInt(rs.getString("visit"));
                 histories.add(new GoogleChrome(url, visitNumber));
             }
+        }
+        return histories;
+    }
+
+    public List<String> getWordsFromGoogleEngine() throws SQLException, ClassNotFoundException, UnsupportedEncodingException {
+        Connection connection = ConnectionFactory.getConnection(CHROME);
+        ResultSet rs;
+        Statement statement = connection.createStatement();
+        List<String> histories = new ArrayList<>();
+        rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word  " +
+                "FROM urls " +
+                "where url like '%google.%' and url like '%?q=%'");
+
+        while (rs.next()) {
+            String encoded = rs.getString("word");
+            String substring = encoded.substring(0, encoded.indexOf("&"));
+            String decode = URLDecoder.decode(substring, "UTF-8");
+            histories.add(decode);
         }
         return histories;
     }

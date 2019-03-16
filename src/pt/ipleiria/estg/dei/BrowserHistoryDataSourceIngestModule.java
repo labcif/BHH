@@ -17,8 +17,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
 
-import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BLOCKED_HISTORY;
-import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BROWSER_HISTORY;
+import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.*;
 
 
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
@@ -34,7 +33,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
-        progressBar.switchToDeterminate(2);
+        progressBar.switchToDeterminate(3);
 
         try {
             Blackboard blackboard = Case.getCurrentCaseThrows().getServices().getBlackboard();
@@ -62,13 +61,13 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
             artifactUrlsMostVisited.addAttributes(attributesOfMostVisited);
             blackboard.indexArtifact(artifactUrlsMostVisited);
-
+            progressBar.progress(1);
 
             BlackboardArtifact.Type blockedUrlsType =
                     blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
             BlackboardArtifact blackBoardArtifcatOfBlockedUrls = dataSource.newArtifact(blockedUrlsType.getTypeID());
 
-            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getDomainVisitedSites();
+            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getBlockedSitesVisited();
             Collection<BlackboardAttribute> attributeOfDomainVisited =
                     blokedSites
                             .stream()
@@ -79,6 +78,20 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                             .collect(Collectors.toList());
 
             blackBoardArtifcatOfBlockedUrls.addAttributes(attributeOfDomainVisited);
+            progressBar.progress(1);
+            List<String> wordsFromGoogleEngine = GoogleChromeRepository.INSTANCE.getWordsFromGoogleEngine();
+            BlackboardArtifact.Type wordSearchInGoogle =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE, "Words Search in Google Engine");
+            BlackboardArtifact blackboardArtifactWordSearchInGoogle = dataSource.newArtifact(wordSearchInGoogle.getTypeID());
+
+            Collection<BlackboardAttribute> attributesOfWordInGoogleEngine = wordsFromGoogleEngine.stream()
+                    .map(word->
+                            new BlackboardAttribute(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_NAME,
+                                    BrowserHistoryDataSourceIngestModule.class.getName(),
+                                    word))
+                    .collect(Collectors.toList());
+            blackboardArtifactWordSearchInGoogle.addAttributes(attributesOfWordInGoogleEngine);
+            progressBar.progress(1);
         } catch (Exception ex) {
             IngestServices
                     .getInstance()

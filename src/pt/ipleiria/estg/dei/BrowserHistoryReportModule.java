@@ -25,29 +25,26 @@ import java.util.*;
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
     private static BrowserHistoryReportModule instance;
-    public static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
-
-    //Example
-    public static final String ARTIFACT_TYPE_BLOCKED_HISTORY = "type_blocked_history";
+    static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
+    static final String ARTIFACT_TYPE_BLOCKED_HISTORY = "type_blocked_history";
+    static final String ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE = "Type_words_in_google";
 
     @Override
     public void generateReport(String reportDir, ReportProgressPanel reportProgressPanel) {
-
         reportProgressPanel.setIndeterminate(false);
         reportProgressPanel.start();
         reportProgressPanel.updateStatusLabel("Adding files...");
 
-        // Example
         StringBuilder sb =new StringBuilder();
         sb.append("The most used urls are: \n");
         List<GoogleChrome> visits = new ArrayList<>();
 
-        //Example
         StringBuilder sbBlocked =new StringBuilder();
         sbBlocked.append("The user has visited this blocked Websites: \n");
 
-        try {
+        StringBuilder sbWordSearchInEngine =new StringBuilder();
 
+        try {
             ArrayList<BlackboardArtifact> artifacts = Case.getCurrentCase()
                     .getSleuthkitCase()
                     .getBlackboardArtifacts(ARTIFACT_TYPE_BROWSER_HISTORY);
@@ -79,8 +76,12 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                         });
             }
 
-        } catch (TskCoreException e) {
-            e.printStackTrace();
+        artifacts = Case.getCurrentCase()
+                .getSleuthkitCase()
+                .getBlackboardArtifacts(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE);
+        if (!artifacts.isEmpty()) {
+          artifacts.get(artifacts.size() - 1)
+                    .getAttributes().forEach(word-> sbWordSearchInEngine.append(word.getValueString()).append(", "));
         }
 
         File templateFile = new File("src/pt/ipleiria/estg/dei/template/autopsy.jrxml");//TODO: this must be more dynamic
@@ -92,12 +93,13 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
         reportData.put("Visits", jrBeanCollectionDataSource);
 
-        //Example
         reportData.put("Blocked", sbBlocked.toString());
+
+        reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
 
         generator.setReportData(reportData);
 
-        try {
+
             ReportParameterMap reportParameters = new ReportParameterMap();
                     // Generate the document into a byte array.
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -115,7 +117,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                 byteArrayOutputStream.writeTo(outputStream);
             }
 
-        } catch(IOException | GenerateReportException e){
+        } catch(IOException | GenerateReportException | TskCoreException e){
             IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BrowserHistoryReportModule.getDefault().getName(),"Failed to create report");
             IngestServices.getInstance().postMessage(message);
         }
