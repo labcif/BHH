@@ -25,7 +25,21 @@ public class OperatingSystem {
                         .append(System.getProperty("user.name"))
                         .append("\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History");
                 return  sb.toString();
+            case BRAVE:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("\\AppData\\Local\\raveSoftware\\Brave-Browser\\User Data\\Default\\History");
+                return  sb.toString();
+            case VIVALDI:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("\\AppData\\Local\\Vivaldi\\User Data\\Default\\History");
+                return  sb.toString();
             case FIREFOX:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History");
+                return  sb.toString();
             default:
                 throw new NotSupportedException("Browser not supported: " + browser);
 

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autopsy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8aca9d9-d729-4688-b0c1-34d28d5385eb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
 	<subDataset name="GroupData" uuid="9874384d-ef9a-48e7-80f6-2cf2011ac1d2">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -17,6 +19,7 @@
 	</subDataset>
 	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Title" class="java.lang.String"/>
+	<parameter name="Blocked" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -24,18 +27,28 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="83" splitType="Stretch">
-			<textField>
-				<reportElement x="160" y="10" width="359" height="56" uuid="9ea7c878-e69e-4c62-8c4d-c8ef3069ada2"/>
-				<textFieldExpression><![CDATA[$P{Title}]]></textFieldExpression>
+		<band height="85" splitType="Stretch">
+			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
+				<reportElement x="335" y="48" width="220" height="20" uuid="d19284d7-75b6-459a-ae24-8db27a80e3d2"/>
+				<textElement textAlignment="Right">
+					<font size="14"/>
+				</textElement>
+				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
+			<staticText>
+				<reportElement x="300" y="29" width="255" height="20" uuid="2d523066-8538-461a-803f-aa7df7e69614"/>
+				<textElement textAlignment="Right">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Report Module - Browser History]]></text>
+			</staticText>
 		</band>
 	</title>
 	<pageHeader>
-		<band height="327" splitType="Stretch">
+		<band height="622" splitType="Stretch">
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="142" y="79" width="391" height="200" uuid="8974df2f-ab93-4e80-9e8d-f808b1235ded"/>
+					<reportElement x="89" y="163" width="391" height="200" uuid="8974df2f-ab93-4e80-9e8d-f808b1235ded"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend position="Bottom"/>
@@ -64,21 +77,36 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
+			<textField>
+				<reportElement x="106" y="70" width="359" height="56" uuid="9ea7c878-e69e-4c62-8c4d-c8ef3069ada2"/>
+				<textFieldExpression><![CDATA[$P{Title}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="144" y="442" width="255" height="20" uuid="f51d1d11-789e-4daa-bca4-c68152417f78"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Blocked Sites]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="144" y="18" width="255" height="20" uuid="15db36f8-4cbf-4d9b-bf2f-1761e5006502"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Most Visited Sites]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="106" y="488" width="374" height="98" uuid="8dfe6f03-00db-4246-8520-5d1e649e40cc"/>
+				<textFieldExpression><![CDATA[$P{Blocked}]]></textFieldExpression>
+			</textField>
 		</band>
 	</pageHeader>
 	<columnHeader>
-		<band height="61" splitType="Stretch"/>
+		<band height="61" splitType="Stretch">
+			<textField>
+				<reportElement x="455" y="41" width="100" height="20" uuid="ee86c45b-6a3c-4650-863c-08a2abd31285"/>
+				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
+			</textField>
+		</band>
 	</columnHeader>
-	<detail>
-		<band height="221" splitType="Stretch"/>
-	</detail>
-	<columnFooter>
-		<band height="45" splitType="Stretch"/>
-	</columnFooter>
-	<pageFooter>
-		<band height="54" splitType="Stretch"/>
-	</pageFooter>
-	<summary>
-		<band height="42" splitType="Stretch"/>
-	</summary>
 </jasperReport>

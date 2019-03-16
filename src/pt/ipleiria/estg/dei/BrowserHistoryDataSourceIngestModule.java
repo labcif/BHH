@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BROWSER_HISTORY;
+import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BLOCKED_HISTORY;
 
 
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
@@ -43,11 +44,14 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
         try {
             Blackboard blackboard = Case.getCurrentCaseThrows().getServices().getBlackboard();
+
+           //Type
             BlackboardArtifact.Type artifactType = blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BROWSER_HISTORY, "Urls most visited");
             BlackboardAttribute.Type attType = blackboard.getOrAddAttributeType("bytes", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.BYTE, "Serialize class");
             BlackboardArtifact artifact = dataSource.newArtifact(artifactType.getTypeID());
             Collection<BlackboardAttribute> attributes = new ArrayList<>();
 
+            // Most Visited Sites
             List<GoogleChrome> mostVisitedSite = GoogleChromeRepository.INSTANCE.getMostVisitedSite();
             mostVisitedSite.forEach(site ->{
                 IngestServices
@@ -69,6 +73,34 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             artifact.addAttributes(attributes);
             blackboard.indexArtifact(artifact);//Indexing for key word search::TODO: this is not necessary, at least for now
 
+
+            //Example
+            BlackboardArtifact.Type artifactType2 = blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
+            BlackboardAttribute.Type attType2 = blackboard.getOrAddAttributeType("bytes", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.BYTE, "Serialize class");
+            BlackboardArtifact artifact2 = dataSource.newArtifact(artifactType2.getTypeID());
+            Collection<BlackboardAttribute> attributes2 = new ArrayList<>();
+
+            // Bloked websites
+            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getDomainVisitedSites();
+            blokedSites.forEach(site ->{
+                IngestServices
+                        .getInstance()
+                        .postMessage(
+                                IngestMessage.createMessage(
+                                        IngestMessage.MessageType.INFO,
+                                        BrowserHistoryIngestModuleFactory.getModuleName(),
+                                        site.toString()
+                                )
+                        );
+                attributes2.add(
+                        new BlackboardAttribute(
+                                attType2,
+                                BrowserHistoryDataSourceIngestModule.class.getName(),
+                                Utils.convertToByte(site)));
+            });
+            artifact2.addAttributes(attributes2);
+
+
         } catch (ClassNotFoundException | SQLException | TskCoreException|Blackboard.BlackboardException
                 | NoCurrentCaseException  ex) {
             IngestServices
@@ -81,8 +113,11 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                                             ex.getMessage()));
             logger.log(Level.SEVERE, "Failed to execute query: " +ex.getMessage(), ex);
             return IngestModule.ProcessResult.ERROR;
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         return IngestModule.ProcessResult.OK;
     }
+
 }

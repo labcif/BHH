@@ -17,15 +17,17 @@ import pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 
 import javax.swing.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
     private static BrowserHistoryReportModule instance;
     public static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
+
+    //Example
+    public static final String ARTIFACT_TYPE_BLOCKED_HISTORY = "type_blocked_history";
 
     @Override
     public void generateReport(String reportDir, ReportProgressPanel reportProgressPanel) {
@@ -38,6 +40,11 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         StringBuilder sb =new StringBuilder();
         sb.append("The most used urls are: \n");
         List<GoogleChrome> visits = new ArrayList<>();
+
+        //Example
+        StringBuilder sbBlocked =new StringBuilder();
+        sbBlocked.append("The user has visited this blocked Websites: \n");
+
         try {
 
             ArrayList<BlackboardArtifact> artifacts = Case.getCurrentCase()
@@ -52,6 +59,18 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                         visits.add(google);
                     });
 
+            //Example
+            artifacts = Case.getCurrentCase()
+                    .getSleuthkitCase()
+                    .getBlackboardArtifacts(ARTIFACT_TYPE_BLOCKED_HISTORY);
+            artifacts
+                    .get(artifacts.size()-1)
+                    .getAttributes()
+                    .forEach(att -> {
+                        GoogleChrome google = (GoogleChrome) Utils.fromByte(att.getValueBytes());
+                        sbBlocked.append(google).append("\n");
+                    });
+
         } catch (TskCoreException e) {
             e.printStackTrace();
         }
@@ -60,9 +79,13 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         Generator generator = new Generator(templateFile);
 
         Map<String, Object> reportData = new HashMap<>();
+
         reportData.put("Title", sb.toString());
         JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
         reportData.put("Visits", jrBeanCollectionDataSource);
+
+        //Example
+        reportData.put("Blocked", sbBlocked.toString());
 
         generator.setReportData(reportData);
 
@@ -75,7 +98,12 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
             generator.generateReport();
 
-            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport.pdf")) {//TODO: this file must have a timestamp as a name to not override the ones created before
+
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SS");
+            Date date = new Date();
+            String dateNoTime = dateFormat.format(date);
+
+            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport"+ dateNoTime +".pdf")) {
                 byteArrayOutputStream.writeTo(outputStream);
             }
 
