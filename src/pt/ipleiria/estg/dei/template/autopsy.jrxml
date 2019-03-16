@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autopsy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8aca9d9-d729-4688-b0c1-34d28d5385eb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -20,6 +21,7 @@
 	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Title" class="java.lang.String"/>
 	<parameter name="Blocked" class="java.lang.String"/>
+	<parameter name="wordsFromGoogleEngine" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -45,17 +47,31 @@
 		</band>
 	</title>
 	<pageHeader>
-		<band height="622" splitType="Stretch">
+		<band height="36" splitType="Stretch"/>
+	</pageHeader>
+	<detail>
+		<band height="389">
+			<staticText>
+				<reportElement x="149" y="23" width="255" height="20" uuid="bf3b875a-0484-4889-8a1d-a71a12303239"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Most Visited Sites]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="111" y="75" width="359" height="56" uuid="baabbd47-2e21-4a3c-aa8f-6002e4d2c730"/>
+				<textFieldExpression><![CDATA[$P{Title}]]></textFieldExpression>
+			</textField>
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="89" y="163" width="391" height="200" uuid="8974df2f-ab93-4e80-9e8d-f808b1235ded"/>
+					<reportElement x="94" y="168" width="391" height="200" uuid="07d9c34c-79b4-4dff-bf86-5e4f6f574645"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend position="Bottom"/>
 				</chart>
 				<categoryDataset>
 					<dataset>
-						<datasetRun subDataset="Chart" uuid="0a64fa5b-782a-46d0-944a-24bd531d7d39">
+						<datasetRun subDataset="Chart" uuid="7ce16cc2-0324-4f80-bb23-74c1f2947b6f">
 							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
@@ -77,36 +93,40 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
-			<textField>
-				<reportElement x="106" y="70" width="359" height="56" uuid="9ea7c878-e69e-4c62-8c4d-c8ef3069ada2"/>
-				<textFieldExpression><![CDATA[$P{Title}]]></textFieldExpression>
-			</textField>
+		</band>
+		<band height="184">
 			<staticText>
-				<reportElement x="144" y="442" width="255" height="20" uuid="f51d1d11-789e-4daa-bca4-c68152417f78"/>
+				<reportElement x="162" y="25" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Blocked Sites]]></text>
 			</staticText>
-			<staticText>
-				<reportElement x="144" y="18" width="255" height="20" uuid="15db36f8-4cbf-4d9b-bf2f-1761e5006502"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<text><![CDATA[Most Visited Sites]]></text>
-			</staticText>
 			<textField>
-				<reportElement x="106" y="488" width="374" height="98" uuid="8dfe6f03-00db-4246-8520-5d1e649e40cc"/>
+				<reportElement x="115" y="65" width="374" height="98" uuid="d13e853e-8f56-4e78-befd-3177bdbebdbc"/>
 				<textFieldExpression><![CDATA[$P{Blocked}]]></textFieldExpression>
 			</textField>
 		</band>
-	</pageHeader>
-	<columnHeader>
-		<band height="61" splitType="Stretch">
+		<band height="590">
+			<staticText>
+				<reportElement x="162" y="25" width="255" height="20" uuid="473ce4f4-1a24-404a-8192-c0d6d8490bda"/>
+				<textElement textAlignment="Center">
+					<font size="14"/>
+				</textElement>
+				<text><![CDATA[Words Searched Google Engine]]></text>
+			</staticText>
 			<textField>
-				<reportElement x="455" y="41" width="100" height="20" uuid="ee86c45b-6a3c-4650-863c-08a2abd31285"/>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="77" width="490" height="193" uuid="dc080068-111d-4bf9-9f5e-8bababe6cbf4"/>
+				<textFieldExpression><![CDATA[$P{wordsFromGoogleEngine}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<pageFooter>
+		<band height="50">
+			<textField>
+				<reportElement x="450" y="19" width="100" height="20" uuid="ee86c45b-6a3c-4650-863c-08a2abd31285"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
-	</columnHeader>
+	</pageFooter>
 </jasperReport>
