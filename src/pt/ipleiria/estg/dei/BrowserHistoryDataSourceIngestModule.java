@@ -76,8 +76,6 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                             .collect(Collectors.toList());
 
             blackBoardArtifcatOfBlockedUrls.addAttributes(attributeOfDomainVisited);
-
-
         } catch (Exception ex) {
             IngestServices
                     .getInstance()

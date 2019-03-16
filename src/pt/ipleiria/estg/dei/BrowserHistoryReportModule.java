@@ -9,6 +9,7 @@ import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
 import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.TskCoreException;
+import pt.ipleiria.estg.dei.exceptions.BrowserHistoryIngestModuleExpection;
 import pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 import pt.ipleiria.estg.dei.utils.Utils;
@@ -50,6 +51,11 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             ArrayList<BlackboardArtifact> artifacts = Case.getCurrentCase()
                     .getSleuthkitCase()
                     .getBlackboardArtifacts(ARTIFACT_TYPE_BROWSER_HISTORY);
+            if (artifacts.isEmpty()) {
+                //TODO: Will have to decide if this is want we want. Probably in the future we will allow options on ingest module
+                //TODO: This will likely imply that if I didnt run that option, probably here I only want to ignore and not throw an error
+                throw new BrowserHistoryIngestModuleExpection("Please run Browser History ingest Module before running this report file");
+            }
             artifacts
                     .get(artifacts.size()-1)
                     .getAttributes()
