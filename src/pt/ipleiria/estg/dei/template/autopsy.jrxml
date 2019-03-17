@@ -5,6 +5,33 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<style name="Table_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
 	<subDataset name="GroupData" uuid="9874384d-ef9a-48e7-80f6-2cf2011ac1d2">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -18,10 +45,20 @@
 		<field name="url" class="java.lang.String"/>
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
+	<subDataset name="FrequencyTable" uuid="a26be887-116c-472b-8c7a-9146925a6bb8">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="domain" class="java.lang.String"/>
+		<field name="frequency" class="java.lang.Float"/>
+		<field name="totalDaysVisited" class="java.lang.Integer"/>
+		<field name="totalDaysDB" class="java.lang.Float"/>
+	</subDataset>
 	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Title" class="java.lang.String"/>
 	<parameter name="Blocked" class="java.lang.String"/>
 	<parameter name="wordsFromGoogleEngine" class="java.lang.String"/>
+	<parameter name="Frequency" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -119,6 +156,88 @@
 				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="77" width="490" height="193" uuid="dc080068-111d-4bf9-9f5e-8bababe6cbf4"/>
 				<textFieldExpression><![CDATA[$P{wordsFromGoogleEngine}]]></textFieldExpression>
 			</textField>
+			<componentElement>
+				<reportElement stretchType="ContainerHeight" x="10" y="330" width="490" height="210" uuid="3addd31d-0cb3-40a9-aa50-d9038336949b">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="FrequencyTable" uuid="a5a126d5-7e6a-43c3-8fbb-fb56f0d8dcca">
+						<dataSourceExpression><![CDATA[$P{Frequency}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="124" uuid="ed726b88-04dc-45c2-8909-90351006ff61">
+						<jr:tableHeader style="Table_TH" height="30"/>
+						<jr:tableFooter style="Table_TH" height="30"/>
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="124" height="30" uuid="320e40f8-fcfd-4d2f-ad15-caf03025c102"/>
+								<text><![CDATA[domain]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="124" height="30" uuid="ec803b4e-d237-405a-8413-9d785d5783e3"/>
+								<textFieldExpression><![CDATA[$F{domain}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="124" uuid="114d87f6-1468-4438-96b2-050667f93a64">
+						<jr:tableHeader style="Table_TH" height="30"/>
+						<jr:tableFooter style="Table_TH" height="30"/>
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="124" height="30" uuid="4c6bec2c-2f9b-4d71-a5cb-51fd2d258969"/>
+								<text><![CDATA[frequency]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="124" height="30" uuid="f6f60899-3f28-436a-8039-35ded4331c66"/>
+								<textFieldExpression><![CDATA[$F{frequency}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="121" uuid="551a597b-37ac-4dbe-9b87-0439ee139de8">
+						<jr:tableHeader style="Table_TH" height="30"/>
+						<jr:tableFooter style="Table_TH" height="30"/>
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="121" height="30" uuid="9d29085c-5657-43c2-a8c7-a7a5de63fdbb"/>
+								<text><![CDATA[totalDaysVisited]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="121" height="30" uuid="f8b33536-3821-4cae-871e-cdfb043694db"/>
+								<textFieldExpression><![CDATA[$F{totalDaysVisited}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="121" uuid="966a2239-d6d0-4815-8d90-8c9638f2e90e">
+						<jr:tableHeader style="Table_TH" height="30"/>
+						<jr:tableFooter style="Table_TH" height="30"/>
+						<jr:columnHeader style="Table_CH" height="30">
+							<staticText>
+								<reportElement x="0" y="0" width="121" height="30" uuid="8cc323d2-e7a3-47d7-936a-dc57c61dbfa5"/>
+								<text><![CDATA[totalDaysDB]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="121" height="30" uuid="79602d88-c918-4fbf-8549-6481304d6e4c"/>
+								<textFieldExpression><![CDATA[$F{totalDaysDB}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
 		</band>
 	</detail>
 	<pageFooter>
