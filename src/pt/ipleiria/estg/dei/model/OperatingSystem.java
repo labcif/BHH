@@ -4,13 +4,13 @@ import pt.ipleiria.estg.dei.exceptions.NotSupportedException;
 
 
 public class OperatingSystem {
-    private static  String operatingSystem= System.getProperty("os.name");
 
     private OperatingSystem(){
     }
 
     public static String getLocation(BrowserEnum browser){
-        if (isWindows()) {
+        String operatingSystem = System.getenv("os.name");
+        if (isWindows(operatingSystem)) {
             return getWindowsLocation(browser);
         }
         throw new NotSupportedException("Operating system not supported:" + operatingSystem);
@@ -22,24 +22,20 @@ public class OperatingSystem {
         switch (browser) {
             case CHROME:
                 sb.append("\\Users\\")
-                        .append(System.getProperty("user.name"))
+                        .append(System.getenv("user.name"))
                         .append("\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History");
                 return  sb.toString();
             case BRAVE:
                 sb.append("\\Users\\")
-                        .append(System.getProperty("user.name"))
+                        .append(System.getenv("user.name"))
                         .append("\\AppData\\Local\\raveSoftware\\Brave-Browser\\User Data\\Default\\History");
                 return  sb.toString();
             case VIVALDI:
                 sb.append("\\Users\\")
-                        .append(System.getProperty("user.name"))
+                        .append(System.getenv("user.name"))
                         .append("\\AppData\\Local\\Vivaldi\\User Data\\Default\\History");
                 return  sb.toString();
             case FIREFOX:
-                sb.append("\\Users\\")
-                        .append(System.getProperty("user.name"))
-                        .append("\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History");
-                return  sb.toString();
             default:
                 throw new NotSupportedException("Browser not supported: " + browser);
 
@@ -49,7 +45,7 @@ public class OperatingSystem {
     private static String getLinuxLocation(BrowserEnum browser){
         switch (browser) {
             case CHROME:
-                return "/home/" + System.getProperty("user.name") + "/.config/google-chrome/Default/Preferences";
+                return "/home/" + System.getenv("user.name") + "/.config/google-chrome/Default/Preferences";
             case FIREFOX:
             default:
                 throw new NotSupportedException("Browser not supported: " + browser);
@@ -57,15 +53,15 @@ public class OperatingSystem {
         }
     }
 
-    private static boolean isWindows() {
+    private static boolean isWindows(String operatingSystem) {
         return (operatingSystem != null && operatingSystem.toLowerCase().contains("win"));
     }
 
-    private static boolean isMac() {
+    private static boolean isMac(String operatingSystem) {
         return (operatingSystem != null && operatingSystem.toLowerCase().contains("mac"));
     }
 
-    private static boolean isUnix() {
+    private static boolean isUnix(String operatingSystem) {
         return operatingSystem != null && (operatingSystem.toLowerCase().contains("nix") ||
                 operatingSystem.toLowerCase().contains("nux") ||
                 operatingSystem.toLowerCase().indexOf("aix") > 0 );
