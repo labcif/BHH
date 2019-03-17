@@ -2,107 +2,97 @@
 package pt.ipleiria.estg.dei;
 
 import org.sleuthkit.autopsy.casemodule.Case;
-import org.sleuthkit.autopsy.casemodule.NoCurrentCaseException;
 import org.sleuthkit.autopsy.casemodule.services.Blackboard;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.autopsy.ingest.*;
 import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
-import org.sleuthkit.datamodel.TskCoreException;
 import pt.ipleiria.estg.dei.db.GoogleChromeRepository;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 import pt.ipleiria.estg.dei.utils.Utils;
 
-import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.stream.Collectors;
 
-import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BROWSER_HISTORY;
-import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.ARTIFACT_TYPE_BLOCKED_HISTORY;
+import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.*;
 
 
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
-    private IngestJobContext context = null;
 
     BrowserHistoryDataSourceIngestModule() {
     }
 
     @Override
-    public void startUp(IngestJobContext context) throws IngestModuleException {
-        this.context = context;
+    public void startUp(IngestJobContext context) {
     }
 
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
-        // There are two tasks to do.
-        progressBar.switchToDeterminate(2);
+        progressBar.switchToDeterminate(3);
 
         try {
             Blackboard blackboard = Case.getCurrentCaseThrows().getServices().getBlackboard();
+            BlackboardAttribute.Type blackBoardAttributeType =
+                    blackboard.getOrAddAttributeType("bytes",
+                            BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.BYTE,
+                            "Serialize class");
 
-           //Type
-            BlackboardArtifact.Type artifactType = blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BROWSER_HISTORY, "Urls most visited");
-            BlackboardAttribute.Type attType = blackboard.getOrAddAttributeType("bytes", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.BYTE, "Serialize class");
-            BlackboardArtifact artifact = dataSource.newArtifact(artifactType.getTypeID());
-            Collection<BlackboardAttribute> attributes = new ArrayList<>();
+
+            BlackboardArtifact.Type urlsMostVisitedType =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BROWSER_HISTORY, "Urls most visited");
+            BlackboardArtifact artifactUrlsMostVisited = dataSource.newArtifact(urlsMostVisitedType.getTypeID());
 
             // Most Visited Sites
             List<GoogleChrome> mostVisitedSite = GoogleChromeRepository.INSTANCE.getMostVisitedSite();
-            mostVisitedSite.forEach(site ->{
-                IngestServices
-                        .getInstance()
-                        .postMessage(
-                                IngestMessage.createMessage(
-                                        IngestMessage.MessageType.INFO,
-                                        BrowserHistoryIngestModuleFactory.getModuleName(),
-                                        site.toString()
-                                )
-                        );
-                attributes.add(
-                        new BlackboardAttribute(
-                                attType,
-                                BrowserHistoryDataSourceIngestModule.class.getName(),
-                                Utils.convertToByte(site)));
-            });
 
-            artifact.addAttributes(attributes);
-            blackboard.indexArtifact(artifact);//Indexing for key word search::TODO: this is not necessary, at least for now
+            Collection<BlackboardAttribute> attributesOfMostVisited = mostVisitedSite
+                    .stream()
+                    .map(site ->
+                            new BlackboardAttribute(
+                                    blackBoardAttributeType,
+                                    BrowserHistoryDataSourceIngestModule.class.getName(),
+                                    Utils.convertToByte(site)))
+                    .collect(Collectors.toList());
 
+            artifactUrlsMostVisited.addAttributes(attributesOfMostVisited);
+            blackboard.indexArtifact(artifactUrlsMostVisited);
+            progressBar.progress(1);
 
-            //Example
-            BlackboardArtifact.Type artifactType2 = blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
-            BlackboardAttribute.Type attType2 = blackboard.getOrAddAttributeType("bytes", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.BYTE, "Serialize class");
-            BlackboardArtifact artifact2 = dataSource.newArtifact(artifactType2.getTypeID());
-            Collection<BlackboardAttribute> attributes2 = new ArrayList<>();
+            BlackboardArtifact.Type blockedUrlsType =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
+            BlackboardArtifact blackBoardArtifcatOfBlockedUrls = dataSource.newArtifact(blockedUrlsType.getTypeID());
 
-            // Bloked websites
-            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getDomainVisitedSites();
-            blokedSites.forEach(site ->{
-                IngestServices
-                        .getInstance()
-                        .postMessage(
-                                IngestMessage.createMessage(
-                                        IngestMessage.MessageType.INFO,
-                                        BrowserHistoryIngestModuleFactory.getModuleName(),
-                                        site.toString()
-                                )
-                        );
-                attributes2.add(
-                        new BlackboardAttribute(
-                                attType2,
-                                BrowserHistoryDataSourceIngestModule.class.getName(),
-                                Utils.convertToByte(site)));
-            });
-            artifact2.addAttributes(attributes2);
+            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getBlockedSitesVisited();
+            Collection<BlackboardAttribute> attributeOfDomainVisited =
+                    blokedSites
+                            .stream()
+                            .map(site ->
+                                    new BlackboardAttribute(blackBoardAttributeType,
+                                            BrowserHistoryDataSourceIngestModule.class.getName(),
+                                            Utils.convertToByte(site)))
+                            .collect(Collectors.toList());
 
+            blackBoardArtifcatOfBlockedUrls.addAttributes(attributeOfDomainVisited);
+            progressBar.progress(1);
+            List<String> wordsFromGoogleEngine = GoogleChromeRepository.INSTANCE.getWordsFromGoogleEngine();
+            BlackboardArtifact.Type wordSearchInGoogle =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE, "Words Search in Google Engine");
+            BlackboardArtifact blackboardArtifactWordSearchInGoogle = dataSource.newArtifact(wordSearchInGoogle.getTypeID());
 
-        } catch (ClassNotFoundException | SQLException | TskCoreException|Blackboard.BlackboardException
-                | NoCurrentCaseException  ex) {
+            Collection<BlackboardAttribute> attributesOfWordInGoogleEngine = wordsFromGoogleEngine.stream()
+                    .map(word->
+                            new BlackboardAttribute(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_NAME,
+                                    BrowserHistoryDataSourceIngestModule.class.getName(),
+                                    word))
+                    .collect(Collectors.toList());
+            blackboardArtifactWordSearchInGoogle.addAttributes(attributesOfWordInGoogleEngine);
+            progressBar.progress(1);
+        } catch (Exception ex) {
             IngestServices
                     .getInstance()
                     .postMessage(
@@ -113,11 +103,10 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                                             ex.getMessage()));
             logger.log(Level.SEVERE, "Failed to execute query: " +ex.getMessage(), ex);
             return IngestModule.ProcessResult.ERROR;
-        } catch (Exception e) {
-            e.printStackTrace();
         }
 
         return IngestModule.ProcessResult.OK;
     }
+
 
 }
