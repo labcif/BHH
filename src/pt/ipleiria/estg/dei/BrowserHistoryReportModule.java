@@ -9,6 +9,7 @@ import org.sleuthkit.autopsy.report.GeneralReportModule;
 import org.sleuthkit.autopsy.report.ReportProgressPanel;
 import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.TskCoreException;
+import pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import pt.ipleiria.estg.dei.exceptions.BrowserHistoryIngestModuleExpection;
 import pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
@@ -21,6 +22,7 @@ import java.io.*;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
@@ -28,6 +30,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
     static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
     static final String ARTIFACT_TYPE_BLOCKED_HISTORY = "type_blocked_history";
     static final String ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE = "Type_words_in_google";
+    static final String ARTIFACT_TYPE_FREQUENCY_HISTORY = "Relative_frequency";
 
     @Override
     public void generateReport(String reportDir, ReportProgressPanel reportProgressPanel) {
@@ -38,6 +41,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         StringBuilder sb =new StringBuilder();
         sb.append("The most used urls are: \n");
         List<GoogleChrome> visits = new ArrayList<>();
+        List<RelativeFrequencyBrowser> frequencyBrowsers = new ArrayList<>();
 
         StringBuilder sbBlocked =new StringBuilder();
         sbBlocked.append("The user has visited this blocked Websites: \n");
@@ -76,28 +80,43 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                         });
             }
 
-        artifacts = Case.getCurrentCase()
-                .getSleuthkitCase()
-                .getBlackboardArtifacts(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE);
-        if (!artifacts.isEmpty()) {
-          artifacts.get(artifacts.size() - 1)
-                    .getAttributes().forEach(word-> sbWordSearchInEngine.append(word.getValueString()).append(", "));
-        }
+            artifacts = Case.getCurrentCase()
+                    .getSleuthkitCase()
+                    .getBlackboardArtifacts(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE);
+            if (!artifacts.isEmpty()) {
+              artifacts.get(artifacts.size() - 1)
+                        .getAttributes().forEach(word-> sbWordSearchInEngine.append(word.getValueString()).append(", "));
+            }
 
-        File templateFile = new File("src/pt/ipleiria/estg/dei/template/autopsy.jrxml");//TODO: this must be more dynamic
-        Generator generator = new Generator(templateFile);
+            artifacts = Case.getCurrentCase()
+                    .getSleuthkitCase()
+                    .getBlackboardArtifacts(ARTIFACT_TYPE_FREQUENCY_HISTORY);
+            if (!artifacts.isEmpty()) {
+                frequencyBrowsers = artifacts.get(artifacts.size()-1)
+                        .getAttributes()
+                        .stream()
+                        .map(browser-> (RelativeFrequencyBrowser)Utils.fromByte(browser.getValueBytes()))
+                        .collect(Collectors.toList());
+            }
 
-        Map<String, Object> reportData = new HashMap<>();
 
-        reportData.put("Title", sb.toString());
-        JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
-        reportData.put("Visits", jrBeanCollectionDataSource);
+            File templateFile = new File("src/pt/ipleiria/estg/dei/template/autopsy.jrxml");//TODO: this must be more dynamic
+            Generator generator = new Generator(templateFile);
 
-        reportData.put("Blocked", sbBlocked.toString());
+            Map<String, Object> reportData = new HashMap<>();
 
-        reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
+            reportData.put("Title", sb.toString());
+            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
+            reportData.put("Visits", jrBeanCollectionDataSource);
 
-        generator.setReportData(reportData);
+            JRBeanCollectionDataSource jrBeanCollectionDataSource1 = new JRBeanCollectionDataSource(frequencyBrowsers);
+            reportData.put("Frequency", jrBeanCollectionDataSource1);
+
+            reportData.put("Blocked", sbBlocked.toString());
+
+            reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
+
+            generator.setReportData(reportData);
 
 
             ReportParameterMap reportParameters = new ReportParameterMap();
