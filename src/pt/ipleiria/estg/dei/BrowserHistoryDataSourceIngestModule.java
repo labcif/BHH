@@ -9,10 +9,12 @@ import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
 import pt.ipleiria.estg.dei.db.GoogleChromeRepository;
+import pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 import pt.ipleiria.estg.dei.utils.Utils;
 
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.stream.Collectors;
@@ -64,7 +66,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                     .collect(Collectors.toList());
 
             artifactUrlsMostVisited.addAttributes(attributesOfMostVisited);
-            blackboard.indexArtifact(artifactUrlsMostVisited);
+            //blackboard.indexArtifact(artifactUrlsMostVisited);
             progressBar.progress(1);
 
             BlackboardArtifact.Type blockedUrlsType =
@@ -96,6 +98,28 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                     .collect(Collectors.toList());
             blackboardArtifactWordSearchInGoogle.addAttributes(attributesOfWordInGoogleEngine);
             progressBar.progress(1);
+
+            BlackboardArtifact.Type relativeFrequencyType =
+                    blackboard.getOrAddArtifactType(ARTIFACT_TYPE_FREQUENCY_HISTORY, "Frequency Domain");
+            BlackboardArtifact artifactFrequencyDomain = dataSource.newArtifact(relativeFrequencyType.getTypeID());
+
+            HashMap<String, List<GoogleChrome>> domainsByFrequencyPerDay = GoogleChromeRepository.INSTANCE.getDomainsByFrequencyPerDay();
+            float daysDatabaseWasActive = GoogleChromeRepository.INSTANCE.getDaysDatabaseWasActive();
+
+            Collection<BlackboardAttribute> attributesFrequencyDomainPerDay =
+                    domainsByFrequencyPerDay.entrySet().stream()
+                            .map(stringListEntry -> {
+                                String key = stringListEntry.getKey();
+                                int daysVisited = stringListEntry.getValue().size();
+                                RelativeFrequencyBrowser relativeFrequencyBrowser =
+                                        new RelativeFrequencyBrowser(key, daysVisited, daysDatabaseWasActive);
+                                return new BlackboardAttribute(blackBoardAttributeType,
+                                        BrowserHistoryDataSourceIngestModule.class.getName(),
+                                        Utils.convertToByte(relativeFrequencyBrowser));
+                            }).collect(Collectors.toList());
+
+            artifactFrequencyDomain.addAttributes(attributesFrequencyDomainPerDay);
+
         } catch (Exception ex) {
             IngestServices
                     .getInstance()

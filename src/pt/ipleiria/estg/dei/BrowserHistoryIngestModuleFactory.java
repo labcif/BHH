@@ -2,11 +2,8 @@
 package pt.ipleiria.estg.dei;
 
 
-import org.openide.util.lookup.ServiceProvider;
-
-
 import org.openide.util.NbBundle;
-
+import org.openide.util.lookup.ServiceProvider;
 import org.sleuthkit.autopsy.ingest.*;
 
 /**

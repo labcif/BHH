@@ -9,7 +9,10 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -83,4 +86,49 @@ public enum GoogleChromeRepository {
         return histories;
     }
 
+    public HashMap<String, List<GoogleChrome>> getDomainsByFrequencyPerDay() throws SQLException, ClassNotFoundException, ParseException {
+        Connection connection = ConnectionFactory.getConnection(CHROME);
+
+        Statement statement = connection.createStatement();
+        HashMap<String, List<GoogleChrome>> histories = new HashMap<>();
+
+        ResultSet rs = statement.executeQuery(
+                "SELECT strftime('%d-%m-%Y', datetime(((visits.visit_time/1000000)-11644473600), 'unixepoch')) as dat, " +
+                            "replace( SUBSTR( substr(u.url,instr(u.url, '://')+3), 0,instr(substr(u.url,instr(u.url, '://')+3),'/')), 'www.', '') as domain, " +
+                            "SUM(visit_count) n_visit " +
+                    "FROM urls u " +
+                    "LEFT JOIN visits on u.id = visits.url " +
+                    "GROUP BY dat, domain " +
+                    "ORDER BY datetime(((visits.visit_time/1000000)-11644473600), 'unixepoch') DESC;");
+
+        SimpleDateFormat formatter = new SimpleDateFormat("MM-dd-yyyy");
+
+        while (rs.next()) {
+            String date = rs.getString("dat");
+            String domain = rs.getString("domain");
+            String numberOfVisits = rs.getString("n_visit");
+
+            List<GoogleChrome> googleChromes = histories.get(domain);
+            if (googleChromes == null) {
+                googleChromes = new ArrayList<>();
+            }
+            Date parse = date!= null ?formatter.parse(date): null;
+            int i = numberOfVisits != null ? Integer.parseInt(numberOfVisits): 0;
+            googleChromes.add(new GoogleChrome(domain, i, parse));
+            histories.put(domain, googleChromes);
+        }
+        return histories;
+    }
+
+    public float  getDaysDatabaseWasActive() throws SQLException, ClassNotFoundException {
+        Connection connection = ConnectionFactory.getConnection(CHROME);
+        Statement statement = connection.createStatement();
+        ResultSet rs = statement.executeQuery("SELECT julianday(MAX(datetime(((visits.visit_time/1000000)-11644473600), 'unixepoch'))) - julianday(MIN(datetime(((visits.visit_time/1000000)-11644473600), 'unixepoch'))) as days " +
+                "from visits;");
+        String days="";
+        while (rs.next()) {
+            days = rs.getString("days");
+        }
+        return Float.valueOf(days);
+    }
 }

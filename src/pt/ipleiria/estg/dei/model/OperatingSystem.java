@@ -9,7 +9,7 @@ public class OperatingSystem {
     }
 
     public static String getLocation(BrowserEnum browser){
-        String operatingSystem = System.getenv("os.name");
+        String operatingSystem = System.getenv("OS");
         if (isWindows(operatingSystem)) {
             return getWindowsLocation(browser);
         }
@@ -28,17 +28,17 @@ public class OperatingSystem {
         switch (browser) {
             case CHROME:
                 sb.append("\\Users\\")
-                        .append(System.getenv("user.name"))
+                        .append(System.getenv("USERNAME"))
                         .append("\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\History");
                 return  sb.toString();
             case BRAVE:
                 sb.append("\\Users\\")
-                        .append(System.getenv("user.name"))
+                        .append(System.getenv("USERNAME"))
                         .append("\\AppData\\Local\\raveSoftware\\Brave-Browser\\User Data\\Default\\History");
                 return  sb.toString();
             case VIVALDI:
                 sb.append("\\Users\\")
-                        .append(System.getenv("user.name"))
+                        .append(System.getenv("USERNAME"))
                         .append("\\AppData\\Local\\Vivaldi\\User Data\\Default\\History");
                 return  sb.toString();
             case FIREFOX:
