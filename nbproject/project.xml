@@ -7,6 +7,14 @@
             <standalone/>
             <module-dependencies>
                 <dependency>
+                    <code-name-base>org.netbeans.libs.junit4</code-name-base>
+                    <build-prerequisite/>
+                    <compile-dependency/>
+                    <run-dependency>
+                        <specification-version>1.14</specification-version>
+                    </run-dependency>
+                </dependency>
+                <dependency>
                     <code-name-base>org.openide.nodes</code-name-base>
                     <build-prerequisite/>
                     <compile-dependency/>
@@ -76,6 +84,10 @@
             <class-path-extension>
                 <runtime-relative-path>ext/jfreechart-1.0.19.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jfreechart-1.0.19.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/system-rules-1.19.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/system-rules-1.19.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-collections-20040616.jar</runtime-relative-path>
