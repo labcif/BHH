@@ -76,6 +76,11 @@ public class GoogleChrome implements Serializable {
         this.url = url;
         this.visitCount = visitCount;
     }
+    public GoogleChrome(String url, int visitCount, Date visitTime){
+        this.url = url;
+        this.visitCount = visitCount;
+        this.visitTime = visitTime;
+    }
 
     public String getUrl() {
         return url;
