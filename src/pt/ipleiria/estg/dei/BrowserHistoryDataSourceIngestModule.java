@@ -25,8 +25,12 @@ import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.*;
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
+    private final boolean localDisk;
+    private final boolean file;
 
-    BrowserHistoryDataSourceIngestModule() {
+    BrowserHistoryDataSourceIngestModule(BrowserHistoryModuleIngestJobSettings settings) {
+        this.localDisk = settings.localDisk();
+        this.file = settings.file();
     }
 
     @Override
@@ -87,7 +91,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             BlackboardArtifact blackboardArtifactWordSearchInGoogle = dataSource.newArtifact(wordSearchInGoogle.getTypeID());
 
             Collection<BlackboardAttribute> attributesOfWordInGoogleEngine = wordsFromGoogleEngine.stream()
-                    .map(word->
+                    .map(word ->
                             new BlackboardAttribute(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_NAME,
                                     BrowserHistoryDataSourceIngestModule.class.getName(),
                                     word))
@@ -125,7 +129,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                                             IngestMessage.MessageType.ERROR,
                                             BrowserHistoryIngestModuleFactory.getModuleName(),
                                             ex.getMessage()));
-            logger.log(Level.SEVERE, "Failed to execute query: " +ex.getMessage(), ex);
+            logger.log(Level.SEVERE, "Failed to execute query: " + ex.getMessage(), ex);
             return IngestModule.ProcessResult.ERROR;
         }
 

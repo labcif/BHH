@@ -13,6 +13,12 @@ public class OperatingSystem {
         if (isWindows(operatingSystem)) {
             return getWindowsLocation(browser);
         }
+        if(isMac(operatingSystem)){
+            return getLinuxLocation(browser);
+        }
+        if(isUnix(operatingSystem)){
+            return getLinuxLocation(browser);
+        }
         throw new NotSupportedException("Operating system not supported:" + operatingSystem);
     }
 
@@ -36,6 +42,15 @@ public class OperatingSystem {
                         .append("\\AppData\\Local\\Vivaldi\\User Data\\Default\\History");
                 return  sb.toString();
             case FIREFOX:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles\\%PROFILE%.default\\places.sqlite"); //Todo needs to select profile
+                return  sb.toString();
+            case SAFARI:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("\\AppData\\Roaming\\Apple Computer\\Safari");
+                return  sb.toString();
             default:
                 throw new NotSupportedException("Browser not supported: " + browser);
 
@@ -43,10 +58,25 @@ public class OperatingSystem {
     }
 
     private static String getLinuxLocation(BrowserEnum browser){
+        StringBuilder sb = new StringBuilder();
+        sb.append(System.getenv("/home/"));
         switch (browser) {
             case CHROME:
-                return "/home/" + System.getenv("USERNAME") + "/.config/google-chrome/Default/Preferences";
+                sb.append(System.getProperty("user.name"))
+                    .append("/.config/google-chrome/Default/Preferences");
+            case BRAVE:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("/.config/brave/Default/Preferences");
+                return  sb.toString();
+            case VIVALDI:
+                sb.append("\\Users\\")
+                        .append(System.getProperty("user.name"))
+                        .append("/.config/vivaldi/Default/Preferences");
+                return  sb.toString();
             case FIREFOX:
+                sb.append(System.getProperty("user.name"))
+                        .append("/.mozilla/firefox/$PROFILE.default/places.sqlite"); //Todo needs to select profile
             default:
                 throw new NotSupportedException("Browser not supported: " + browser);
 
@@ -66,4 +96,5 @@ public class OperatingSystem {
                 operatingSystem.toLowerCase().contains("nux") ||
                 operatingSystem.toLowerCase().indexOf("aix") > 0 );
     }
+
 }

@@ -44,28 +44,24 @@ public enum GoogleChromeRepository {
         return histories;
     }
 
-    public  List<GoogleChrome> getBlockedSitesVisited() throws Exception { //TODO: this dosen´t solv the problem of multiple urls, but it takes only domains into consideration
+    public  List<GoogleChrome> getBlockedSitesVisited() throws Exception {
         Connection connection = ConnectionFactory.getConnection(CHROME);
         ResultSet rs;
         Statement statement = connection.createStatement();
         List<GoogleChrome> histories = new ArrayList<>();
-        rs = statement.executeQuery(" Select url, visit" +
-                " FROM (" +
-                " SELECT  replace( SUBSTR(SUBSTR(urls.url, INSTR(urls.url, '//') + 2), 0, INSTR(SUBSTR(urls.url, INSTR(urls.url, '//') + 2), '/')), 'www.', '') AS url,   count(*) as visit " +
-                " FROM urls , visits " +
-                " WHERE urls.id = visits.url  " +
-                " GROUP by urls.url " +
-                " ORDER By visit_count DESC ) ");
-
+        rs = statement.executeQuery(" SELECT replace( SUBSTR( substr(url,instr(url, '://')+3), 0,instr(substr(url,instr(url, '://')+3),'/')), 'www.', '') as urlDomain, sum(visit_count) as visitDomain " +
+                " FROM urls " +
+                " GROUP BY urlDomain " +
+                " order by visitDomain desc ");
 
         HashMap blockedWebisites = ISPLockedWebsites.INSTANCE.readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json");
 
         while (rs.next()) {
 
-            String url = rs.getString("url");
+            String url = rs.getString("urlDomain");
 
             if(blockedWebisites.containsKey(url)){
-                int visitNumber = Integer.parseInt(rs.getString("visit"));
+                int visitNumber = Integer.parseInt(rs.getString("visitDomain"));
                 histories.add(new GoogleChrome(url, visitNumber));
             }
         }
