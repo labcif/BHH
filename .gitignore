@@ -8,3 +8,4 @@ nbdist/
 .nb-gradle/
 *.iml
 .idea
+/nbproject/private/
