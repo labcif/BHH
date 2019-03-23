@@ -1,13 +1,15 @@
 
 package pt.ipleiria.estg.dei.model;
 
+import main.pt.ipleiria.estg.dei.model.BrowserEnum;
+import main.pt.ipleiria.estg.dei.model.OperatingSystem;
 import org.junit.*;
 import org.junit.contrib.java.lang.system.EnvironmentVariables;
-import pt.ipleiria.estg.dei.exceptions.NotSupportedException;
+import main.pt.ipleiria.estg.dei.exceptions.NotSupportedException;
 
 import java.util.HashMap;
 
-import static pt.ipleiria.estg.dei.model.BrowserEnum.*;
+import static main.pt.ipleiria.estg.dei.model.BrowserEnum.*;
 
 
 public class LinuxOperatingSystemTest {
