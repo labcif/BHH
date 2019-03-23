@@ -37,15 +37,18 @@ import org.sleuthkit.autopsy.ingest.IngestModuleIngestJobSettings;
 public class BrowserHistoryModuleIngestJobSettings implements IngestModuleIngestJobSettings {
 
     private static final long serialVersionUID = 1L;
-    private boolean file = false;
-    private boolean localDisk = false;
 
+    private String fileChoosed;
+    
     BrowserHistoryModuleIngestJobSettings() {
     }
 
-    BrowserHistoryModuleIngestJobSettings(boolean localDisk, boolean file) {
-        this.file = file;
-        this.localDisk = localDisk;
+    BrowserHistoryModuleIngestJobSettings(String fileChoosed) {
+        this.fileChoosed = fileChoosed;
+    }
+
+    public String getFileChoosed() {
+        return fileChoosed;
     }
 
     @Override
@@ -53,19 +56,4 @@ public class BrowserHistoryModuleIngestJobSettings implements IngestModuleIngest
         return serialVersionUID;
     }
 
-    public boolean file() {
-        return file;
-    }
-
-    public void setFile(boolean file) {
-        this.file = file;
-    }
-
-    public boolean localDisk() {
-        return localDisk;
-    }
-
-    public void setLocalDisk(boolean localDisk) {
-        this.localDisk = localDisk;
-    }
 }

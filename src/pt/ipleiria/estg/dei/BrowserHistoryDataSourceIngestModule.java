@@ -8,6 +8,8 @@ import org.sleuthkit.autopsy.ingest.*;
 import org.sleuthkit.datamodel.BlackboardArtifact;
 import org.sleuthkit.datamodel.BlackboardAttribute;
 import org.sleuthkit.datamodel.Content;
+import pt.ipleiria.estg.dei.blocked.ISPBlokedCSVReader;
+import pt.ipleiria.estg.dei.blocked.ISPLockedWebsites;
 import pt.ipleiria.estg.dei.db.GoogleChromeRepository;
 import pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
@@ -25,12 +27,10 @@ import static pt.ipleiria.estg.dei.BrowserHistoryReportModule.*;
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
-    private final boolean localDisk;
-    private final boolean file;
+    private String choosedFile;
 
     BrowserHistoryDataSourceIngestModule(BrowserHistoryModuleIngestJobSettings settings) {
-        this.localDisk = settings.localDisk();
-        this.file = settings.file();
+        choosedFile = settings.getFileChoosed();
     }
 
     @Override
@@ -73,7 +73,8 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                     blackboard.getOrAddArtifactType(ARTIFACT_TYPE_BLOCKED_HISTORY, "Blocked Urls");
             BlackboardArtifact blackBoardArtifcatOfBlockedUrls = dataSource.newArtifact(blockedUrlsType.getTypeID());
 
-            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getBlockedSitesVisited();
+            List<GoogleChrome> blokedSites = GoogleChromeRepository.INSTANCE.getBlockedSitesVisited(
+                    choosedFile != null ? ISPBlokedCSVReader.INSTANCE.readFile(choosedFile) : ISPLockedWebsites.INSTANCE.readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json"));
             Collection<BlackboardAttribute> attributeOfDomainVisited =
                     blokedSites
                             .stream()
@@ -85,6 +86,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
             blackBoardArtifcatOfBlockedUrls.addAttributes(attributeOfDomainVisited);
             progressBar.progress(1);
+
             List<String> wordsFromGoogleEngine = GoogleChromeRepository.INSTANCE.getWordsFromGoogleEngine();
             BlackboardArtifact.Type wordSearchInGoogle =
                     blackboard.getOrAddArtifactType(ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE, "Words Search in Google Engine");

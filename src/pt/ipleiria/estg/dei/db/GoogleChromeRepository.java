@@ -1,6 +1,5 @@
 package pt.ipleiria.estg.dei.db;
 
-import pt.ipleiria.estg.dei.blocked.ISPLockedWebsites;
 import pt.ipleiria.estg.dei.model.GoogleChrome;
 
 import java.io.UnsupportedEncodingException;
@@ -15,6 +14,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static pt.ipleiria.estg.dei.model.BrowserEnum.CHROME;
 
@@ -41,10 +42,14 @@ public enum GoogleChromeRepository {
             int visitNumber = Integer.parseInt(rs.getString("visit"));
             histories.add(new GoogleChrome(url, visitNumber));
         }
+
+        //Exemp only (pls don´t put me on a weird chat :)
+        BroserHistoryDBArrangement.insertDomain(histories);
+
         return histories;
     }
 
-    public  List<GoogleChrome> getBlockedSitesVisited() throws Exception {
+    public  List<GoogleChrome> getBlockedSitesVisited(HashMap blokedWebsites) throws Exception {
         Connection connection = ConnectionFactory.getConnection(CHROME);
         ResultSet rs;
         Statement statement = connection.createStatement();
@@ -54,7 +59,7 @@ public enum GoogleChromeRepository {
                 " GROUP BY urlDomain " +
                 " order by visitDomain desc ");
 
-        HashMap blockedWebisites = ISPLockedWebsites.INSTANCE.readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json");
+        HashMap blockedWebisites = blokedWebsites;
 
         while (rs.next()) {
 
@@ -84,6 +89,47 @@ public enum GoogleChromeRepository {
             histories.add(decode);
         }
         return histories;
+    }
+
+    public HashMap<String, Integer> getEmailsFromHistory() throws SQLException, ClassNotFoundException, UnsupportedEncodingException {
+        Connection connection = ConnectionFactory.getConnection(CHROME);
+        ResultSet rs;
+        Statement statement = connection.createStatement();
+
+        //Only need to replace character present in emails (decoding it with java function for some reason leads to errors after a while)
+        rs = statement.executeQuery("select replace(url, " +
+                "    '%40', '@') as email, replace(title, " +
+                "    '%40', '@') as email2" +
+                " from urls " );
+
+        HashMap<String, Integer> historicoEmail = new HashMap();
+        Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
+
+        while (rs.next()) {
+            String emailUrl = rs.getString("email");
+            Matcher m = emailVerification.matcher(emailUrl);
+            String group;
+            while (m.find()) {
+                group = m.group();
+                if (historicoEmail.containsKey(group) == true) {
+                    historicoEmail.put(group, historicoEmail.get(group) + 1);
+                } else {
+                    historicoEmail.put(group, 1);
+                }
+            }
+
+            String emailTitle = rs.getString("email2");
+            m = emailVerification.matcher(emailTitle);
+            while (m.find()) {
+                group = m.group();
+                if (historicoEmail.containsKey(group) == true) {
+                    historicoEmail.put(group, historicoEmail.get(group) + 1);
+                } else {
+                    historicoEmail.put(group, 1);
+                }
+            }
+        }
+        return historicoEmail;
     }
 
     public HashMap<String, List<GoogleChrome>> getDomainsByFrequencyPerDay() throws SQLException, ClassNotFoundException, ParseException {
