@@ -1,7 +1,5 @@
 package main.pt.ipleiria.estg.dei.utils;
 
-import main.pt.ipleiria.estg.dei.db.DataWarehouseFactory;
-
 import java.util.logging.Level;
 
 public class Logger <T>{

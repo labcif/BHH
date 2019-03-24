@@ -29,8 +29,11 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
     private static BrowserHistoryReportModule instance;
     static final String ARTIFACT_TYPE_BROWSER_HISTORY = "type_browser_history";
     static final String ARTIFACT_TYPE_BLOCKED_HISTORY = "type_blocked_history";
+    static final String ARTIFACT_TYPE_EMAIL_HISTORY= "type_blocked_history";
     static final String ARTIFACT_TYPE_WORDS_GOOGLE_ENGINE = "Type_words_in_google";
     static final String ARTIFACT_TYPE_FREQUENCY_HISTORY = "Relative_frequency";
+
+    private BrowserHistoryReportConfigurationPanel configPanel;
 
     @Override
     public void generateReport(String reportDir, ReportProgressPanel reportProgressPanel) {
@@ -105,19 +108,26 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
             Map<String, Object> reportData = new HashMap<>();
 
-            reportData.put("Title", sb.toString());
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
-            reportData.put("Visits", jrBeanCollectionDataSource);
+            if(configPanel.isMostVisitedSitesEnabled()) {
+                reportData.put("Title", sb.toString());
+                JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
+                reportData.put("Visits", jrBeanCollectionDataSource);
+            }
 
-            JRBeanCollectionDataSource jrBeanCollectionDataSource1 = new JRBeanCollectionDataSource(frequencyBrowsers);
-            reportData.put("Frequency", jrBeanCollectionDataSource1);
+            if(configPanel.isDomainDailyVisitsEnabled()) {
+                JRBeanCollectionDataSource jrBeanCollectionDataSource1 = new JRBeanCollectionDataSource(frequencyBrowsers);
+                reportData.put("Frequency", jrBeanCollectionDataSource1);
+            }
 
-            reportData.put("Blocked", sbBlocked.toString());
+            if(configPanel.isBlokedSitesEnabled()) {
+                reportData.put("Blocked", sbBlocked.toString());
+            }
 
-            reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
+            if(configPanel.isWordsSearchEnabled()) {
+                reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
+            }
 
             generator.setReportData(reportData);
-
 
             ReportParameterMap reportParameters = new ReportParameterMap();
                     // Generate the document into a byte array.
@@ -126,7 +136,6 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             generator.setReportParameters(reportParameters);
 
             generator.generateReport();
-
 
             DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SS");
             Date date = new Date();
@@ -162,7 +171,10 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
     @Override
     public JPanel getConfigurationPanel() {
-        return new BrowserHistoryReportConfigurationPanel(); //To change body of generated methods, choose Tools | Templates.
+        if (configPanel == null) {
+            configPanel = new BrowserHistoryReportConfigurationPanel();
+        }
+        return configPanel;
     }
 
     // Get the default instance of this report
