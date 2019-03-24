@@ -1,8 +1,7 @@
-package main.pt.ipleiria.estg.dei.db.extraction;
+package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.blocked.ISPLockedWebsites;
 import main.pt.ipleiria.estg.dei.model.BrowserEnum;
-import main.pt.ipleiria.estg.dei.db.ConnectionFactory;
 import main.pt.ipleiria.estg.dei.model.GoogleChrome;
 
 import java.io.UnsupportedEncodingException;
@@ -18,15 +17,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+@Deprecated
 public enum GoogleChromeExtraction {
     INSTANCE;
 
     GoogleChromeExtraction(){
     }
 
-    public void extractData(){
-
-    }
 
     public  List<GoogleChrome> getMostVisitedSite() throws SQLException, ClassNotFoundException {
         Connection connection = ConnectionFactory.getConnection(BrowserEnum.CHROME);
