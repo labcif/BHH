@@ -14,12 +14,10 @@ import org.sleuthkit.datamodel.Content;
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
-    private final boolean localDisk;
-    private final boolean file;
+    private String choosedFile;
 
     BrowserHistoryDataSourceIngestModule(BrowserHistoryModuleIngestJobSettings settings) {
-        this.localDisk = settings.localDisk();
-        this.file = settings.file();
+        choosedFile = settings.getFileChoosed();
     }
 
     @Override
