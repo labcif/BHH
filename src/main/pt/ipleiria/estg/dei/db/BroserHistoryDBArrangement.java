@@ -1,6 +1,7 @@
-package pt.ipleiria.estg.dei.db;
+package main.pt.ipleiria.estg.dei.db;
 
-import pt.ipleiria.estg.dei.model.GoogleChrome;
+
+import main.pt.ipleiria.estg.dei.model.GoogleChrome;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
