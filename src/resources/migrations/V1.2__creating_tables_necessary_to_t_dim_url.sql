@@ -1,7 +1,7 @@
 create table if not exists t_ext_urls
 (
   id              INTEGER
-    primary key autoincrement,
+    primary key,
   url             LONGVARCHAR,
   title           LONGVARCHAR,
   visit_count     INTEGER default 0 not null,
@@ -39,13 +39,13 @@ create table if not exists t_clean_url
   url_path VARCHAR2(255),
   url_title varchar(255),
   url_visit_count INTEGER(30),
-  "url_typed_count " INTEGER(30),
+  url_typed_count INTEGER(30),
   url_last_visit_time DATE,
   url_hidden INTEGER(5),
   url_visit_full_date DATE,
   url_visit_date DATE,
   url_visit_time DATE,
-  "url_from_visit " NUMBER(5)
+  url_from_visit NUMBER(5)
 );
 
 
