@@ -1,7 +1,6 @@
 package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
-import main.pt.ipleiria.estg.dei.db.etl.Extractor;
 import main.pt.ipleiria.estg.dei.db.etl.Transformator;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -12,7 +11,7 @@ public class DataWarehouseFactory {
 
     private DataWarehouseFactory(String databaseLocation) {
         DatabaseCreator.init(databaseLocation);
-        Extractor.run();
+//        Extractor.run();
         Transformator.tranform();
     }
 

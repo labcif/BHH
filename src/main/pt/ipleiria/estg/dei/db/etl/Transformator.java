@@ -33,21 +33,15 @@ public class Transformator {
             PreparedStatement preparedStatement =
                     datawarehouseConnection.prepareStatement(
                             "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_visit_count, " +
-                                    "url_typed_count  , url_last_visit_time, url_hidden, url_visit_full_date, url_visit_date, " +
-                                    "url_visit_time, url_from_visit )" +
-                            " VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
+                                    "url_typed_count )" +
+                            " VALUES(?, ?, ?, ?, ?, ?)");//TODO: falta acrescentar os restantes
             preparedStatement.setString(1, rs.getString("url_full"));
             preparedStatement.setString(2,  rs.getString("url_domain"));
             preparedStatement.setString(3, "TODO: path");
             preparedStatement.setString(4,"TODO: title");
             preparedStatement.setInt(5, 2);
             preparedStatement.setInt(6,  3);
-            preparedStatement.setDate(7,  Date.valueOf("22-01-2019"));//last_visit_time
-            preparedStatement.setInt(8,  3);
-            preparedStatement.setDate(9,  Date.valueOf("22-01-2019"));
-            preparedStatement.setDate(10,  Date.valueOf("22-01-2019"));
-            preparedStatement.setDate(11,  Date.valueOf("22-01-2019"));
-            preparedStatement.setInt(12,  5);
+
             preparedStatement.executeUpdate();
         }
     }
