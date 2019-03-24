@@ -1,5 +1,8 @@
 package main.pt.ipleiria.estg.dei.db;
 
+import main.pt.ipleiria.estg.dei.exceptions.DatabaseInitializationException;
+import main.pt.ipleiria.estg.dei.utils.Logger;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -11,39 +14,46 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class DataWarehouseFactory {
-    private static DataWarehouseFactory dataWarehouseFactory = new DataWarehouseFactory();
-    private static final String CONNECTION = "jdbc:sqlite:src/resources/database/browser-history.db";
+    private static DataWarehouseFactory dataWarehouseFactory;
+    private static final String CONNECTION = "jdbc:sqlite:";//src/resources/database/
+    private static final String DB_NAME = "/browser-history.db";
+    private Logger<DataWarehouseFactory> logger = new Logger<>(DataWarehouseFactory.class);
 
-    private DataWarehouseFactory() {
+    private DataWarehouseFactory(String databaseLocation) {
         try {
-            setupDB();
+            setupDB(databaseLocation);
         } catch (ClassNotFoundException | SQLException | IOException e) {
-            System.out.println(e.getMessage());
+            logger.error(e.getMessage());
+            throw new DatabaseInitializationException(e.getMessage());
         }
     }
 
-    private void setupDB() throws ClassNotFoundException, SQLException, IOException {
-        createDB();
-        System.out.println("Start running migrations");
-        runMigrations();
-        System.out.println("All migration finished with success");
+    public static void init(String databaseLocation) {
+        dataWarehouseFactory = new DataWarehouseFactory(databaseLocation);
     }
 
-    private void runMigrations() throws SQLException, IOException {
-        List<String> allMigrations = getAllMigrations();
+    private void setupDB(String databaseLocation) throws ClassNotFoundException, SQLException, IOException {
+        logger.info("Creating database...");
+        createDB(databaseLocation);
+        logger.info("Database created");
 
-        for (String allMigration : allMigrations) {
-            executeMigration(allMigration);
+        logger.info("Start running migrations");
+        runMigrations(databaseLocation);
+        logger.info("All migration finished with success");
+    }
+
+    private void runMigrations(String databaseLocation) throws SQLException, IOException {
+        for (String allMigration : getAllMigrations()) {
+            executeMigration(allMigration, databaseLocation);
         }
-
     }
 
-    private void executeMigration(String migration) throws IOException, SQLException {
-        System.out.println("Running migration: " + migration);
+    private void executeMigration(String migration, String databaseLocation) throws IOException, SQLException {
+        logger.info("Running migration: " + migration);
         try (BufferedReader br = new BufferedReader(new FileReader("src/resources/migrations/" + migration))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
-            Connection conn = DriverManager.getConnection(CONNECTION );
+            Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME );
             while (line != null) {
                 sb.append(line);
                 sb.append(System.lineSeparator());
@@ -56,11 +66,8 @@ public class DataWarehouseFactory {
                 }
             }
             conn.close();
-
-
-
-            System.out.println("Migration " + migration + " finished with success");
         }
+        logger.info("Migration " + migration + " finished with success");
     }
 
     private List<String> getAllMigrations() {
@@ -69,23 +76,15 @@ public class DataWarehouseFactory {
     }
 
 
-    private void createDB() throws ClassNotFoundException {
+    private void createDB(String databaseLocation) throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
-        try (Connection conn = DriverManager.getConnection(CONNECTION)) {
+        try (Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME)) {
             if (conn != null) {
                 DatabaseMetaData meta = conn.getMetaData();
-                System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database has been created.");
+                logger.info("The driver name is " + meta.getDriverName());
+                logger.info("A new database has been created.");
             }
-
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
         }
-        System.out.println();
     }
 
-
-    public static DataWarehouseFactory getInstance() {
-        return dataWarehouseFactory;
-    }
 }

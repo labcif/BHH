@@ -1,6 +1,7 @@
 
 package main.pt.ipleiria.estg.dei;
 
+import main.pt.ipleiria.estg.dei.db.DataWarehouseFactory;
 import main.pt.ipleiria.estg.dei.db.extraction.GoogleChromeExtraction;
 import main.pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import main.pt.ipleiria.estg.dei.model.GoogleChrome;
@@ -40,6 +41,8 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
         progressBar.switchToDeterminate(3);
+
+        DataWarehouseFactory.init(Case.getCurrentCase().getCaseDirectory());
 
         try {
             Blackboard blackboard = Case.getCurrentCaseThrows().getServices().getBlackboard();
