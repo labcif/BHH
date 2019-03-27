@@ -59,7 +59,7 @@ public class DatabaseCreator {
     private void executeMigration(String migration) throws IOException, SQLException {
         logger.info("Running migration: " + migration);
 
-        InputStream resourceAsStream = getClass().getResourceAsStream(MIGRATIONS_LOCATION +migration);
+        InputStream resourceAsStream = getClass().getResourceAsStream(MIGRATIONS_LOCATION + migration);
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();

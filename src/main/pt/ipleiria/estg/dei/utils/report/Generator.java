@@ -2,15 +2,15 @@ package main.pt.ipleiria.estg.dei.utils.report;
 
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 
-import java.io.File;
+import java.io.InputStream;
 import java.util.Map;
 
 public class Generator {
-    private File templateFile;
+    private InputStream templateFile;
     private Map<String, Object> reportData;
     private ReportParameterMap reportParameters;
 
-    public Generator(File templateFile) {
+    public Generator(InputStream templateFile) {
         this.templateFile = templateFile;
         reportData = null;
         reportParameters = new ReportParameterMap();
@@ -21,11 +21,11 @@ public class Generator {
         reportBuilder.createReport(this.templateFile, reportData, reportParameters);
     }
 
-    public File getTemplateFile() {
+    public InputStream getTemplateFile() {
         return templateFile;
     }
 
-    public void setTemplateFile(File templateFile) {
+    public void setTemplateFile(InputStream templateFile) {
         this.templateFile = templateFile;
     }
 

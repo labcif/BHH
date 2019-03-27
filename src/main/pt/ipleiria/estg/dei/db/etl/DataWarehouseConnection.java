@@ -1,25 +1,25 @@
 package main.pt.ipleiria.estg.dei.db.etl;
 
 import main.pt.ipleiria.estg.dei.db.ConnectionFactory;
-import main.pt.ipleiria.estg.dei.exceptions.ExtractionException;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
-public class DataWareHouseConnection {
-    private static DataWareHouseConnection ourInstance = new DataWareHouseConnection();
+public class DataWarehouseConnection {
+    private static DataWarehouseConnection instance = new DataWarehouseConnection();
     private static Connection datawarehouseConnection;
 
-    private DataWareHouseConnection(){
+    private DataWarehouseConnection(){
         try {
             datawarehouseConnection = ConnectionFactory.getConnection();
         } catch (SQLException | ClassNotFoundException e) {
-            throw new ExtractionException(e.getMessage());
+            throw new ConnectionException(e.getMessage());
         }
     }
 
-    public static DataWareHouseConnection getOurInstance() {
-        return ourInstance;
+    public static DataWarehouseConnection getInstance() {
+        return instance;
     }
 
     public static Connection getDatawarehouseConnection() {

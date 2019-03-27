@@ -3,6 +3,7 @@ package main.pt.ipleiria.estg.dei.model;
 import java.io.Serializable;
 import java.util.Date;
 
+@Deprecated
 public class GoogleChrome implements Serializable {
 
     /**Primary key used to link all tables*/

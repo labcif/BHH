@@ -42,7 +42,7 @@
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
-		<field name="url" class="java.lang.String"/>
+		<field name="domain" class="java.lang.String"/>
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
 	<subDataset name="FrequencyTable" uuid="a26be887-116c-472b-8c7a-9146925a6bb8">
@@ -117,10 +117,10 @@
 						</datasetRun>
 					</dataset>
 					<categorySeries>
-						<seriesExpression><![CDATA[$F{url}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{url}]]></categoryExpression>
+						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
 						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{url}]]></labelExpression>
+						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
 					</categorySeries>
 				</categoryDataset>
 				<barPlot>
