@@ -27,6 +27,8 @@ public class ConnectionFactory {
      */
     public static Connection getConnection() throws ClassNotFoundException, SQLException {
         Class.forName("org.sqlite.JDBC");
+        //TODO: This is not correct. If we don't run ingest module first, we'll get an error. since we dont have the path.
+        //TODO: to solve this issue we must get the path from a Autopsy.
         return DriverManager.getConnection(FULL_PATH_CONNECTION);
     }
 }

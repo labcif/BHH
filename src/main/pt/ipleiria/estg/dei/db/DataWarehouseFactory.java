@@ -1,32 +1,28 @@
 package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
+import main.pt.ipleiria.estg.dei.db.etl.Extractor;
 import main.pt.ipleiria.estg.dei.db.etl.Transformator;
 import main.pt.ipleiria.estg.dei.utils.Logger;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class DataWarehouseFactory {
-    private static DataWarehouseFactory dataWarehouseFactory;
     private Logger<DataWarehouseFactory> logger = new Logger<>(DataWarehouseFactory.class);
 
     private DataWarehouseFactory(String databaseLocation) {
+        logger.info("Initiating database construction");
         DatabaseCreator.init(databaseLocation);
-//        Extractor.run();
+        logger.info("Database construction finished");
+        logger.info("Initiating extraction");
+        Extractor.run();
+        logger.info("Extraction finished");
+        logger.info("Initiating transformation");
         Transformator.tranform();
+        logger.info("Transformation finished");
     }
 
     public static void run(String databaseLocation) {
-        if (isFirstExtraction()) {
-            dataWarehouseFactory = new DataWarehouseFactory(databaseLocation);
-        } else {
-            run();
-        }
-    }
-    private static boolean isFirstExtraction() {
-        return dataWarehouseFactory == null;
+        //Each time we run the ingest module will get a total extraction.
+        new DataWarehouseFactory(databaseLocation);
     }
 
-    private static void run() {
-        throw new NotImplementedException();//TODO:
-    }
 }

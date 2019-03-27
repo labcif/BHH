@@ -2,22 +2,24 @@ package main.pt.ipleiria.estg.dei.db.etl;
 
 import main.pt.ipleiria.estg.dei.db.ConnectionFactory;
 import main.pt.ipleiria.estg.dei.exceptions.ExtractionException;
+import main.pt.ipleiria.estg.dei.model.OperatingSystem;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.sql.Statement;
 
 import static main.pt.ipleiria.estg.dei.model.BrowserEnum.CHROME;
 
 public class Extractor {
-    private static Extractor extractor;
-    private Connection datawarehouseConnection;//TODO: This connection is annoying. Create a singleton to only have one instance of this
     private Logger<Extractor> logger = new Logger<>(Extractor.class);
 
     protected Extractor() {
         try {
-            datawarehouseConnection = ConnectionFactory.getConnection();
             cleanTExtTables();
             runFirstExtraction();
+
         } catch (SQLException | ClassNotFoundException e) {
             logger.error(e.getMessage());
             throw new ExtractionException(e.getMessage());
@@ -25,11 +27,7 @@ public class Extractor {
     }
 
     public static void run() {
-        if (extractor == null) {
-            extractor = new Extractor();
-        } else {
-            //TODO: run next extractions
-        }
+        new Extractor();
     }
 
     private void runFirstExtraction() throws SQLException, ClassNotFoundException {
@@ -38,65 +36,74 @@ public class Extractor {
 
     private void extractDataGoogleChrome() throws SQLException, ClassNotFoundException {
         Connection fontConnection = ConnectionFactory.getConnection(CHROME);
+        DataWarehouseConnection.getDatawarehouseConnection()
+                .prepareStatement( "ATTACH DATABASE '"+ OperatingSystem.getLocation(CHROME) +"' AS externalUrls")
+                .executeUpdate();
 
-        Statement statement = fontConnection.createStatement();
-
-        extractUrlsTable(statement);
-        extractVisitsTable(statement);
-
-
-        insertInTInfoExtract("t_ext_urls");
-        insertInTInfoExtract("t_ext_visits");
-
+        extractAllTables();
+        insertAllRowsInTInfoExtract();
         fontConnection.close();
     }
 
-    //TODO: if this is way too slow. We have to find a way to copy directly the table from differents databases
-    private void extractUrlsTable(Statement statement) throws SQLException {
-        ResultSet rs = statement.executeQuery("SELECT * FROM urls;");
-
-        while (rs.next()) {
-            PreparedStatement preparedStatement =
-                    datawarehouseConnection.prepareStatement("INSERT INTO t_ext_urls (url, title, visit_count, typed_count, last_visit_time, hidden) " +
-                            " VALUES(?, ?, ?, ?, ?, ?)");
-            preparedStatement.setString(1, rs.getString("url"));
-            preparedStatement.setString(2,  rs.getString("title"));
-            preparedStatement.setLong(3, Long.parseLong(rs.getString("visit_count")));
-            preparedStatement.setLong(4,Long.parseLong(rs.getString("typed_count")));
-            preparedStatement.setLong(5, Long.parseLong(rs.getString("last_visit_time")));
-            preparedStatement.setLong(6,  Long.parseLong(rs.getString("hidden")));
-            preparedStatement.executeUpdate();
-        }
+    private void insertAllRowsInTInfoExtract() throws SQLException {
+        insertInTInfoExtract("t_ext_chrome_urls");
+        insertInTInfoExtract("t_ext_chrome_visits");
+        insertInTInfoExtract("t_ext_chrome_visit_source");
+        insertInTInfoExtract("t_ext_chrome_downloads");
+        insertInTInfoExtract("t_ext_chrome_downloads_slices");
+        insertInTInfoExtract("t_ext_chrome_downloads_url_chains");
+        insertInTInfoExtract("t_ext_chrome_keyword_search_terms");
+        insertInTInfoExtract("t_ext_chrome_meta");
+        insertInTInfoExtract("t_ext_chrome_segment_usage");
+        insertInTInfoExtract("t_ext_chrome_segments");
+        insertInTInfoExtract("t_ext_chrome_sqlite_sequence");
+        insertInTInfoExtract("t_ext_chrome_typed_url_sync_metadata");
     }
-    private void extractVisitsTable(Statement statement) throws SQLException {
-        ResultSet rs = statement.executeQuery("SELECT * FROM visits;");
 
-        while (rs.next()) {
-            PreparedStatement preparedStatement =
-                    datawarehouseConnection.prepareStatement("INSERT INTO t_ext_visits (url, visit_time, from_visit, transition, segment_id, visit_duration, incremented_omnibox_typed_score) " +
-                            " VALUES(?, ?, ?, ?, ?, ?, ?)");
-            preparedStatement.setString(1, rs.getString("url"));
-            preparedStatement.setLong(2,  Long.parseLong(rs.getString("visit_time")));
-            preparedStatement.setLong(3, Long.parseLong(rs.getString("from_visit")));
-            preparedStatement.setLong(4,Long.parseLong(rs.getString("transition")));
-            preparedStatement.setLong(5, Long.parseLong(rs.getString("segment_id")));
-            preparedStatement.setLong(6,  Long.parseLong(rs.getString("visit_duration")));
-            preparedStatement.setBoolean(7,  Boolean.getBoolean(rs.getString("incremented_omnibox_typed_score")));
-            preparedStatement.executeUpdate();
-        }
+    private void extractAllTables() throws SQLException {
+        extractTable("t_ext_chrome_urls", "urls");
+        extractTable("t_ext_chrome_visits", "visits");
+        extractTable("t_ext_chrome_visit_source", "visit_source");
+        extractTable("t_ext_chrome_downloads", "downloads");
+        extractTable("t_ext_chrome_downloads_slices", "downloads_slices");
+        extractTable("t_ext_chrome_downloads_url_chains", "downloads_url_chains");
+        extractTable("t_ext_chrome_keyword_search_terms", "keyword_search_terms");
+        extractTable("t_ext_chrome_meta", "meta");
+        extractTable("t_ext_chrome_segment_usage", "segment_usage");
+        extractTable("t_ext_chrome_segments", "segments");
+        extractTable("t_ext_chrome_sqlite_sequence", "sqlite_sequence");
+        extractTable("t_ext_chrome_typed_url_sync_metadata", "typed_url_sync_metadata");
+    }
+
+    private void extractTable(String newTable, String oldTable) throws SQLException {
+        DataWarehouseConnection.getDatawarehouseConnection()
+                .prepareStatement("INSERT INTO main." + newTable + " SELECT * FROM externalUrls." + oldTable)
+                .executeUpdate();
     }
 
     private void insertInTInfoExtract(String tablename) throws SQLException {
+
         PreparedStatement preparedStatement =
-                datawarehouseConnection.prepareStatement("INSERT INTO t_info_extract (name, last_extraction) VALUES (?, DateTime('now'));");
+                DataWarehouseConnection.getDatawarehouseConnection()
+                        .prepareStatement("INSERT INTO t_info_extract (name, last_extraction) VALUES (?, DateTime('now'));");
         preparedStatement.setString(1, tablename);
         preparedStatement.executeUpdate();
     }
 
     private void cleanTExtTables() throws SQLException {
-        Statement stmt = datawarehouseConnection.createStatement();
-        stmt.execute("DELETE FROM t_ext_urls;");
-        stmt.execute("DELETE FROM t_ext_visits;");
+        Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+        stmt.execute("DELETE FROM t_ext_chrome_urls;");
+        stmt.execute("DELETE FROM t_ext_chrome_visits;");
+        stmt.execute("DELETE FROM t_ext_chrome_visit_source;");
+        stmt.execute("DELETE FROM t_ext_chrome_downloads;");
+        stmt.execute("DELETE FROM t_ext_chrome_downloads_slices;");
+        stmt.execute("DELETE FROM t_ext_chrome_downloads_url_chains;");
+        stmt.execute("DELETE FROM t_ext_chrome_keyword_search_terms;");
+        stmt.execute("DELETE FROM t_ext_chrome_meta;");
+        stmt.execute("DELETE FROM t_ext_chrome_segment_usage;");
+        stmt.execute("DELETE FROM t_ext_chrome_segments;");
+        stmt.execute("DELETE FROM t_ext_chrome_sqlite_sequence;");
+        stmt.execute("DELETE FROM t_ext_chrome_typed_url_sync_metadata;");
         stmt.execute("DELETE FROM t_info_extract;");//TODO: this is to remove. Only here to speed up debug
     }
 }

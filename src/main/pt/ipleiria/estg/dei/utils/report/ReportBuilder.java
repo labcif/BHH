@@ -10,6 +10,7 @@ import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
 import org.sleuthkit.autopsy.coreutils.Logger;
 
 import java.io.File;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.*;
 import java.util.logging.Level;
@@ -18,7 +19,7 @@ public class ReportBuilder {
     private static final Logger logger = Logger.getLogger(ReportBuilder.class.getName());
 
 
-    public OutputStream createReport(File templateFile, Map<String, Object> reportDataMap,
+    public OutputStream createReport(InputStream templateFile, Map<String, Object> reportDataMap,
                                      ReportParameterMap reportParameters) throws GenerateReportException {
         JasperReport compiledReport;
 
@@ -106,7 +107,7 @@ public class ReportBuilder {
         return reportData;
     }
 
-    private JasperReport compileReport(File reportFile) throws JRException {
-        return JasperCompileManager.compileReport(reportFile.getAbsolutePath());
+    private JasperReport compileReport(InputStream reportFile) throws JRException {
+        return JasperCompileManager.compileReport(reportFile);
     }
 }
