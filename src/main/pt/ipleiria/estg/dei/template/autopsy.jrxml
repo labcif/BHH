@@ -58,6 +58,10 @@
 	<parameter name="Title" class="java.lang.String"/>
 	<parameter name="Blocked" class="java.lang.String"/>
 	<parameter name="wordsFromGoogleEngine" class="java.lang.String"/>
+	<parameter name="isMostVisitedSitesEnabled" class="java.lang.Boolean"/>
+	<parameter name="isDomainDailyVisitsEnabled" class="java.lang.Boolean"/>
+	<parameter name="isBlokedSitesEnabled" class="java.lang.Boolean"/>
+	<parameter name="isWordsSearchEnabled" class="java.lang.Boolean"/>
 	<parameter name="Frequency" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
@@ -101,7 +105,7 @@
 			</textField>
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement x="94" y="168" width="391" height="200" uuid="07d9c34c-79b4-4dff-bf86-5e4f6f574645"/>
+					<reportElement stretchType="ElementGroupBottom" x="94" y="168" width="391" height="200" uuid="07d9c34c-79b4-4dff-bf86-5e4f6f574645"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend position="Bottom"/>
@@ -131,9 +135,11 @@
 				</barPlot>
 			</barChart>
 		</band>
-		<band height="184">
+		<band height="186">
 			<staticText>
-				<reportElement x="162" y="25" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8"/>
+				<reportElement x="162" y="25" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8">
+					<printWhenExpression><![CDATA[$P{isWordsSearchEnabled}]]></printWhenExpression>
+				</reportElement>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>

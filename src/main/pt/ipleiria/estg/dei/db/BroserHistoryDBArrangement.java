@@ -8,7 +8,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
-
+@Deprecated
 public class BroserHistoryDBArrangement {
 
     private static  String DBPATH = "jdbc:sqlite:" + System.getenv("SystemDrive") + "\\Users\\" + System.getenv("USERNAME")  +"\\Desktop\\browser-history";

@@ -108,25 +108,29 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
             Map<String, Object> reportData = new HashMap<>();
 
+            reportData.put("isMostVisitedSitesEnabled", configPanel.isMostVisitedSitesEnabled());
             if(configPanel.isMostVisitedSitesEnabled()) {
                 reportData.put("Title", sb.toString());
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(visits);
                 reportData.put("Visits", jrBeanCollectionDataSource);
             }
 
+            reportData.put("isDomainDailyVisitsEnabled", configPanel.isDomainDailyVisitsEnabled());
             if(configPanel.isDomainDailyVisitsEnabled()) {
                 JRBeanCollectionDataSource jrBeanCollectionDataSource1 = new JRBeanCollectionDataSource(frequencyBrowsers);
                 reportData.put("Frequency", jrBeanCollectionDataSource1);
             }
 
+            reportData.put("isBlokedSitesEnabled", configPanel.isBlokedSitesEnabled());
             if(configPanel.isBlokedSitesEnabled()) {
                 reportData.put("Blocked", sbBlocked.toString());
             }
 
+
+            reportData.put("isWordsSearchEnabled", configPanel.isWordsSearchEnabled());
             if(configPanel.isWordsSearchEnabled()) {
                 reportData.put("wordsFromGoogleEngine", sbWordSearchInEngine.toString());
             }
-
             generator.setReportData(reportData);
 
             ReportParameterMap reportParameters = new ReportParameterMap();

@@ -1,4 +1,4 @@
-create table if not exists t_ext_urls
+create table if not exists t_ext_chrome_urls
 (
   id              INTEGER
     primary key,
@@ -10,8 +10,8 @@ create table if not exists t_ext_urls
   hidden          INTEGER default 0 not null
 );
 create index IF NOT EXISTS urls_url_index
-  on t_ext_urls (url);
-create table if not exists t_ext_visits
+  on t_ext_chrome_urls (url);
+create table if not exists t_ext_chrome_visits
 (
   id                              INTEGER
     primary key,
@@ -24,11 +24,12 @@ create table if not exists t_ext_visits
   incremented_omnibox_typed_score BOOLEAN default FALSE not null
 );
 create index  if not exists  visits_from_index
-  on t_ext_visits (from_visit);
+  on t_ext_chrome_visits (from_visit);
 create index  if not exists  visits_time_index
-  on t_ext_visits (visit_time);
+  on t_ext_chrome_visits (visit_time);
 create index if not exists  visits_url_index
-  on t_ext_visits (url);
+  on t_ext_chrome_visits (url);
+
 create table if not exists t_clean_url
 (
   url_natural_key INTEGER
@@ -47,5 +48,4 @@ create table if not exists t_clean_url
   url_visit_time DATE,
   url_from_visit NUMBER(5)
 );
-
 
