@@ -1,14 +1,17 @@
 package main.pt.ipleiria.estg.dei.db.etl;
 
+import main.pt.ipleiria.estg.dei.blocked.ISPLockedWebsites;
 import main.pt.ipleiria.estg.dei.db.ConnectionFactory;
 import main.pt.ipleiria.estg.dei.exceptions.ExtractionException;
 import main.pt.ipleiria.estg.dei.model.OperatingSystem;
 import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.json.JSONException;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.io.IOException;
+import java.sql.*;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
 
 import static main.pt.ipleiria.estg.dei.model.BrowserEnum.CHROME;
 
@@ -34,14 +37,24 @@ public class Extractor {
         extractDataGoogleChrome();
     }
 
-    private void extractDataGoogleChrome() throws SQLException, ClassNotFoundException {
+    private void extractDataGoogleChrome() throws SQLException, ClassNotFoundException{
         Connection fontConnection = ConnectionFactory.getConnection(CHROME);
         DataWarehouseConnection.getDatawarehouseConnection()
                 .prepareStatement( "ATTACH DATABASE '"+ OperatingSystem.getLocation(CHROME) +"' AS externalUrls")
                 .executeUpdate();
 
+        DataWarehouseConnection.getDatawarehouseConnection()
+                .prepareStatement("ATTACH DATABASE '"+ OperatingSystem.getLocationEmail(CHROME) +"' AS externalLogins")
+                .executeUpdate();
+
+        DataWarehouseConnection.getDatawarehouseConnection().setAutoCommit(false);
+
         extractAllTables();
+        extractBlokedSites();
         insertAllRowsInTInfoExtract();
+
+        DataWarehouseConnection.getDatawarehouseConnection().commit();
+
         fontConnection.close();
     }
 
@@ -58,27 +71,45 @@ public class Extractor {
         insertInTInfoExtract("t_ext_chrome_segments");
         insertInTInfoExtract("t_ext_chrome_sqlite_sequence");
         insertInTInfoExtract("t_ext_chrome_typed_url_sync_metadata");
+        insertInTInfoExtract("t_ext_blocked_websites");
     }
 
     private void extractAllTables() throws SQLException {
-        extractTable("t_ext_chrome_urls", "urls");
-        extractTable("t_ext_chrome_visits", "visits");
-        extractTable("t_ext_chrome_visit_source", "visit_source");
-        extractTable("t_ext_chrome_downloads", "downloads");
-        extractTable("t_ext_chrome_downloads_slices", "downloads_slices");
-        extractTable("t_ext_chrome_downloads_url_chains", "downloads_url_chains");
-        extractTable("t_ext_chrome_keyword_search_terms", "keyword_search_terms");
-        extractTable("t_ext_chrome_meta", "meta");
-        extractTable("t_ext_chrome_segment_usage", "segment_usage");
-        extractTable("t_ext_chrome_segments", "segments");
-        extractTable("t_ext_chrome_sqlite_sequence", "sqlite_sequence");
-        extractTable("t_ext_chrome_typed_url_sync_metadata", "typed_url_sync_metadata");
+        extractTable("t_ext_chrome_urls", "urls", "externalUrls");
+        extractTable("t_ext_chrome_visits", "visits", "externalUrls");
+        extractTable("t_ext_chrome_visit_source", "visit_source", "externalUrls");
+        extractTable("t_ext_chrome_downloads", "downloads", "externalUrls");
+        extractTable("t_ext_chrome_downloads_slices", "downloads_slices", "externalUrls");
+        extractTable("t_ext_chrome_downloads_url_chains", "downloads_url_chains", "externalUrls");
+        extractTable("t_ext_chrome_keyword_search_terms", "keyword_search_terms", "externalUrls");
+        extractTable("t_ext_chrome_meta", "meta", "externalUrls");
+        extractTable("t_ext_chrome_segment_usage", "segment_usage", "externalUrls");
+        extractTable("t_ext_chrome_segments", "segments", "externalUrls");
+        extractTable("t_ext_chrome_sqlite_sequence", "sqlite_sequence", "externalUrls");
+        extractTable("t_ext_chrome_typed_url_sync_metadata", "typed_url_sync_metadata", "externalUrls");
+        extractTable("t_ext_chrome_login_data", "logins", "externalLogins");
     }
 
-    private void extractTable(String newTable, String oldTable) throws SQLException {
+    private void extractTable(String newTable, String oldTable, String externalDB) throws SQLException {
         DataWarehouseConnection.getDatawarehouseConnection()
-                .prepareStatement("INSERT INTO main." + newTable + " SELECT * FROM externalUrls." + oldTable)
+                .prepareStatement("INSERT INTO main." + newTable + " SELECT * FROM " + externalDB + "." + oldTable)
                 .executeUpdate();
+    }
+
+    private void extractBlokedSites() throws SQLException {
+
+
+        Set<String> urlSet = ISPLockedWebsites.INSTANCE.readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json").keySet();
+
+        PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement("INSERT INTO main.t_ext_blocked_websites (domain) " +
+                " VALUES (?)");
+
+        for (String url : urlSet) {
+            preparedStatement.setString(1, url);
+            preparedStatement.addBatch();
+        }
+
+        preparedStatement.executeBatch();
     }
 
     private void insertInTInfoExtract(String tablename) throws SQLException {
@@ -104,6 +135,7 @@ public class Extractor {
         stmt.execute("DELETE FROM t_ext_chrome_segments;");
         stmt.execute("DELETE FROM t_ext_chrome_sqlite_sequence;");
         stmt.execute("DELETE FROM t_ext_chrome_typed_url_sync_metadata;");
+        stmt.execute("DELETE FROM t_ext_blocked_websites;");
         stmt.execute("DELETE FROM t_info_extract;");//TODO: this is to remove. Only here to speed up debug
     }
 }

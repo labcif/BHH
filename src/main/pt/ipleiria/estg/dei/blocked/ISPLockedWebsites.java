@@ -1,28 +1,40 @@
 package main.pt.ipleiria.estg.dei.blocked;
 
 
+import main.pt.ipleiria.estg.dei.exceptions.ExtractionException;
+import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Iterator;
 
 public enum  ISPLockedWebsites {
     INSTANCE;
+    private Logger<ISPLockedWebsites> logger = new Logger<>(ISPLockedWebsites.class);
 
     ISPLockedWebsites() {
     }
 
-    public HashMap readJsonFromUrl(String url) throws Exception {
-        String jsonText = getLockedWebsites(url);
-        JSONObject json = new JSONObject(jsonText);
-        return parseFile(json);
+    public HashMap readJsonFromUrl(String url)  {
+        try{
+            String jsonText = getLockedWebsites(url);
+            JSONObject json = new JSONObject(jsonText);
+            return parseFile(json);
+        }catch ( IOException | JSONException e) {
+            logger.error(e.getMessage());
+            throw new ExtractionException(e.getMessage());
+        }
+
     }
 
-    public String getLockedWebsites(String urlToRead) throws Exception {
+    public String getLockedWebsites(String urlToRead) throws IOException {
         StringBuilder result = new StringBuilder();
         URL url = new URL(urlToRead);
 
@@ -39,7 +51,7 @@ public enum  ISPLockedWebsites {
         return result.toString();
     }
 
-    public HashMap parseFile(JSONObject json) throws Exception{
+    public HashMap parseFile(JSONObject json) throws JSONException {
         HashMap blockedSites = new HashMap();
         JSONObject arr = json.getJSONObject("domains");
         Iterator<String> domainKeys = arr.keys();
