@@ -3,6 +3,7 @@ package main.pt.ipleiria.estg.dei;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
+import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
@@ -59,11 +60,11 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             if(configPanel.isWordsSearchEnabled()) {
                 List<Word> wordUsed = DatasetRepository.getWordsUsed();
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(wordUsed);
-                reportData.put("wordsFromGoogleEngine", jrBeanCollectionDataSource);
+                reportData.put("Words", jrBeanCollectionDataSource);
             }
 
             if(configPanel.isWordsSearchEnabled()) {
-                List<String> emailsUsed = DatasetRepository.getEmailsUsed();
+                List<Email> emailsUsed = DatasetRepository.getEmailsUsed();
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(emailsUsed);
                 reportData.put("Emails", jrBeanCollectionDataSource);
             }

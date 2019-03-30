@@ -32,6 +32,33 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
+	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_TH" mode="Opaque" backcolor="#F0F8FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
+	<style name="Table 1_CH" mode="Opaque" backcolor="#BFE1FF">
+		<box>
+			<pen lineWidth="0.5" lineColor="#000000"/>
+			<topPen lineWidth="0.5" lineColor="#000000"/>
+			<leftPen lineWidth="0.5" lineColor="#000000"/>
+			<bottomPen lineWidth="0.5" lineColor="#000000"/>
+			<rightPen lineWidth="0.5" lineColor="#000000"/>
+		</box>
+	</style>
 	<subDataset name="GroupData" uuid="9874384d-ef9a-48e7-80f6-2cf2011ac1d2">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -54,10 +81,41 @@
 		<field name="totalDaysVisited" class="java.lang.Integer"/>
 		<field name="totalDaysDB" class="java.lang.Float"/>
 	</subDataset>
+	<subDataset name="Blocked" uuid="5e55c336-5274-4a9b-8264-a48081b149ed">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="domain" class="java.lang.String"/>
+		<field name="visitCount" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="Words" uuid="716a207c-b704-4953-9c4f-209efaf4d924">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="description" class="java.lang.String"/>
+		<field name="useCount" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="BlockedWebSitesChart" uuid="413527c0-1481-44ee-9434-929cb4d701cc">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="domain" class="java.lang.String"/>
+		<field name="visitCount" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="Emails" uuid="7a261ebe-d037-4ed7-9b11-65c5ebd613e7">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="description" class="java.lang.String"/>
+		<field name="source" class="java.lang.String"/>
+	</subDataset>
 	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Title" class="java.lang.String"/>
 	<parameter name="Blocked" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
-	<parameter name="wordsFromGoogleEngine" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="Words" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="isMostVisitedSitesEnabled" class="java.lang.Boolean"/>
 	<parameter name="isDomainDailyVisitsEnabled" class="java.lang.Boolean"/>
 	<parameter name="isBlokedSitesEnabled" class="java.lang.Boolean"/>
@@ -92,7 +150,7 @@
 		<band height="36" splitType="Stretch"/>
 	</pageHeader>
 	<detail>
-		<band height="389">
+		<band height="520">
 			<staticText>
 				<reportElement x="149" y="23" width="255" height="20" uuid="bf3b875a-0484-4889-8a1d-a71a12303239">
 					<printWhenExpression><![CDATA[$P{isMostVisitedSitesEnabled}]]></printWhenExpression>
@@ -102,15 +160,9 @@
 				</textElement>
 				<text><![CDATA[Most Visited Sites]]></text>
 			</staticText>
-			<textField>
-				<reportElement x="111" y="75" width="359" height="56" uuid="baabbd47-2e21-4a3c-aa8f-6002e4d2c730">
-					<printWhenExpression><![CDATA[$P{isMostVisitedSitesEnabled}]]></printWhenExpression>
-				</reportElement>
-				<textFieldExpression><![CDATA[$P{Title}]]></textFieldExpression>
-			</textField>
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement stretchType="ElementGroupBottom" x="94" y="168" width="391" height="200" uuid="21b4a9ce-783c-419a-b0e1-7e2a0b2939df">
+					<reportElement positionType="Float" stretchType="ContainerBottom" x="82" y="60" width="391" height="200" uuid="21b4a9ce-783c-419a-b0e1-7e2a0b2939df">
 						<printWhenExpression><![CDATA[$P{isMostVisitedSitesEnabled}]]></printWhenExpression>
 					</reportElement>
 					<chartTitle/>
@@ -141,10 +193,8 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
-		</band>
-		<band height="301">
 			<staticText>
-				<reportElement x="160" y="10" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8">
+				<reportElement positionType="Float" x="149" y="279" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8">
 					<printWhenExpression><![CDATA[$P{isBlokedSitesEnabled}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -154,8 +204,8 @@
 			</staticText>
 			<barChart>
 				<chart evaluationTime="Report">
-					<reportElement stretchType="ElementGroupBottom" x="81" y="50" width="391" height="200" uuid="69eaadb4-00eb-42ef-b9b2-0596330229c5">
-						<printWhenExpression><![CDATA[$P{isMostVisitedSitesEnabled}]]></printWhenExpression>
+					<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="82" y="320" width="391" height="200" uuid="79643d63-0ad8-4170-b2ec-aa2bd47edca4">
+						<printWhenExpression><![CDATA[$P{isBlokedSitesEnabled}]]></printWhenExpression>
 					</reportElement>
 					<chartTitle/>
 					<chartSubtitle/>
@@ -163,8 +213,8 @@
 				</chart>
 				<categoryDataset>
 					<dataset>
-						<datasetRun subDataset="Chart" uuid="108cc591-98a7-4dcb-8dca-99d43f175a17">
-							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
+						<datasetRun subDataset="BlockedWebSitesChart" uuid="c1c51e6e-21de-410e-9c43-a76ff9a99c36">
+							<dataSourceExpression><![CDATA[$P{Blocked}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
 					<categorySeries>
@@ -186,9 +236,9 @@
 				</barPlot>
 			</barChart>
 		</band>
-		<band height="716">
+		<band height="301">
 			<staticText>
-				<reportElement x="162" y="25" width="255" height="20" uuid="473ce4f4-1a24-404a-8192-c0d6d8490bda">
+				<reportElement positionType="Float" x="150" y="40" width="255" height="20" uuid="473ce4f4-1a24-404a-8192-c0d6d8490bda">
 					<printWhenExpression><![CDATA[$P{isWordsSearchEnabled}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
@@ -197,15 +247,119 @@
 				<text><![CDATA[Words Searched Google Engine]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement stretchType="ContainerHeight" x="20" y="490" width="490" height="210" uuid="3addd31d-0cb3-40a9-aa50-d9038336949b">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="31" y="90" width="490" height="180" uuid="2c1e13a3-bb8e-4c0a-b505-76cb7b7f88ba">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
 					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
 					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+					<printWhenExpression><![CDATA[$P{isWordsSearchEnabled}]]></printWhenExpression>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="Words" uuid="bf8ccba9-40c3-45c0-aece-c3acaaca453a">
+						<dataSourceExpression><![CDATA[$P{Words}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="245" uuid="f42080c4-f85d-4cd8-b358-be45fadf3685">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="245" height="30" uuid="a6fc7859-d28a-4fec-b7c2-34ef64efbe63"/>
+								<text><![CDATA[Word]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="245" height="30" uuid="f622866b-9726-4af9-8747-a881e6137bf7"/>
+								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="245" uuid="905073ea-08d8-4f07-92ce-0895907112f1">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="245" height="30" uuid="becb6123-6691-4a3e-8afe-9cfc6aaf36d0"/>
+								<text><![CDATA[Times it was used]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="245" height="30" uuid="995af603-7f01-461c-89ea-361558a30db3"/>
+								<textFieldExpression><![CDATA[$F{useCount}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="483">
+			<componentElement>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="22" y="40" width="490" height="160" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="Emails" uuid="0e965368-6c50-43c4-b35f-0bca8ef1ae60">
+						<dataSourceExpression><![CDATA[$P{Emails}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="245" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="245" height="30" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
+								<text><![CDATA[Email]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="245" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
+								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="245" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
+						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement x="0" y="0" width="245" height="30" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
+								<text><![CDATA[Source]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="245" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
+								<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<componentElement>
+				<reportElement positionType="Float" stretchType="ContainerBottom" x="32" y="260" width="490" height="210" uuid="3addd31d-0cb3-40a9-aa50-d9038336949b">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
 				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
 					<datasetRun subDataset="FrequencyTable" uuid="a5a126d5-7e6a-43c3-8fbb-fb56f0d8dcca">
 						<dataSourceExpression><![CDATA[$P{Frequency}]]></dataSourceExpression>
 					</datasetRun>
@@ -279,113 +433,16 @@
 					</jr:column>
 				</jr:table>
 			</componentElement>
-			<componentElement>
-				<reportElement stretchType="ContainerHeight" x="20" y="60" width="490" height="210" uuid="2c1e13a3-bb8e-4c0a-b505-76cb7b7f88ba">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
-				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="FrequencyTable" uuid="17d10600-e6a7-437a-8922-a5b31e447899">
-						<dataSourceExpression><![CDATA[$P{Frequency}]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="245" uuid="f42080c4-f85d-4cd8-b358-be45fadf3685">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="245" height="30" uuid="a6fc7859-d28a-4fec-b7c2-34ef64efbe63"/>
-								<text><![CDATA[Word]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30"/>
-					</jr:column>
-					<jr:column width="245" uuid="905073ea-08d8-4f07-92ce-0895907112f1">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="245" height="30" uuid="becb6123-6691-4a3e-8afe-9cfc6aaf36d0"/>
-								<text><![CDATA[Times it was used]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30"/>
-					</jr:column>
-				</jr:table>
-			</componentElement>
-			<componentElement>
-				<reportElement stretchType="ContainerHeight" x="20" y="290" width="490" height="160" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
-				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
-					<datasetRun subDataset="FrequencyTable" uuid="1cf28036-8a61-427f-b68d-b6dc86f0e8b1">
-						<dataSourceExpression><![CDATA[$P{Frequency}]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="162" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="162" height="30" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
-								<text><![CDATA[Email]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30"/>
-					</jr:column>
-					<jr:column width="162" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="162" height="30" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
-								<text><![CDATA[Source]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30"/>
-					</jr:column>
-					<jr:column width="166" uuid="911d3e30-625f-45e0-854d-90fd5b9c89a5">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="166" height="30" uuid="e9b683f3-0563-4efc-aec0-12a217bda6ad"/>
-								<text><![CDATA[Has Password]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30"/>
-					</jr:column>
-				</jr:table>
-			</componentElement>
 			<staticText>
-				<reportElement x="138" y="260" width="255" height="20" uuid="66a7e028-094b-4fba-833c-d34e712a08a9">
-					<printWhenExpression><![CDATA[$P{isWordsSearchEnabled}]]></printWhenExpression>
-				</reportElement>
+				<reportElement positionType="Float" x="138" y="10" width="255" height="20" uuid="66a7e028-094b-4fba-833c-d34e712a08a9"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>
 				<text><![CDATA[Emails Used by the User]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="140" y="460" width="255" height="20" uuid="d693e76c-07be-4cc9-97d8-eb9da68e6646">
-					<printWhenExpression><![CDATA[$P{isWordsSearchEnabled}]]></printWhenExpression>
+				<reportElement x="150" y="230" width="255" height="20" uuid="d693e76c-07be-4cc9-97d8-eb9da68e6646">
+					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
 				</reportElement>
 				<textElement textAlignment="Center">
 					<font size="14"/>
