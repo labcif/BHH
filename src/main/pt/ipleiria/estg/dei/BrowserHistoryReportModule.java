@@ -4,6 +4,7 @@ import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.model.Website;
+import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -32,13 +33,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         reportProgressPanel.start();
         reportProgressPanel.updateStatusLabel("Adding files...");
 
-        List<RelativeFrequencyBrowser> frequencyBrowsers = new ArrayList<>();
-
-        StringBuilder sbBlocked =new StringBuilder();
-        sbBlocked.append("The user has visited this blocked Websites: \n");
-
-
-        try {
+       try {
             InputStream templateFile = getClass().getResourceAsStream("/resources/template/autopsy.jrxml");
 
             Generator generator = new Generator(templateFile);
@@ -53,22 +48,27 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                 reportData.put("Visits", jrBeanCollectionDataSource);
             }
 
-            reportData.put("isDomainDailyVisitsEnabled", configPanel.isDomainDailyVisitsEnabled());
-            if(configPanel.isDomainDailyVisitsEnabled()) {
-                JRBeanCollectionDataSource jrBeanCollectionDataSource1 = new JRBeanCollectionDataSource(frequencyBrowsers);
-                reportData.put("Frequency", jrBeanCollectionDataSource1);
-            }
-
             reportData.put("isBlokedSitesEnabled", configPanel.isBlokedSitesEnabled());
             if(configPanel.isBlokedSitesEnabled()) {
-                reportData.put("Blocked", sbBlocked.toString());
+                List<Website> blockedWebsitesVisited = DatasetRepository.getBlockedWebsiteVisited();
+                JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(blockedWebsitesVisited);
+                reportData.put("Blocked", jrBeanCollectionDataSource);
             }
-
 
             reportData.put("isWordsSearchEnabled", configPanel.isWordsSearchEnabled());
             if(configPanel.isWordsSearchEnabled()) {
-                reportData.put("wordsFromGoogleEngine", "TODO");
+                List<Word> wordUsed = DatasetRepository.getWordsUsed();
+                JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(wordUsed);
+                reportData.put("wordsFromGoogleEngine", jrBeanCollectionDataSource);
             }
+
+            if(configPanel.isWordsSearchEnabled()) {
+                List<String> emailsUsed = DatasetRepository.getEmailsUsed();
+                JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(emailsUsed);
+                reportData.put("Emails", jrBeanCollectionDataSource);
+            }
+
+
             generator.setReportData(reportData);
 
             ReportParameterMap reportParameters = new ReportParameterMap();
