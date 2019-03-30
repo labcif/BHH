@@ -2,70 +2,70 @@
 CREATE TABLE if not exists t_ext_chrome_downloads
 (
   id                   INTEGER PRIMARY KEY,
-  guid                 VARCHAR NOT NULL,
-  current_path         LONGVARCHAR NOT NULL,
-  target_path          LONGVARCHAR NOT NULL,
-  start_time           INTEGER NOT NULL,
-  received_bytes       INTEGER NOT NULL,
-  total_bytes          INTEGER NOT NULL,
-  state                INTEGER NOT NULL,
-  danger_type          INTEGER NOT NULL,
-  interrupt_reason     INTEGER NOT NULL,
-  hash                 BLOB NOT NULL,
-  end_time             INTEGER NOT NULL,
-  opened               INTEGER NOT NULL,
-  referrer             VARCHAR NOT NULL,
-  site_url             VARCHAR NOT NULL,
-  tab_url              VARCHAR NOT NULL,
-  tab_referrer_url     VARCHAR NOT NULL,
-  http_method          VARCHAR NOT NULL,
-  by_ext_id            VARCHAR NOT NULL,
-  by_ext_name          VARCHAR NOT NULL,
-  etag                 VARCHAR NOT NULL,
-  last_modified        VARCHAR NOT NULL,
-  mime_type            VARCHAR(255) NOT NULL,
-  original_mime_type   VARCHAR(255) NOT NULL,
-  last_access_time     INTEGER NOT NULL DEFAULT 0,
-  transient            INTEGER NOT NULL DEFAULT 0
+  guid                 VARCHAR,
+  current_path         LONGVARCHAR,
+  target_path          LONGVARCHAR,
+  start_time           INTEGER,
+  received_bytes       INTEGER,
+  total_bytes          INTEGER,
+  state                INTEGER,
+  danger_type          INTEGER,
+  interrupt_reason     INTEGER,
+  hash                 BLOB,
+  end_time             INTEGER,
+  opened               INTEGER,
+  referrer             VARCHAR,
+  site_url             VARCHAR,
+  tab_url              VARCHAR,
+  tab_referrer_url     VARCHAR,
+  http_method          VARCHAR,
+  by_ext_id            VARCHAR,
+  by_ext_name          VARCHAR,
+  etag                 VARCHAR,
+  last_modified        VARCHAR,
+  mime_type            VARCHAR(255),
+  original_mime_type   VARCHAR(255),
+  last_access_time     INTEGER DEFAULT 0,
+  transient            INTEGER DEFAULT 0
 );
 
 CREATE TABLE if not exists t_ext_chrome_downloads_slices
 (
-  download_id          INTEGER NOT NULL,
-  offset               INTEGER NOT NULL,
-  received_bytes       INTEGER NOT NULL,
-  finished             INTEGER NOT NULL DEFAULT 0,
+  download_id          INTEGER,
+  offset               INTEGER,
+  received_bytes       INTEGER,
+  finished             INTEGER DEFAULT 0,
   PRIMARY KEY (download_id, offset)
 );
 
 CREATE TABLE if not exists t_ext_chrome_downloads_url_chains
 (
-  id                   INTEGER NOT NULL,
-  chain_index          INTEGER NOT NULL,
-  url                  LONGVARCHAR NOT NULL,
+  id                   INTEGER ,
+  chain_index          INTEGER ,
+  url                  LONGVARCHAR ,
   PRIMARY KEY (id, chain_index)
 );
 
 CREATE TABLE if not exists t_ext_chrome_keyword_search_terms
 (
-  keyword_id           INTEGER NOT NULL,
-  url_id               INTEGER NOT NULL,
-  lower_term           LONGVARCHAR NOT NULL,
-  term                 LONGVARCHAR NOT NULL
+  keyword_id           INTEGER ,
+  url_id               INTEGER ,
+  lower_term           LONGVARCHAR ,
+  term                 LONGVARCHAR
 );
 
 CREATE TABLE if not exists t_ext_chrome_meta
 (
-  key LONGVARCHAR      NOT NULL UNIQUE PRIMARY KEY,
+  key LONGVARCHAR       UNIQUE PRIMARY KEY,
   value LONGVARCHAR
 );
 
 CREATE TABLE if not exists t_ext_chrome_segment_usage
 (
   id                   INTEGER PRIMARY KEY,
-  segment_id           INTEGER NOT NULL,
-  time_slot            INTEGER NOT NULL,
-  visit_count          INTEGER DEFAULT 0 NOT NULL
+  segment_id           INTEGER ,
+  time_slot            INTEGER ,
+  visit_count          INTEGER DEFAULT 0
 );
 
 CREATE TABLE if not exists t_ext_chrome_segments
@@ -83,14 +83,14 @@ CREATE TABLE if not exists t_ext_chrome_sqlite_sequence
 
 CREATE TABLE if not exists t_ext_chrome_typed_url_sync_metadata
 (
-  storage_key          INTEGER PRIMARY KEY NOT NULL,
+  storage_key          INTEGER PRIMARY KEY ,
   value                BLOB
 );
 
 CREATE TABLE if not exists t_ext_chrome_visit_source
 (
   id                   INTEGER PRIMARY KEY,
-  source               INTEGER NOT NULL
+  source               INTEGER
 );
 
 CREATE TABLE if not exists t_clean_downloads
@@ -108,7 +108,9 @@ CREATE TABLE if not exists t_clean_downloads
   ending_date           INTEGER,
   received_bytes        INTEGER,
   total_bytes           INTEGER,
-  interrupt_reason      INTEGER
+  interrupt_reason      INTEGER,
+  url_user_origin varchar(255) NOT NULL,
+  url_browser_origin varchar(255) NOT NULL
 );
 
 create table if not exists t_clean_emails
@@ -121,7 +123,9 @@ create table if not exists t_clean_emails
   original_url          VARCHAR2(255),
   username_value        VARCHAR2(255),
   available_password    INTEGER,
-  date                  INTEGER
+  date                  INTEGER,
+  url_user_origin varchar(255) NOT NULL,
+  url_browser_origin varchar(255) NOT NULL
 );
 
 create table if not exists t_clean_words
@@ -130,7 +134,9 @@ create table if not exists t_clean_words
     constraint t_clean_words_pk
       primary key autoincrement,
   word                  VARCHAR2(255),
-  source_full           VARCHAR2(255)
+  source_full           VARCHAR2(255),
+  url_user_origin varchar(255) NOT NULL,
+  url_browser_origin varchar(255) NOT NULL
 );
 
 CREATE INDEX if not exists keyword_search_terms_index1
