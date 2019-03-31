@@ -49,7 +49,7 @@ public class Chrome extends Browser {
                 String userName = file.getParentPath().split("/")[2];
 
                 //We have to copy this file to the temp directory
-                String tempPath = getTempPath(Case.getCurrentCase(), "chrome") + File.separator +
+                String tempPath = getTempPath(Case.getCurrentCase(), getBrowserName()) + File.separator +
                         historyFilename + userName + ".db";
                 try {
                     ContentUtils.writeToFile(file, new File(tempPath), context::dataSourceIngestIsCancelled);
@@ -72,7 +72,6 @@ public class Chrome extends Browser {
     @Override
     public void extractAllTables() {
         extractHistory();
-
     }
 
     private void extractHistory() {
@@ -93,7 +92,7 @@ public class Chrome extends Browser {
 
     @Override
     public void runTransformation(String user) {
-        //deletedCleanTables();TODO: only on first time
+        //deleteCleanTables();TODO: only on first time
         transformAllTables(user);
     }
 
@@ -126,56 +125,24 @@ public class Chrome extends Browser {
             stmt.execute("DELETE FROM t_ext_chrome_segments;");
             stmt.execute("DELETE FROM t_ext_chrome_sqlite_sequence;");
             stmt.execute("DELETE FROM t_ext_chrome_typed_url_sync_metadata;");
-            stmt.execute("DELETE FROM t_info_extract;");//TODO: this is to remove. Only here to speed up debug
         } catch (SQLException e) {
-            logger.error("Error cleaning extracted tables - " + e.getSQLState());
-            throw new ExtractionException("Error cleaning extracted tables - " + e.getSQLState());
-
+            logger.error("Error cleaning extracted tables - " + e.getMessage() + " From: " +getBrowserName());
+            throw new ExtractionException("Error cleaning extracted tables - " + e.getMessage() + " From: " +getBrowserName());
         }
-
-    }
-
-    @Override
-    public void deletedCleanTables()  {
-        try {
-            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
-            stmt.execute("DELETE FROM t_clean_url;");
-            stmt.execute("DELETE FROM t_clean_downloads;");
-            stmt.execute("DELETE FROM t_clean_blocked_websites;");
-            stmt.execute("DELETE FROM t_clean_emails;");
-            stmt.execute("DELETE FROM t_clean_words;");
-        } catch (SQLException e) {
-            String error = "Error deleting clean tables - Reason:" + e.getSQLState();
-            logger.error(error);
-            throw new TransformationException(error);
-        }
-    }
-
-    @Override
-    public void insertAllRowsInTInfoExtract() {
-        insertInTInfoExtract("t_ext_chrome_urls");
-        insertInTInfoExtract("t_ext_chrome_visits");
-        insertInTInfoExtract("t_ext_chrome_visit_source");
-        insertInTInfoExtract("t_ext_chrome_downloads");
-        insertInTInfoExtract("t_ext_chrome_downloads_slices");
-        insertInTInfoExtract("t_ext_chrome_downloads_url_chains");
-        insertInTInfoExtract("t_ext_chrome_keyword_search_terms");
-        insertInTInfoExtract("t_ext_chrome_meta");
-        insertInTInfoExtract("t_ext_chrome_segment_usage");
-        insertInTInfoExtract("t_ext_chrome_segments");
-        insertInTInfoExtract("t_ext_chrome_sqlite_sequence");
-        insertInTInfoExtract("t_ext_chrome_typed_url_sync_metadata");
     }
 
     private void transformUrlTable(String user) throws SQLException {
         PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
-                " INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_visit_count, url_typed_count, url_visit_time, url_user_origin, url_browser_origin ) " +
-                        "SELECT  teu.url as url_full, replace( SUBSTR( substr(teu.url,instr(teu.url, '://')+3), 0,instr(substr(teu.url,instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, 'TODO: path',title as url_title," +
-                        " visit_count as url_visit_count, typed_count as url_typed_count, strftime('%d-%m-%Y', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, '" + user + "',  '" + getBrowserName() + "'" +
-                        " FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
+                "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_visit_count, url_typed_count, " +
+                                                    "url_visit_time, url_user_origin, url_browser_origin ) " +
+                        "SELECT teu.url as url_full, " +
+                            "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                            "'TODO: path', title as url_title, visit_count as url_visit_count, typed_count as url_typed_count, " +
+                            "strftime('%d-%m-%Y  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, " +
+                            "'" + user + "',  '" + getBrowserName() + "' " +
+                        "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                         "WHERE teu.id = tev.url " +
-                        "and url_domain <> '' ");
-
+                        "and url_domain <> ''; ");
         preparedStatement.executeUpdate();
     }
 
@@ -318,6 +285,6 @@ public class Chrome extends Browser {
     }
 
     public String getBrowserName() {
-        return "Google Chrome";
+        return "Google_Chrome";
     }
 }

@@ -30,10 +30,10 @@ public class DatasetRepository {
         Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT url_domain, SUM(url_visit_count) as total " +
+                "SELECT url_domain, count (*) as total " +
                         "FROM t_clean_url " +
                         "group by url_domain " +
-                        "order by SUM(url_visit_count) desc " +
+                        "order by count (*) desc " +
                         "limit " + limit);
 
         while (rs.next()) {

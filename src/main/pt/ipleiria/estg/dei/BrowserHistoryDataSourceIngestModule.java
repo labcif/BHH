@@ -4,6 +4,7 @@ package main.pt.ipleiria.estg.dei;
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
 import main.pt.ipleiria.estg.dei.model.browsers.Browser;
 import main.pt.ipleiria.estg.dei.model.browsers.Chrome;
+import main.pt.ipleiria.estg.dei.model.browsers.Firefox;
 import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.coreutils.Logger;
 import org.sleuthkit.autopsy.ingest.*;
@@ -26,6 +27,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
         DatabaseCreator.init(Case.getCurrentCase().getCaseDirectory());
         browsersToRun = new ArrayList<>();
         browsersToRun.add(new Chrome(context));
+        browsersToRun.add(new Firefox(context));
 
     }
 
