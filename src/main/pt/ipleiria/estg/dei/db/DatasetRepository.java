@@ -1,12 +1,11 @@
 package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
-import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
+import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -63,17 +62,17 @@ public class DatasetRepository {
         return website;
     }
 
-    public static List<String> getEmailsUsed() throws SQLException {
-        List<String> emails = new ArrayList<>();
+    public static List<Email> getEmailsUsed() throws SQLException {
+        List<Email> emails = new ArrayList<>();
         Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT  * " +
+                "SELECT  email, source_full " +
                         "FROM t_clean_emails " +
                         "group by email ");
 
         while (rs.next()) {
-            emails.add(rs.getString("email"));
+            emails.add(new Email(rs.getString("email"),rs.getString("source_full") ));
         }
         return emails;
     }

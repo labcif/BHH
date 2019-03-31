@@ -9,7 +9,7 @@ import java.sql.SQLException;
 
 import static main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator.FULL_PATH_CONNECTION;
 
-
+@Deprecated
 public class ConnectionFactory {
     /**
      * Get a connection to database
