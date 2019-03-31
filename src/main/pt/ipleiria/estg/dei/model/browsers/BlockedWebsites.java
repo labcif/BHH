@@ -66,12 +66,7 @@ public class BlockedWebsites extends Data implements ETLProcess {
     }
 
     @Override
-    public void deletedCleanTables() {
+    public void deleteCleanTables() {
 
-    }
-
-    @Override
-    public void insertAllRowsInTInfoExtract() {
-        insertInTInfoExtract("t_ext_blocked_websites");
     }
 }

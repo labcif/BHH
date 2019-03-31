@@ -1,6 +1,4 @@
 
-/*
--- FIREFOX --
 CREATE TABLE if not exists t_ext_mozila_anno_attributes
 (
   id                      INTEGER PRIMARY KEY,
@@ -108,7 +106,7 @@ CREATE TABLE if not exists t_ext_mozila_origins
   UNIQUE (prefix, host)
 );
 
-CREATE TABLE if not exists t_ext_moz_places
+CREATE TABLE if not exists t_ext_mozila_places
 (
   id                     INTEGER PRIMARY KEY,
   url                    LONGVARCHAR,
@@ -125,7 +123,7 @@ CREATE TABLE if not exists t_ext_moz_places
   url_hash               INTEGER DEFAULT 0 NOT NULL ,
   description            TEXT,
   preview_image_url      TEXT,
-  origin_id              INTEGER REFERENCES moz_origins(id)
+  origin_id              INTEGER
 );
 
 CREATE TABLE if not exists t_ext_mozila_sqlite_sequence
@@ -182,7 +180,7 @@ CREATE INDEX if not exists moz_places_hostindex
   ON t_ext_mozila_places (rev_host);
 
 CREATE INDEX if not exists moz_places_lastvisitdateindex
-  ON t_ext__mozila_places (last_visit_date);
+  ON t_ext_mozila_places (last_visit_date);
 
 CREATE INDEX if not exists moz_places_originidindex
   ON t_ext_mozila_places (origin_id);
@@ -192,4 +190,3 @@ CREATE INDEX if not exists moz_places_url_hashindex
 
 CREATE INDEX if not exists moz_places_visitcount
   ON t_ext_mozila_places (visit_count);
-*/

@@ -10,9 +10,7 @@ public interface ETLProcess {
     void transformAllTables(String user);
 
     void deleteExtractTables();
-    void deletedCleanTables();
-
-    void insertAllRowsInTInfoExtract();
+    void deleteCleanTables();
 
     void runETLProcess(String path, String user);
 }

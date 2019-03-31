@@ -27,9 +27,6 @@ public abstract class Data  implements ETLProcess{
             startTransaction(path);
             extractAllTables();
             endTransaction();
-
-            insertAllRowsInTInfoExtract();
-
         } catch (SQLException | ClassNotFoundException e) {
             logger.error("Couldn't connect to db. Path: " + path + " - Error: " + e.getMessage());
             throw new TransformationException("Couldn't connect to db. Path: " + path + " - Error: " + e.getMessage());
@@ -38,7 +35,7 @@ public abstract class Data  implements ETLProcess{
 
     @Override
     public void runTransformation(String user) {
-        deletedCleanTables();
+//        deleteCleanTables();
         transformAllTables(user);
     }
 
@@ -54,9 +51,10 @@ public abstract class Data  implements ETLProcess{
     public void endTransaction() throws SQLException {
         DataWarehouseConnection.getDatawarehouseConnection().commit();
         DataWarehouseConnection.getDatawarehouseConnection()
-                .prepareStatement("DETACH DATABASE 'externalUrls'")
+                .prepareStatement("DETACH DATABASE '"+ EXTERNAL_URL+"'")
                 .executeUpdate();
         connection.close();
+        DataWarehouseConnection.getDatawarehouseConnection().setAutoCommit(true);
     }
 
     public void extractTable(String newTable, String oldTable, String externalDB){
@@ -98,18 +96,6 @@ public abstract class Data  implements ETLProcess{
         }
     }
 
-    protected void insertInTInfoExtract(String tablename){
-        try {
-            PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection()
-                    .prepareStatement("INSERT INTO t_info_extract (name, last_extraction) VALUES (?, DateTime('now'));");
-            preparedStatement.setString(1, tablename);
-            preparedStatement.executeUpdate();
-        } catch (SQLException e) {
-            logger.error("Error inserting in t_info_extarct - reason: " +e.getSQLState());
-            throw new ExtractionException("Error inserting in t_info_extarct - reason: " +e.getSQLState());
-
-        }
-    }
 
     protected static String getTempPath(Case aCase, String filename) {
         String tmpDir = aCase.getTempDirectory() + File.separator + "RecentActivity" + File.separator + filename;
@@ -118,5 +104,21 @@ public abstract class Data  implements ETLProcess{
             dir.mkdirs();
         }
         return tmpDir;
+    }
+
+    @Override
+    public void deleteCleanTables()  {
+        try {
+            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+            stmt.execute("DELETE FROM t_clean_url;");
+            stmt.execute("DELETE FROM t_clean_downloads;");
+            stmt.execute("DELETE FROM t_clean_blocked_websites;");
+            stmt.execute("DELETE FROM t_clean_emails;");
+            stmt.execute("DELETE FROM t_clean_words;");
+        } catch (SQLException e) {
+            String error = "Error deleting clean tables - Reason:" + e.getSQLState();
+            logger.error(error);
+            throw new TransformationException(error);
+        }
     }
 }
