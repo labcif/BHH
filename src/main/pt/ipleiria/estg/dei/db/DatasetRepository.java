@@ -49,12 +49,12 @@ public class DatasetRepository {
         Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT url_domain, SUM(url_visit_count) as total " +
-                        "FROM t_clean_url " +
+                " SELECT url_domain, count(*) as total " +
+                        " FROM t_clean_url " +
                         " WHERE url_domain IN (SELECT DOMAIN " +
-                        "                   FROM t_clean_blocked_websites) " +
-                        "group by url_domain " +
-                        "order by SUM(url_visit_count) desc ");
+                        "                       FROM t_clean_blocked_websites) " +
+                        " group by url_domain " +
+                        " order by total desc ");
 
         while (rs.next()) {
             website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
