@@ -35,7 +35,6 @@ create table if not exists t_clean_url
   url_domain VARCHAR2(255),
   url_path VARCHAR2(255),
   url_title varchar(255),
-  url_visit_count INTEGER(30),
   url_typed_count INTEGER(30),
   url_last_visit_time DATE,
   url_hidden INTEGER(5),

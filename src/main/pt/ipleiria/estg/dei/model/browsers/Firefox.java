@@ -115,11 +115,11 @@ public class Firefox extends Browser {
 
     private void transformUrlTable(String user) throws SQLException {
         PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
-                "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_visit_count, url_typed_count, " +
+                "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
                                                 "url_visit_time, url_user_origin, url_browser_origin ) " +
                         "SELECT  mp.url as url_full, " +
                                 "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
-                                "'TODO: path', title as url_title, visit_count as url_visit_count, typed as url_typed_count, " +
+                                "'TODO: path', title as url_title, typed as url_typed_count, " +
                                 "strftime('%d-%m-%Y %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
                                 "'" + user + "', '" + getBrowserName() + "' " +
                         "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
