@@ -1,5 +1,7 @@
 package main.pt.ipleiria.estg.dei;
 
+import main.pt.ipleiria.estg.dei.Subreport.DataBean;
+import main.pt.ipleiria.estg.dei.Subreport.DataBeanList;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
@@ -8,6 +10,7 @@ import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
+import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.ingest.IngestMessage;
@@ -70,6 +73,21 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             }
 
 
+            
+           //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
+           List<Website> topMostVisited = DatasetRepository.getTopVisitedWebsite(10);
+           JRDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(topMostVisited);
+           reportData.put("VisitsTesting", jrBeanCollectionDataSource);
+
+            //Adding SubReport (most people online said that if you want to repeat an element / group of elements the best way is to place them in a subreport and pass the variables)
+           InputStream templateFile2 = getClass().getResourceAsStream("/resources/template/user_graf.jrxml");
+           JasperReport subReport = JasperCompileManager.compileReport(templateFile2);
+           reportData.put("subReport", subReport);
+
+
+
+
+
             generator.setReportData(reportData);
 
             ReportParameterMap reportParameters = new ReportParameterMap();
@@ -88,7 +106,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                 byteArrayOutputStream.writeTo(outputStream);
             }
 
-        } catch(IOException | GenerateReportException | SQLException e){
+        } catch(IOException | GenerateReportException | SQLException | JRException e){
             IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BrowserHistoryReportModule.getDefault().getName(),"Failed to create report");
             IngestServices.getInstance().postMessage(message);
         }
