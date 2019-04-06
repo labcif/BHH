@@ -1,28 +1,34 @@
 package main.pt.ipleiria.estg.dei.db.etl;
 
-import main.pt.ipleiria.estg.dei.db.ConnectionFactory;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
+import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.sleuthkit.autopsy.casemodule.Case;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class DataWarehouseConnection {
-    private static DataWarehouseConnection instance = new DataWarehouseConnection();
-    private static Connection datawarehouseConnection;
+public final class DataWarehouseConnection {
+    public static final String FULL_PATH_CONNECTION = "jdbc:sqlite:" + Case.getCurrentCase().getCaseDirectory() + "/browser-history.db";
+    private static Connection connection;
+    private static DataWarehouseConnection instance;
+    private Logger<DataWarehouseConnection> logger = new Logger<>(DataWarehouseConnection.class);
 
     private DataWarehouseConnection(){
         try {
-            datawarehouseConnection = ConnectionFactory.getConnection();
+            Class.forName("org.sqlite.JDBC");
+            connection = DriverManager.getConnection(FULL_PATH_CONNECTION);
         } catch (SQLException | ClassNotFoundException e) {
-            throw new ConnectionException(e.getMessage());
+            instance = null;
+            logger.error("Connection to database failed - Reason: " + e.getMessage());
+            throw new ConnectionException("Connection to database failed - Reason: " + e.getMessage());
         }
     }
 
-    public static DataWarehouseConnection getInstance() {
-        return instance;
-    }
-
-    public static Connection getDatawarehouseConnection() {
-        return datawarehouseConnection;
+    public static Connection getConnection() {
+        if (instance == null) {
+            instance = new DataWarehouseConnection();
+        }
+        return connection;
     }
 }

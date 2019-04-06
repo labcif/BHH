@@ -42,26 +42,26 @@ public abstract class Data  implements ETLProcess{
     public void startTransaction(String path) throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:" + path);
-        DataWarehouseConnection.getDatawarehouseConnection()
+        DataWarehouseConnection.getConnection()
                 .prepareStatement( "ATTACH DATABASE '"+ path +"' AS " +EXTERNAL_URL)
                 .executeUpdate();
-        DataWarehouseConnection.getDatawarehouseConnection().setAutoCommit(false);
+        DataWarehouseConnection.getConnection().setAutoCommit(false);
     }
 
     public void endTransaction() throws SQLException {
-        DataWarehouseConnection.getDatawarehouseConnection().commit();
-        DataWarehouseConnection.getDatawarehouseConnection()
+        DataWarehouseConnection.getConnection().commit();
+        DataWarehouseConnection.getConnection()
                 .prepareStatement("DETACH DATABASE '"+ EXTERNAL_URL+"'")
                 .executeUpdate();
         connection.close();
-        DataWarehouseConnection.getDatawarehouseConnection().setAutoCommit(true);
+        DataWarehouseConnection.getConnection().setAutoCommit(true);
     }
 
     public void extractTable(String newTable, String oldTable, String externalDB){
         try {
             //reason???? --- stupids versions have differrent columns
             //get columns of newTable
-            Connection datawarehouseConnection = DataWarehouseConnection.getDatawarehouseConnection();
+            Connection datawarehouseConnection = DataWarehouseConnection.getConnection();
             Statement statement = datawarehouseConnection.createStatement();
             ResultSet rs = statement.executeQuery("PRAGMA table_info (" + newTable + ");");
             List<String> columnsHeaderNewTable = new ArrayList<>();
@@ -85,7 +85,7 @@ public abstract class Data  implements ETLProcess{
 
             String columns = String.join( ", ", columnsHeaderNewTable);
             //make insertion with match
-            DataWarehouseConnection.getDatawarehouseConnection()
+            DataWarehouseConnection.getConnection()
                     .prepareStatement("INSERT INTO main." + newTable + " (" + columns + ") " +
                             "SELECT " + columns + " FROM " + externalDB + "." + oldTable)
                     .executeUpdate();
@@ -109,7 +109,7 @@ public abstract class Data  implements ETLProcess{
     @Override
     public void deleteCleanTables()  {
         try {
-            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+            Statement stmt = DataWarehouseConnection.getConnection().createStatement();
             stmt.execute("DELETE FROM t_clean_url;");
             stmt.execute("DELETE FROM t_clean_downloads;");
             stmt.execute("DELETE FROM t_clean_blocked_websites;");

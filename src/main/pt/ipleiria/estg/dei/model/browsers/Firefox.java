@@ -92,7 +92,7 @@ public class Firefox extends Browser {
     @Override
     public void deleteExtractTables() {
         try {
-            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+            Statement stmt = DataWarehouseConnection.getConnection().createStatement();
             stmt.execute("DELETE FROM t_ext_mozila_anno_attributes;");
             stmt.execute("DELETE FROM t_ext_mozila_annos;");
             stmt.execute("DELETE FROM t_ext_mozila_bookmarks;");
@@ -114,7 +114,7 @@ public class Firefox extends Browser {
     }
 
     private void transformUrlTable(String user) throws SQLException {
-        PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+        PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                 "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
                                                 "url_visit_time, url_user_origin, url_browser_origin ) " +
                         "SELECT  mp.url as url_full, " +

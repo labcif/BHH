@@ -18,7 +18,7 @@ public class BlockedWebsites extends Data implements ETLProcess {
     public void extractAllTables() {
         Set<String> urlSet = ISPLockedWebsites.INSTANCE.readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json").keySet();
         try {
-            PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement("INSERT INTO main.t_ext_blocked_websites (domain) " +
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement("INSERT INTO main.t_ext_blocked_websites (domain) " +
                     " VALUES (?)");
             for (String url : urlSet) {
                 preparedStatement.setString(1, url);
@@ -41,7 +41,7 @@ public class BlockedWebsites extends Data implements ETLProcess {
     @Override
     public void transformAllTables(String user) {
         try {
-            PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                 " INSERT INTO t_clean_blocked_websites (domain) " +
                         " SELECT  domain " +
                         " FROM t_ext_blocked_websites ");
@@ -56,7 +56,7 @@ public class BlockedWebsites extends Data implements ETLProcess {
     @Override
     public void deleteExtractTables() {
         try {
-            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+            Statement stmt = DataWarehouseConnection.getConnection().createStatement();
             stmt.execute("DELETE FROM t_ext_blocked_websites;");
         } catch (SQLException e) {
             logger.error("Error deleting extract tables - " + e.getSQLState());

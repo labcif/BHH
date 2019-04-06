@@ -17,27 +17,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection.FULL_PATH_CONNECTION;
+
 public class DatabaseCreator {
-    private static final String CONNECTION = "jdbc:sqlite:";//src/resources/database/
-    private static final String DB_NAME = "/browser-history.db";
     private static final String MIGRATIONS_LOCATION = "/resources/migrations/";
-    private static String databaseLocation;
 
     private Logger<DatabaseCreator> logger = new Logger<>(DatabaseCreator.class);
-    public static String FULL_PATH_CONNECTION;
 
-    private DatabaseCreator(String databaseLocation) {
+    private DatabaseCreator() {
         try {
-            DatabaseCreator.databaseLocation = databaseLocation;
-            FULL_PATH_CONNECTION = CONNECTION + databaseLocation + DB_NAME;
             setupDB();
         } catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
             e.printStackTrace();
         }
 
     }
-    public static void init(String databaseLocation){
-        new DatabaseCreator(databaseLocation);
+    public static void init(){
+        new DatabaseCreator();
     }
 
     private void setupDB() throws ClassNotFoundException, SQLException, IOException, URISyntaxException {
@@ -63,7 +59,7 @@ public class DatabaseCreator {
         try (BufferedReader br = new BufferedReader(new InputStreamReader(resourceAsStream, StandardCharsets.UTF_8))) {
             StringBuilder sb = new StringBuilder();
             String line = br.readLine();
-            Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME );
+            Connection conn = DataWarehouseConnection.getConnection();
             while (line != null) {
                 sb.append(line);
                 sb.append(System.lineSeparator());
@@ -84,24 +80,21 @@ public class DatabaseCreator {
 
     private void registerInSchema(String fullname) throws SQLException {
         String version = fullname.split("__")[0];
-        try (Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME)) {
-            PreparedStatement preparedStatement = conn.prepareStatement("INSERT INTO schema_version (version, name) VALUES (?, ?);");
-            preparedStatement.setString(1, version);
-            preparedStatement.setString(2, fullname);
-            preparedStatement.executeUpdate();
-        }
+        PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement("INSERT INTO schema_version (version, name) VALUES (?, ?);");
+        preparedStatement.setString(1, version);
+        preparedStatement.setString(2, fullname);
+        preparedStatement.executeUpdate();
+
     }
 
     private List<String> getMigrationsRegisterInSchema() throws SQLException {
-        try (Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME)) {
-            Statement statement = conn.createStatement();
-            List<String> names = new ArrayList<>();
-            ResultSet rs = statement.executeQuery("SELECT name from schema_version; ");
-            while (rs.next()) {
-                names.add(rs.getString("name"));
-            }
-            return names;
+        Statement statement = DataWarehouseConnection.getConnection().createStatement();
+        List<String> names = new ArrayList<>();
+        ResultSet rs = statement.executeQuery("SELECT name from schema_version; ");
+        while (rs.next()) {
+            names.add(rs.getString("name"));
         }
+        return names;
     }
 
     private List<String> getAllMigrations() throws URISyntaxException, IOException, SQLException {
@@ -131,30 +124,29 @@ public class DatabaseCreator {
     }
 
 
-    private void createDB() throws ClassNotFoundException, SQLException {
+    private void createDB() throws SQLException, ClassNotFoundException {
         Class.forName("org.sqlite.JDBC");
-        try (Connection conn = DriverManager.getConnection(CONNECTION + databaseLocation + DB_NAME)) {
-            if (conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                logger.info("The driver name is " + meta.getDriverName());
-                logger.info("A new database has been created.");
-                Statement stmt = conn.createStatement();
+        Connection conn = DriverManager.getConnection(FULL_PATH_CONNECTION);
+        if (conn != null) {
+            DatabaseMetaData meta = conn.getMetaData();
+            logger.info("The driver name is " + meta.getDriverName());
+            logger.info("A new database has been created.");
+            Statement stmt = conn.createStatement();
 
-                logger.info("Creating version table...");
-                stmt.execute("create table if not exists schema_version " +
-                        "( " +
-                        "  id INTEGER " +
-                        "    constraint schema_version_pk " +
-                        "      primary key autoincrement, " +
-                        "  version FLOAT, " +
-                        "  name VARCHAR2(255) not null " +
-                        "); ");
-                stmt.execute("create unique index if not exists schema_version_NAME_uindex " +
-                        "  on schema_version (name); ");
-                stmt.execute("create unique index if not exists schema_version_version_uindex " +
-                        "  on schema_version (version); ");
-                logger.info("Version table created");
-            }
+            logger.info("Creating version table...");
+            stmt.execute("create table if not exists schema_version " +
+                    "( " +
+                    "  id INTEGER " +
+                    "    constraint schema_version_pk " +
+                    "      primary key autoincrement, " +
+                    "  version FLOAT, " +
+                    "  name VARCHAR2(255) not null " +
+                    "); ");
+            stmt.execute("create unique index if not exists schema_version_NAME_uindex " +
+                    "  on schema_version (name); ");
+            stmt.execute("create unique index if not exists schema_version_version_uindex " +
+                    "  on schema_version (version); ");
+            logger.info("Version table created");
         }
     }
 }

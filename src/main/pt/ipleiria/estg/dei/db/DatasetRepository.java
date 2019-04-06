@@ -1,6 +1,7 @@
 package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
@@ -15,9 +16,15 @@ import java.util.List;
 public class DatasetRepository {
     private static DatasetRepository datasetRepository = new DatasetRepository();
     private Logger<DatasetRepository> logger = new Logger<>(DatasetRepository.class);
+    private static Statement statement;
 
-    private DatasetRepository() {
-
+    private DatasetRepository()  {
+        try {
+            statement = DataWarehouseConnection.getConnection().createStatement();
+        } catch (SQLException e) {
+            logger.error("Couldn't create statement - reason: " + e.getMessage());
+            throw new ConnectionException("Couldn't create statement - reason: " + e.getMessage());
+        }
     }
 
 
@@ -27,7 +34,6 @@ public class DatasetRepository {
 
     public static List<Website> getTopVisitedWebsite(int limit) throws SQLException {
         List<Website> website = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT url_domain, count (*) as total " +
@@ -46,7 +52,6 @@ public class DatasetRepository {
 
     public static List<Website> getBlockedWebsiteVisited() throws SQLException {
         List<Website> website = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 " SELECT url_domain, count(*) as total " +
@@ -64,7 +69,6 @@ public class DatasetRepository {
 
     public static List<Email> getEmailsUsed() throws SQLException {
         List<Email> emails = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT  email, source_full " +
@@ -79,7 +83,6 @@ public class DatasetRepository {
 
     public static List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT  word, count(word) as times_used " +

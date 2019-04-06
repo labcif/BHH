@@ -8,8 +8,6 @@ import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.datamodel.ContentUtils;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
-import org.sleuthkit.autopsy.ingest.IngestMessage;
-import org.sleuthkit.autopsy.ingest.IngestServices;
 import org.sleuthkit.datamodel.AbstractFile;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
@@ -114,7 +112,7 @@ public class Chrome extends Browser {
     @Override
     public void deleteExtractTables() {
         try {
-            Statement stmt = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+            Statement stmt = DataWarehouseConnection.getConnection().createStatement();
             stmt.execute("DELETE FROM t_ext_chrome_urls;");
             stmt.execute("DELETE FROM t_ext_chrome_visits;");
             stmt.execute("DELETE FROM t_ext_chrome_visit_source;");
@@ -134,7 +132,7 @@ public class Chrome extends Browser {
     }
 
     private void transformUrlTable(String user) throws SQLException {
-        PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+        PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                 "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
                         "url_visit_time, url_user_origin, url_browser_origin ) " +
                         "SELECT teu.url as url_full, " +
@@ -149,7 +147,7 @@ public class Chrome extends Browser {
     }
 
     private void transformDownloadsTable(String user) throws SQLException {
-        PreparedStatement preparedStatement = DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+        PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                 " INSERT INTO t_clean_downloads (url_domain, " +
                                                     "url_full," +
                                                     " type, " +
@@ -183,14 +181,14 @@ public class Chrome extends Browser {
 
 
     private void transformEmailsTable(String user) throws SQLException {
-        Statement statement = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+        Statement statement = DataWarehouseConnection.getConnection().createStatement();
         ResultSet rs = statement.executeQuery(
                 "SELECT  teu.url || ' ' ||  title as url, replace( SUBSTR( substr(teu.url,instr(teu.url, '://')+3), 0,instr(substr(teu.url,instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain" +
                 " FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                 " WHERE teu.id = tev.url " +
                 " and url_domain <> '' ");
 
-        PreparedStatement preparedStatement =  DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+        PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
                 " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin) " +
                         " VALUES (?,?,?,?,?,?,?,?)");
 
@@ -249,12 +247,12 @@ public class Chrome extends Browser {
 
 
     public void transformWordsTable(String user) throws SQLException{
-        Statement statement = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+        Statement statement = DataWarehouseConnection.getConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full  " +
                 "FROM t_ext_chrome_urls " +
                 "where url like '%google.%' and url like '%?q=%'");
 
-        PreparedStatement preparedStatement =  DataWarehouseConnection.getDatawarehouseConnection().prepareStatement(
+        PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
                 " INSERT INTO t_clean_words (word, source_full, url_user_origin, url_browser_origin) " +
                         " VALUES (?,?,?,?)");
 
