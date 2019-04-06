@@ -1,16 +1,16 @@
 package main.pt.ipleiria.estg.dei;
 
-import main.pt.ipleiria.estg.dei.Subreport.DataBean;
-import main.pt.ipleiria.estg.dei.Subreport.DataBeanList;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
-import main.pt.ipleiria.estg.dei.dtos.RelativeFrequencyBrowser;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
-import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.ingest.IngestMessage;
@@ -23,7 +23,10 @@ import java.io.*;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
