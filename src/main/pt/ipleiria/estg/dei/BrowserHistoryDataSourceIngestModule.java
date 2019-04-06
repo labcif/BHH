@@ -2,6 +2,7 @@
 package main.pt.ipleiria.estg.dei;
 
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
+import main.pt.ipleiria.estg.dei.events.EtlObserver;
 import main.pt.ipleiria.estg.dei.model.browsers.Browser;
 import main.pt.ipleiria.estg.dei.model.browsers.Chrome;
 import main.pt.ipleiria.estg.dei.model.browsers.Firefox;
@@ -33,15 +34,16 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
-        progressBar.switchToDeterminate(3);
 
-        browsersToRun.forEach(browser -> browser.run(dataSource));
+        browsersToRun.forEach(browser -> browser.events.subscribe("etl_process", new EtlObserver(progressBar, browsersToRun.size())));
+        browsersToRun.forEach(browser -> {
+                                            browser.run(dataSource);
+                                            browser.events.notify("etl_process");
+                                        });
 
-        progressBar.switchToDeterminate(1);
+
         IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, "browser History","Done");
         IngestServices.getInstance().postMessage(message);
         return IngestModule.ProcessResult.OK;
     }
-
-
 }

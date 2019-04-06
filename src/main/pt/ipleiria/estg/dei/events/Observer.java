@@ -1,5 +1,7 @@
 package main.pt.ipleiria.estg.dei.events;
 
+import java.io.File;
+
 public interface Observer {
-    public abstract void update(String processFase, String operation);
+    void update(String eventType);
 }

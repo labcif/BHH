@@ -8,6 +8,8 @@ import org.sleuthkit.autopsy.casemodule.Case;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.datamodel.ContentUtils;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
+import org.sleuthkit.autopsy.ingest.IngestMessage;
+import org.sleuthkit.autopsy.ingest.IngestServices;
 import org.sleuthkit.datamodel.AbstractFile;
 import org.sleuthkit.datamodel.Content;
 import org.sleuthkit.datamodel.TskCoreException;
@@ -245,7 +247,7 @@ public class Chrome extends Browser {
 
     }
 
-    //Todo this isn´t finished (needs further discussion)
+
     public void transformWordsTable(String user) throws SQLException{
         Statement statement = DataWarehouseConnection.getDatawarehouseConnection().createStatement();
         ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full  " +
