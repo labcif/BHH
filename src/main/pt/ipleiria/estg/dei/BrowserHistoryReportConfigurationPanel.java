@@ -18,17 +18,42 @@
  */
 package main.pt.ipleiria.estg.dei;
 
+import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
+
+import javax.swing.*;
+import java.sql.SQLException;
+import java.util.List;
+
 /**
  * The panel shown for all TableReportModules when configuring report modules.
  */
 @SuppressWarnings("PMD.SingularField") // UI widgets cause lots of false positives
 public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
-
+    private List<String> usersSelected;
     /**
      * Creates new form BrowserHistoryReportConfigurationPanel
      */
     public BrowserHistoryReportConfigurationPanel() {
         initComponents();
+        users.addListSelectionListener(e -> {
+            if(!e.getValueIsAdjusting()) {
+                usersSelected= users.getSelectedValuesList();
+            }
+        });
+        fillUsers();
+    }
+    private void fillUsers() {
+        DefaultListModel dlm = new DefaultListModel();
+        try {
+            List<String> users = DatasetRepository.getInstance().getUsers();
+            //TODO: check list is not empty
+
+            users.forEach(dlm::addElement);
+            this.users.setModel(dlm);
+        } catch (ConnectionException | SQLException e) {
+            e.printStackTrace();//TODO: If the ingest module has been run yet it can't be executed
+        }
     }
 
     public boolean isMostVisitedSitesEnabled() {
@@ -46,6 +71,10 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
     public String getGraphType() {
         return buttonGroup2.getSelection().toString();
+    }
+
+    public List<String> getUsersSelected() {
+        return usersSelected;
     }
 
     /**
@@ -71,6 +100,9 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         blokedSites = new javax.swing.JCheckBox();
         wordsSearch = new javax.swing.JCheckBox();
         domainDailyVisits = new javax.swing.JCheckBox();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        users = new javax.swing.JList<String>();
+        filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
 
         setFont(getFont().deriveFont(getFont().getStyle() & ~java.awt.Font.BOLD, 11));
 
@@ -107,6 +139,8 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         domainDailyVisits.setSelected(true);
         domainDailyVisits.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.domainDailyVisits.text")); // NOI18N
 
+        jScrollPane1.setViewportView(users);
+
         javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
         panel1.setLayout(panel1Layout);
         panel1Layout.setHorizontalGroup(
@@ -130,12 +164,14 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                             .addComponent(blokedSites)
                             .addComponent(wordsSearch)
                             .addComponent(domainDailyVisits))))
-                .addContainerGap(28, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 187, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(39, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap(10, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
+                .addContainerGap(17, Short.MAX_VALUE)
                 .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
                     .addComponent(jLabel1))
@@ -156,6 +192,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                         .addGap(18, 18, 18)
                         .addComponent(pieChart)))
                 .addContainerGap())
+            .addComponent(jScrollPane1)
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
@@ -170,7 +207,11 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                     .addGroup(layout.createSequentialGroup()
                         .addGap(18, 18, 18)
                         .addComponent(jLabel2)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(143, Short.MAX_VALUE))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addGap(0, 0, Short.MAX_VALUE)
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(110, 110, 110))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -179,7 +220,9 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                 .addComponent(jLabel2)
                 .addGap(21, 21, 21)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(54, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addComponent(filler1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -195,13 +238,18 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JCheckBox domainDailyVisits;
+    private javax.swing.Box.Filler filler1;
     private javax.swing.JRadioButton histogram;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JCheckBox mostVisitedSites;
     private java.awt.Panel panel1;
     private javax.swing.JRadioButton pieChart;
+    private javax.swing.JList<String> users;
     private javax.swing.JCheckBox wordsSearch;
     // End of variables declaration//GEN-END:variables
+
+    
 }

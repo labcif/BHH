@@ -78,11 +78,8 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
            //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
            List<User> usersVisitedSites = new ArrayList<>();
-           List<String> userNames = new ArrayList<>();
-           userNames.add("2130166");
-           userNames.add("2140402");
-           userNames.add("2140309");
-           userNames.add("2141077");
+           List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+
            for (String nome: userNames ) {
                usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getTopVisitedWebsiteByUser(5, nome))));
            }

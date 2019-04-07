@@ -118,6 +118,17 @@ public class DatasetRepository {
         return words;
     }
 
+    public List<String> getUsers() throws SQLException {
+        List<String> users = new ArrayList<>();
 
+        ResultSet rs = statement.executeQuery(
+                "select url_user_origin as user " +
+                        "from t_clean_url " +
+                        "group by url_user_origin;");
 
+        while (rs.next()) {
+            users.add(rs.getString("user"));
+        }
+        return users;
+    }
 }
