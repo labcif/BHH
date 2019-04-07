@@ -1,5 +1,8 @@
 package main.pt.ipleiria.estg.dei.db.etl;
 
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
+import main.pt.ipleiria.estg.dei.exceptions.DatabaseInitializationException;
+import main.pt.ipleiria.estg.dei.exceptions.MigrationException;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
 import java.io.BufferedReader;
@@ -24,19 +27,14 @@ public class DatabaseCreator {
 
     private Logger<DatabaseCreator> logger = new Logger<>(DatabaseCreator.class);
 
-    private DatabaseCreator() {
-        try {
-            setupDB();
-        } catch (ClassNotFoundException | SQLException | IOException | URISyntaxException e) {
-            e.printStackTrace();
-        }
-
+    private DatabaseCreator() throws MigrationException, DatabaseInitializationException, ConnectionException {
+        setupDB();
     }
-    public static void init(){
+    public static void init() throws MigrationException, DatabaseInitializationException, ConnectionException {
         new DatabaseCreator();
     }
 
-    private void setupDB() throws ClassNotFoundException, SQLException, IOException, URISyntaxException {
+    private void setupDB() throws MigrationException, DatabaseInitializationException, ConnectionException {
         logger.info("Creating database...");
         createDB();
         logger.info("Database created");
@@ -46,13 +44,17 @@ public class DatabaseCreator {
         logger.info("All migration finished with success");
     }
 
-    private void runMigrations() throws SQLException, IOException, URISyntaxException {
-        for (String allMigration : getAllMigrations()) {
-            executeMigration(allMigration);
+    private void runMigrations() throws MigrationException, ConnectionException {
+        try {
+            for (String allMigration : getAllMigrations()) {
+                executeMigration(allMigration);
+            }
+        } catch (URISyntaxException | IOException | SQLException | ClassNotFoundException e) {
+            throw new MigrationException(e.getMessage());
         }
     }
 
-    private void executeMigration(String migration) throws IOException, SQLException {
+    private void executeMigration(String migration) throws IOException, SQLException, ClassNotFoundException, ConnectionException {
         logger.info("Running migration: " + migration);
 
         InputStream resourceAsStream = getClass().getResourceAsStream(MIGRATIONS_LOCATION + migration);
@@ -71,14 +73,13 @@ public class DatabaseCreator {
                     sb = new StringBuilder();
                 }
             }
-            conn.close();
         }
         logger.info("Migration " + migration + " finished with success");
         registerInSchema(migration);
 
     }
 
-    private void registerInSchema(String fullname) throws SQLException {
+    private void registerInSchema(String fullname) throws SQLException, ClassNotFoundException, ConnectionException {
         String version = fullname.split("__")[0];
         PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement("INSERT INTO schema_version (version, name) VALUES (?, ?);");
         preparedStatement.setString(1, version);
@@ -87,7 +88,7 @@ public class DatabaseCreator {
 
     }
 
-    private List<String> getMigrationsRegisterInSchema() throws SQLException {
+    private List<String> getMigrationsRegisterInSchema() throws SQLException, ClassNotFoundException, ConnectionException {
         Statement statement = DataWarehouseConnection.getConnection().createStatement();
         List<String> names = new ArrayList<>();
         ResultSet rs = statement.executeQuery("SELECT name from schema_version; ");
@@ -97,7 +98,7 @@ public class DatabaseCreator {
         return names;
     }
 
-    private List<String> getAllMigrations() throws URISyntaxException, IOException, SQLException {
+    private List<String> getAllMigrations() throws URISyntaxException, IOException, SQLException, ClassNotFoundException, ConnectionException {
         URI uri = getClass().getResource(MIGRATIONS_LOCATION).toURI();
         Path myPath;
         if (uri.getScheme().equals("jar")) {
@@ -124,29 +125,34 @@ public class DatabaseCreator {
     }
 
 
-    private void createDB() throws SQLException, ClassNotFoundException {
-        Class.forName("org.sqlite.JDBC");
-        Connection conn = DriverManager.getConnection(FULL_PATH_CONNECTION);
-        if (conn != null) {
-            DatabaseMetaData meta = conn.getMetaData();
-            logger.info("The driver name is " + meta.getDriverName());
-            logger.info("A new database has been created.");
-            Statement stmt = conn.createStatement();
+    private void createDB() throws DatabaseInitializationException {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection(FULL_PATH_CONNECTION);
+            if (conn != null) {
+                DatabaseMetaData meta = conn.getMetaData();
+                logger.info("The driver name is " + meta.getDriverName());
+                logger.info("A new database has been created.");
+                Statement stmt = conn.createStatement();
 
-            logger.info("Creating version table...");
-            stmt.execute("create table if not exists schema_version " +
-                    "( " +
-                    "  id INTEGER " +
-                    "    constraint schema_version_pk " +
-                    "      primary key autoincrement, " +
-                    "  version FLOAT, " +
-                    "  name VARCHAR2(255) not null " +
-                    "); ");
-            stmt.execute("create unique index if not exists schema_version_NAME_uindex " +
-                    "  on schema_version (name); ");
-            stmt.execute("create unique index if not exists schema_version_version_uindex " +
-                    "  on schema_version (version); ");
-            logger.info("Version table created");
+                logger.info("Creating version table...");
+                stmt.execute("create table if not exists schema_version " +
+                        "( " +
+                        "  id INTEGER " +
+                        "    constraint schema_version_pk " +
+                        "      primary key autoincrement, " +
+                        "  version FLOAT, " +
+                        "  name VARCHAR2(255) not null " +
+                        "); ");
+                stmt.execute("create unique index if not exists schema_version_NAME_uindex " +
+                        "  on schema_version (name); ");
+                stmt.execute("create unique index if not exists schema_version_version_uindex " +
+                        "  on schema_version (version); ");
+                logger.info("Version table created");
+            }
+        } catch (ClassNotFoundException | SQLException e) {
+            throw new DatabaseInitializationException(e.getMessage());
         }
+
     }
 }

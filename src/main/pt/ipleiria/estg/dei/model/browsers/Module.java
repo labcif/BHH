@@ -1,9 +1,10 @@
 package main.pt.ipleiria.estg.dei.model.browsers;
 
 import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
+import main.pt.ipleiria.estg.dei.events.IngestModuleProgress;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.ExtractionException;
 import main.pt.ipleiria.estg.dei.exceptions.TransformationException;
-import main.pt.ipleiria.estg.dei.utils.Logger;
 import org.sleuthkit.autopsy.casemodule.Case;
 
 import java.io.File;
@@ -11,35 +12,39 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Data  implements ETLProcess{
-    private Logger<Data> logger = new Logger<>(Data.class);
+public abstract class Module implements ETLProcess{
     private Connection connection;
     protected final static String EXTERNAL_URL = "externalUrls";
 
-    public void runETLProcess(String path, String user) {
+    public void runETLProcess(String path, String user) throws ConnectionException {
+        IngestModuleProgress.getInstance().incrementProgress(user, getModuleName(),"extraction");
         runExtraction(path);
+        IngestModuleProgress.getInstance().incrementProgress(user, getModuleName(),"tranformation");
         runTransformation(user);
     }
 
-    public void runExtraction(String path) {
+    public void runExtraction(String path) throws ConnectionException {
         try {
             deleteExtractTables();
             startTransaction(path);
             extractAllTables();
-            endTransaction();
         } catch (SQLException | ClassNotFoundException e) {
-            logger.error("Couldn't connect to db. Path: " + path + " - Error: " + e.getMessage());
-            throw new TransformationException("Couldn't connect to db. Path: " + path + " - Error: " + e.getMessage());
+            throw new ExtractionException(getModuleName(), path, "Couldn't connect to db " + e.getMessage());
+        }finally {
+            try {
+                endTransaction();
+            } catch (SQLException | ClassNotFoundException e) {
+            }
         }
     }
 
     @Override
-    public void runTransformation(String user) {
+    public void runTransformation(String user) throws ConnectionException {
 //        deleteCleanTables();
         transformAllTables(user);
     }
 
-    public void startTransaction(String path) throws SQLException, ClassNotFoundException {
+    public void startTransaction(String path) throws SQLException, ClassNotFoundException, ConnectionException {
         Class.forName("org.sqlite.JDBC");
         connection = DriverManager.getConnection("jdbc:sqlite:" + path);
         DataWarehouseConnection.getConnection()
@@ -48,7 +53,7 @@ public abstract class Data  implements ETLProcess{
         DataWarehouseConnection.getConnection().setAutoCommit(false);
     }
 
-    public void endTransaction() throws SQLException {
+    public void endTransaction() throws SQLException, ClassNotFoundException, ConnectionException {
         DataWarehouseConnection.getConnection().commit();
         DataWarehouseConnection.getConnection()
                 .prepareStatement("DETACH DATABASE '"+ EXTERNAL_URL+"'")
@@ -57,9 +62,9 @@ public abstract class Data  implements ETLProcess{
         DataWarehouseConnection.getConnection().setAutoCommit(true);
     }
 
-    public void extractTable(String newTable, String oldTable, String externalDB){
+    public void extractTable(String newTable, String oldTable, String externalDB) throws ConnectionException {
         try {
-            //reason???? --- stupids versions have differrent columns
+            //we need to check which columns are equals, because different versions of same browser change columns
             //get columns of newTable
             Connection datawarehouseConnection = DataWarehouseConnection.getConnection();
             Statement statement = datawarehouseConnection.createStatement();
@@ -89,10 +94,8 @@ public abstract class Data  implements ETLProcess{
                     .prepareStatement("INSERT INTO main." + newTable + " (" + columns + ") " +
                             "SELECT " + columns + " FROM " + externalDB + "." + oldTable)
                     .executeUpdate();
-        } catch (SQLException e) {
-            logger.warn("One table could't be extracted: " + oldTable + " - Reason: " + e.getMessage());
-            throw new ExtractionException("One table could't be extracted: " + oldTable + " - Reason: " + e.getMessage());
-
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new ExtractionException(getModuleName(), oldTable, "One table could't be extracted: " + e.getMessage());
         }
     }
 
@@ -107,7 +110,7 @@ public abstract class Data  implements ETLProcess{
     }
 
     @Override
-    public void deleteCleanTables()  {
+    public void deleteCleanTables() throws ConnectionException {
         try {
             Statement stmt = DataWarehouseConnection.getConnection().createStatement();
             stmt.execute("DELETE FROM t_clean_url;");
@@ -115,10 +118,9 @@ public abstract class Data  implements ETLProcess{
             stmt.execute("DELETE FROM t_clean_blocked_websites;");
             stmt.execute("DELETE FROM t_clean_emails;");
             stmt.execute("DELETE FROM t_clean_words;");
-        } catch (SQLException e) {
-            String error = "Error deleting clean tables - Reason:" + e.getSQLState();
-            logger.error(error);
-            throw new TransformationException(error);
+        } catch (SQLException | ClassNotFoundException e) {
+             throw new TransformationException(getModuleName(), "t_clean_","Error deleting clean tables - Reason:" + e.getMessage());
         }
     }
+    public abstract String getModuleName();
 }

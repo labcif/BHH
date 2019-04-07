@@ -1,6 +1,7 @@
 package main.pt.ipleiria.estg.dei;
 
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.User;
@@ -24,10 +25,7 @@ import java.io.*;
 import java.sql.SQLException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class BrowserHistoryReportModule implements GeneralReportModule {
 
@@ -50,7 +48,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
             reportData.put("isMostVisitedSitesEnabled", configPanel.isMostVisitedSitesEnabled());
             if(configPanel.isMostVisitedSitesEnabled()) {
-                List<Website> topMostVisited = DatasetRepository.getTopVisitedWebsite(10);
+                List<Website> topMostVisited = DatasetRepository.getInstance().getTopVisitedWebsite(10);
                 reportData.put("Title", "Most visited websites");
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(topMostVisited);
                 reportData.put("Visits", jrBeanCollectionDataSource);
@@ -58,20 +56,20 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
             reportData.put("isBlokedSitesEnabled", configPanel.isBlokedSitesEnabled());
             if(configPanel.isBlokedSitesEnabled()) {
-                List<Website> blockedWebsitesVisited = DatasetRepository.getBlockedWebsiteVisited();
+                List<Website> blockedWebsitesVisited = DatasetRepository.getInstance().getBlockedWebsiteVisited();
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(blockedWebsitesVisited);
                 reportData.put("Blocked", jrBeanCollectionDataSource);
             }
 
             reportData.put("isWordsSearchEnabled", configPanel.isWordsSearchEnabled());
             if(configPanel.isWordsSearchEnabled()) {
-                List<Word> wordUsed = DatasetRepository.getWordsUsed();
+                List<Word> wordUsed = DatasetRepository.getInstance().getWordsUsed();
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(wordUsed);
                 reportData.put("Words", jrBeanCollectionDataSource);
             }
 
             if(configPanel.isWordsSearchEnabled()) {
-                List<Email> emailsUsed = DatasetRepository.getEmailsUsed();
+                List<Email> emailsUsed = DatasetRepository.getInstance().getEmailsUsed();
                 JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(emailsUsed);
                 reportData.put("Emails", jrBeanCollectionDataSource);
             }
@@ -86,7 +84,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
            userNames.add("2140309");
            userNames.add("2141077");
            for (String nome: userNames ) {
-               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getTopVisitedWebsiteByUser(5, nome))));
+               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getTopVisitedWebsiteByUser(5, nome))));
            }
 
 
@@ -121,7 +119,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                 byteArrayOutputStream.writeTo(outputStream);
             }
 
-        } catch(IOException | GenerateReportException | SQLException | JRException e){
+        } catch(IOException | GenerateReportException | SQLException | JRException | ConnectionException | ClassNotFoundException e){
             IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BrowserHistoryReportModule.getDefault().getName(),"Failed to create report");
             IngestServices.getInstance().postMessage(message);
         }

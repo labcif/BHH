@@ -1,13 +1,22 @@
 
 package main.pt.ipleiria.estg.dei;
 
+import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
-import main.pt.ipleiria.estg.dei.events.EtlObserver;
-import main.pt.ipleiria.estg.dei.model.browsers.Browser;
+import main.pt.ipleiria.estg.dei.events.IngestModuleProgress;
+import main.pt.ipleiria.estg.dei.exceptions.BrowserHistoryIngestModuleExpection;
+import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
+import main.pt.ipleiria.estg.dei.exceptions.DatabaseInitializationException;
+import main.pt.ipleiria.estg.dei.exceptions.MigrationException;
+import main.pt.ipleiria.estg.dei.model.browsers.BlockedWebsites;
 import main.pt.ipleiria.estg.dei.model.browsers.Chrome;
 import main.pt.ipleiria.estg.dei.model.browsers.Firefox;
-import org.sleuthkit.autopsy.coreutils.Logger;
-import org.sleuthkit.autopsy.ingest.*;
+import main.pt.ipleiria.estg.dei.model.browsers.Module;
+import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.sleuthkit.autopsy.ingest.DataSourceIngestModule;
+import org.sleuthkit.autopsy.ingest.DataSourceIngestModuleProgress;
+import org.sleuthkit.autopsy.ingest.IngestJobContext;
+import org.sleuthkit.autopsy.ingest.IngestModule;
 import org.sleuthkit.datamodel.Content;
 
 import java.util.ArrayList;
@@ -15,8 +24,8 @@ import java.util.List;
 
 
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
-    private Logger logger = Logger.getLogger(BrowserHistoryIngestModuleFactory.getModuleName());
-    private List<Browser> browsersToRun;
+    private Logger logger = new Logger<>(BrowserHistoryDataSourceIngestModule.class);
+    private List<Module> modulesToRun;
 
 
     BrowserHistoryDataSourceIngestModule(BrowserHistoryModuleIngestJobSettings settings) {
@@ -24,25 +33,40 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
 
     @Override
     public void startUp(IngestJobContext context) {
-        DatabaseCreator.init();
-        browsersToRun = new ArrayList<>();
-        browsersToRun.add(new Chrome(context));
-        browsersToRun.add(new Firefox(context));
-
+        try {
+            DatabaseCreator.init();
+            modulesToRun = new ArrayList<>();
+            modulesToRun.add(new Chrome(context));
+            modulesToRun.add(new Firefox(context));
+            modulesToRun.add(new BlockedWebsites());
+        } catch (MigrationException e) {
+            logger.error("Migration couldn't be run. Please look at the logs for more information!");
+            throw new BrowserHistoryIngestModuleExpection(e.getMessage());
+        } catch (DatabaseInitializationException e) {
+            logger.error("Database couldn't be initialized. Please look at the logs for more information!");
+            throw new BrowserHistoryIngestModuleExpection(e.getMessage());
+        } catch (ConnectionException e) {
+            logger.error("Connection couldn't be established. Please look at the logs for more information!");
+            throw new BrowserHistoryIngestModuleExpection(e.getMessage());
+        }
     }
 
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
+        IngestModuleProgress.getInstance().init(dataSource, modulesToRun, progressBar);
 
-        browsersToRun.forEach(browser -> browser.events.subscribe("etl_process", new EtlObserver(progressBar, browsersToRun.size())));
-        browsersToRun.forEach(browser -> {
-                                            browser.run(dataSource);
-                                            browser.events.notify("etl_process");
-                                        });
+        modulesToRun.forEach(browser -> {
+            try {
+                browser.run(dataSource);
+            } catch (ConnectionException e) {
+                logger.error("Connection couldn't be established. Please look at the logs for more information!");
+                throw new BrowserHistoryIngestModuleExpection(e.getMessage());
+            }
+        });
 
+        IngestModuleProgress.getInstance().finishProgress();
+        DataWarehouseConnection.getInstance().closeConnection();
 
-        IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, "browser History","Done");
-        IngestServices.getInstance().postMessage(message);
         return IngestModule.ProcessResult.OK;
     }
 }

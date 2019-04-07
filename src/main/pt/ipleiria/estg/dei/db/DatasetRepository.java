@@ -14,25 +14,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DatasetRepository {
-    private static DatasetRepository datasetRepository = new DatasetRepository();
+    private static DatasetRepository datasetRepository;
     private Logger<DatasetRepository> logger = new Logger<>(DatasetRepository.class);
     private static Statement statement;
 
-    private DatasetRepository()  {
+    private DatasetRepository() throws ConnectionException {
         try {
             statement = DataWarehouseConnection.getConnection().createStatement();
-        } catch (SQLException e) {
+        } catch (SQLException | ClassNotFoundException e) {
             logger.error("Couldn't create statement - reason: " + e.getMessage());
             throw new ConnectionException("Couldn't create statement - reason: " + e.getMessage());
         }
     }
 
 
-    public DatasetRepository getInstance() {
+    public static DatasetRepository getInstance() throws ConnectionException {
+        if (datasetRepository == null) {
+            datasetRepository = new DatasetRepository();
+        }
         return datasetRepository;
     }
 
-    public static List<Website> getTopVisitedWebsite(int limit) throws SQLException {
+    public List<Website> getTopVisitedWebsite(int limit) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -50,9 +53,9 @@ public class DatasetRepository {
         return website;
     }
 
-    public static List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException {
+    public List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException, ConnectionException, ClassNotFoundException {
         List<Website> website = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+        Statement statement =  DataWarehouseConnection.getConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT url_domain, count (*) as total " +
@@ -70,7 +73,7 @@ public class DatasetRepository {
         return website;
     }
 
-    public static List<Website> getBlockedWebsiteVisited() throws SQLException {
+    public List<Website> getBlockedWebsiteVisited() throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -87,7 +90,7 @@ public class DatasetRepository {
         return website;
     }
 
-    public static List<Email> getEmailsUsed() throws SQLException {
+    public List<Email> getEmailsUsed() throws SQLException {
         List<Email> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -101,7 +104,7 @@ public class DatasetRepository {
         return emails;
     }
 
-    public static List<Word> getWordsUsed() throws SQLException {
+    public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(

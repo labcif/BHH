@@ -14,21 +14,41 @@ public final class DataWarehouseConnection {
     private static DataWarehouseConnection instance;
     private Logger<DataWarehouseConnection> logger = new Logger<>(DataWarehouseConnection.class);
 
-    private DataWarehouseConnection(){
+    private DataWarehouseConnection() throws ConnectionException {
         try {
-            Class.forName("org.sqlite.JDBC");
-            connection = DriverManager.getConnection(FULL_PATH_CONNECTION);
+            connect();
         } catch (SQLException | ClassNotFoundException e) {
             instance = null;
             logger.error("Connection to database failed - Reason: " + e.getMessage());
             throw new ConnectionException("Connection to database failed - Reason: " + e.getMessage());
         }
     }
+    private static void connect() throws SQLException, ClassNotFoundException {
+        Class.forName("org.sqlite.JDBC");
+        connection = DriverManager.getConnection(FULL_PATH_CONNECTION);
+    }
 
-    public static Connection getConnection() {
+    public static Connection getConnection() throws SQLException, ClassNotFoundException, ConnectionException {
         if (instance == null) {
             instance = new DataWarehouseConnection();
         }
+        if (connection.isClosed()) {
+            connect();
+        }
         return connection;
+    }
+
+    public static DataWarehouseConnection getInstance() {
+        return instance;
+    }
+
+    public void closeConnection() {
+        try {
+            connection.close();
+            instance = null;
+            connection = null;
+        } catch (SQLException e) {
+            logger.warn("Connection couldn't be closed: " + e.getMessage());
+        }
     }
 }

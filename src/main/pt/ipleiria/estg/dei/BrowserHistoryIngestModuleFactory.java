@@ -18,7 +18,7 @@ import org.sleuthkit.autopsy.ingest.*;
 public class BrowserHistoryIngestModuleFactory extends IngestModuleFactoryAdapter {
 
 
-    static String getModuleName() {
+    public static String getModuleName() {
         return NbBundle.getMessage(BrowserHistoryIngestModuleFactory.class, "BrowserHistoryIngestModuleFactory.moduleName");
     }
 

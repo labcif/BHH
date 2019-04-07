@@ -1,11 +1,6 @@
 package main.pt.ipleiria.estg.dei.model;
 
-import main.pt.ipleiria.estg.dei.model.Website;
-import main.pt.ipleiria.estg.dei.model.Word;
 import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-
-import java.util.List;
 
 public class User {
     private String name;
