@@ -3,6 +3,7 @@ package main.pt.ipleiria.estg.dei;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.model.Email;
+import main.pt.ipleiria.estg.dei.model.User;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
@@ -76,11 +77,22 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             }
 
 
-            
+
            //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
-           List<Website> topMostVisited = DatasetRepository.getTopVisitedWebsite(10);
-           JRDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(topMostVisited);
-           reportData.put("VisitsTesting", jrBeanCollectionDataSource);
+           List<User> usersVisitedSites = new ArrayList<>();
+           List<String> userNames = new ArrayList<>();
+           userNames.add("2130166");
+           userNames.add("2140402");
+           userNames.add("2140309");
+           userNames.add("2141077");
+           for (String nome: userNames ) {
+               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getTopVisitedWebsiteByUser(5, nome))));
+           }
+
+
+           JRDataSource jrBeanCollectionDataSource3 = new JRBeanCollectionDataSource(usersVisitedSites);
+           reportData.put("UserVisitsSubreport", jrBeanCollectionDataSource3);
+
 
             //Adding SubReport (most people online said that if you want to repeat an element / group of elements the best way is to place them in a subreport and pass the variables)
            InputStream templateFile2 = getClass().getResourceAsStream("/resources/template/user_graf.jrxml");

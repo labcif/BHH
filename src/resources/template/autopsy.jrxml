@@ -114,10 +114,7 @@
 	</subDataset>
 	<subDataset name="Graf_subreport" uuid="8ffb5b9b-7a53-4786-bd75-50d7bbaefa4c">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-		<property name="com.jaspersoft.studio.data.sql.tables">
-			<![CDATA[ZHVhbCAsMTUsMTUsNjBmNThlMzEtOTI4YS00NDc0LTg2YzYtNzU0ODA3MzVkNWMzOw==
-]]>
-		</property>
+		<property name="com.jaspersoft.studio.data.sql.tables" value="ZHVhbCAsMTUsMTUsNjBmNThlMzEtOTI4YS00NDc0LTg2YzYtNzU0ODA3MzVkNWMzOw=="/>
 		<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport"/>
 		<parameter name="VisitsTesting" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 		<queryString>
@@ -125,6 +122,16 @@
 		</queryString>
 		<field name="domain" class="java.lang.String"/>
 		<field name="visitCount" class="java.lang.Integer"/>
+	</subDataset>
+	<subDataset name="UserSites" uuid="0b0c45af-0d9b-438f-9ad7-7ab05420b749">
+		<parameter name="VisitsTesting2" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+		<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport"/>
+		<parameter name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="name" class="java.lang.String"/>
+		<field name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	</subDataset>
 	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Title" class="java.lang.String"/>
@@ -137,7 +144,7 @@
 	<parameter name="Frequency" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="Emails" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport"/>
-	<parameter name="VisitsTesting" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="UserVisitsSubreport" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -362,24 +369,26 @@
 				<text><![CDATA[Url Frequency]]></text>
 			</staticText>
 		</band>
-		<band height="302">
+		<band height="385">
 			<componentElement>
-				<reportElement positionType="Float" stretchType="ContainerHeight" x="12" y="20" width="530" height="260" uuid="dd0b9647-e73d-45fc-930c-740a2f1955dc"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
-					<datasetRun subDataset="Graf_subreport" uuid="cd6a6625-26cf-41eb-9f23-78d1177cc935">
-						<datasetParameter name="VisitsTesting">
-							<datasetParameterExpression><![CDATA[$P{VisitsTesting}]]></datasetParameterExpression>
-						</datasetParameter>
+				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="10" y="20" width="540" height="270" forecolor="#FFFFFF" uuid="93210bf6-88d5-478a-8a20-ed19cc654fae">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+					<datasetRun subDataset="UserSites" uuid="d67d7018-8513-47cb-b465-6575abc02958">
 						<datasetParameter name="subReport">
 							<datasetParameterExpression><![CDATA[$P{subReport}]]></datasetParameterExpression>
 						</datasetParameter>
-						<dataSourceExpression><![CDATA[$P{VisitsTesting}]]></dataSourceExpression>
+						<datasetParameter name="VisitsTesting2">
+							<datasetParameterExpression><![CDATA[$P{UserVisitsSubreport}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[$P{UserVisitsSubreport}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="260" width="530">
+					<jr:listContents height="270" width="540">
 						<subreport>
-							<reportElement stretchType="ContainerHeight" x="30" y="10" width="470" height="200" uuid="b41fd3f9-c1c1-46f4-bbd8-e683d80cfc99"/>
-							<subreportParameter name="VisitsTesting">
-								<subreportParameterExpression><![CDATA[$P{VisitsTesting}]]></subreportParameterExpression>
+							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="11" y="11" width="520" height="250" uuid="465a7797-ac90-4a6d-bb26-ab3b198a70c0"/>
+							<subreportParameter name="userWebsites">
+								<subreportParameterExpression><![CDATA[$F{userWebsites}]]></subreportParameterExpression>
 							</subreportParameter>
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>

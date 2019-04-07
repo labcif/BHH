@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="925a4c70-6274-4715-a31d-fb20f37d5c50">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="Blank_A4" pageWidth="520" pageHeight="250" orientation="Landscape" whenNoDataType="AllSectionsNoDetail" columnWidth="480" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" whenResourceMissingType="Error" uuid="925a4c70-6274-4715-a31d-fb20f37d5c50">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-	<subDataset name="Chart" uuid="0667fc7a-d738-4104-828b-d7b0d151fddd">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-		<field name="domain" class="java.lang.String"/>
-		<field name="visitCount" class="java.lang.Integer"/>
-	</subDataset>
+	<property name="net.sf.jasperreports.print.create.bookmarks" value="true"/>
 	<subDataset name="Graf_subreport" uuid="47d62753-014f-4a9a-813d-fbcab6e364a5">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -20,23 +14,22 @@
 		<field name="domain" class="java.lang.String"/>
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
-	<parameter name="Visits" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
-	<parameter name="VisitsTesting" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<field name="domain" class="java.lang.String"/>
 	<field name="visitCount" class="java.lang.Integer"/>
 	<title>
-		<band height="280">
+		<band height="209">
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement stretchType="ContainerHeight" x="90" y="60" width="391" height="200" isPrintInFirstWholeBand="true" uuid="317ad7ba-36d7-47bc-af9d-0e1e9b83a4f6"/>
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="0" y="10" width="480" height="199" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
 				</chart>
 				<categoryDataset>
 					<dataset>
-						<datasetRun subDataset="Graf_subreport" uuid="69a5958b-f9ea-4a18-8e97-7cea74b75a9c">
-							<dataSourceExpression><![CDATA[$P{VisitsTesting}]]></dataSourceExpression>
+						<datasetRun subDataset="Graf_subreport" uuid="ac21e36e-1e19-4913-bffb-97784aaa783a">
+							<dataSourceExpression><![CDATA[$P{userWebsites}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
 					<categorySeries>
@@ -62,7 +55,7 @@
 				</barPlot>
 			</barChart>
 			<staticText>
-				<reportElement x="150" y="20" width="260" height="20" uuid="fd7a2f14-736b-4b85-b927-b0cafc6b013f"/>
+				<reportElement x="120" y="-10" width="218" height="20" uuid="fd7a2f14-736b-4b85-b927-b0cafc6b013f"/>
 				<textElement textAlignment="Center">
 					<font size="14"/>
 				</textElement>

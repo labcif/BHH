@@ -50,6 +50,26 @@ public class DatasetRepository {
         return website;
     }
 
+    public static List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException {
+        List<Website> website = new ArrayList<>();
+        Statement statement =  DataWarehouseConnection.getDatawarehouseConnection().createStatement();
+
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_domain, count (*) as total " +
+                        "FROM t_clean_url " +
+                        "where url_user_origin  = '" + userName + "'"   +
+                        "group by url_domain " +
+                        "order by count (*) desc " +
+                        "limit " + limit);
+
+        while (rs.next()) {
+            String domain = rs.getString("url_domain");
+            int visitNumber = Integer.parseInt(rs.getString("total"));
+            website.add(new Website(domain, visitNumber));
+        }
+        return website;
+    }
+
     public static List<Website> getBlockedWebsiteVisited() throws SQLException {
         List<Website> website = new ArrayList<>();
 
