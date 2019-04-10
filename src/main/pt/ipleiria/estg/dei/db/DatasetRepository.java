@@ -129,7 +129,8 @@ public class DatasetRepository {
                 "SELECT  word, count(word) as times_used " +
                         " FROM t_clean_words " +
                         " group by word " +
-                        " order by times_used desc ");
+                        " order by times_used desc " +
+                        " limit 10 ");
 
         while (rs.next()) {
             words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));
