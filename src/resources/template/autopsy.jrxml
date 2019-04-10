@@ -124,9 +124,18 @@
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
 	<subDataset name="UserSites" uuid="0b0c45af-0d9b-438f-9ad7-7ab05420b749">
-		<parameter name="VisitsTesting2" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+		<parameter name="UserVisitsSubreport" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 		<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport"/>
 		<parameter name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+		<parameter name="UserBlockedSubreport_" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="name" class="java.lang.String"/>
+		<field name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	</subDataset>
+	<subDataset name="UsersList" uuid="e3a37a0c-6e79-4d94-87fc-020df6703ba0">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
 			<![CDATA[]]>
 		</queryString>
@@ -145,6 +154,8 @@
 	<parameter name="Emails" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="subReport" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="UserVisitsSubreport" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="UsersList" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="UserBlockedSubreport" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -153,46 +164,295 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="85" splitType="Stretch">
+		<band height="50" splitType="Stretch"/>
+	</title>
+	<detail>
+		<band height="672">
+			<staticText>
+				<reportElement x="-1" y="30" width="555" height="30" uuid="260e9f76-8e8a-42db-b005-0ea9d204109b"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[Report History]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="60" width="555" height="40" uuid="6446247b-1077-4b0e-b077-2e30115be057"/>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="24"/>
+				</textElement>
+				<text><![CDATA[Informatic Engineering]]></text>
+			</staticText>
 			<textField pattern="EEE, d MMM yyyy HH:mm:ss Z">
-				<reportElement x="335" y="48" width="220" height="20" uuid="d19284d7-75b6-459a-ae24-8db27a80e3d2"/>
-				<textElement textAlignment="Right">
-					<font size="14"/>
+				<reportElement x="3" y="610" width="554" height="30" uuid="d19284d7-75b6-459a-ae24-8db27a80e3d2"/>
+				<textElement textAlignment="Center">
+					<font size="16"/>
 				</textElement>
 				<textFieldExpression><![CDATA[new java.util.Date()]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="300" y="29" width="255" height="20" uuid="2d523066-8538-461a-803f-aa7df7e69614"/>
-				<textElement textAlignment="Right">
-					<font size="14"/>
+				<reportElement x="80" y="250" width="401" height="40" uuid="c8ba3026-f57b-4302-b4e1-6143cd04bd52"/>
+				<box>
+					<pen lineWidth="0.0"/>
+					<bottomPen lineWidth="1.5" lineColor="#ADD8E6"/>
+				</box>
+				<textElement textAlignment="Center">
+					<font fontName="Serif" size="30"/>
 				</textElement>
-				<text><![CDATA[Report Module - Browser History]]></text>
+				<text><![CDATA[Digital Forensics Investigation]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="360" width="180" height="30" uuid="a9310f6b-7fa5-40c3-b957-62e171cf3b8e"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[Analised Users:]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="120" y="400" width="190" height="30" uuid="fda1e794-c496-4c49-8d30-da32c4cb049e">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="UsersList" uuid="715f9e62-3ab1-421e-94c4-b9f64ab23ea7">
+						<dataSourceExpression><![CDATA[$P{UsersList}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="190" uuid="88ce0044-6bd6-48d6-948e-da8c16067558">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:detailCell height="30">
+							<textField>
+								<reportElement x="0" y="0" width="190" height="30" uuid="8a42ee7c-122f-45c6-90e9-885a44fab9f6"/>
+								<textElement textAlignment="Left">
+									<font size="18"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+			<break>
+				<reportElement x="0" y="671" width="555" height="1" uuid="cf4dacd0-45cd-4ffd-beb2-22bb0147cbb8"/>
+			</break>
+		</band>
+		<band height="182">
+			<property name="com.jaspersoft.studio.layout"/>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="30" width="555" height="60" uuid="95e01ed2-681c-4642-a212-6f2b7f66a0e8"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[1 - Report History]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="90" width="562" height="90" uuid="7d4afef3-cd97-4e90-b242-caa895563a02"/>
+				<box leftPadding="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="16"/>
+				</textElement>
+				<text><![CDATA[	    The equipment analyzed was a "Desktop computer"  ID:  A.PC03.
+	    Was made a copy of the hard drive and later proceeded the forensics analysis of the information available on the browser's history. 					    	    The operations done were:]]></text>
 			</staticText>
 		</band>
-	</title>
-	<detail>
-		<band height="295">
+		<band height="183">
 			<staticText>
-				<reportElement positionType="Float" x="158" y="20" width="255" height="20" uuid="ce720a72-ded6-40f6-a26a-8d8acd136fb8">
-					<printWhenExpression><![CDATA[$P{isBlokedSitesEnabled}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14"/>
+				<reportElement positionType="Float" x="-1" y="0" width="555" height="60" uuid="7b83f7c5-9d24-4cdd-950d-0724d00d181b"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
 				</textElement>
-				<text><![CDATA[Blocked Sites]]></text>
+				<text><![CDATA[2 - Emails found]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-1" y="60" width="562" height="30" uuid="5eaff89a-a43c-4553-be7c-ec9a73d82e53"/>
+				<box leftPadding="20"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="16"/>
+				</textElement>
+				<text><![CDATA[	    The analysed historie showed the following Emails:]]></text>
+			</staticText>
+			<componentElement>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="35" y="110" width="490" height="60" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
+					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
+					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
+					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
+					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
+					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
+				</reportElement>
+				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
+					<datasetRun subDataset="Emails" uuid="0e965368-6c50-43c4-b35f-0bca8ef1ae60">
+						<dataSourceExpression><![CDATA[$P{Emails}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:column width="210" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="210" height="30" backcolor="#BCF5DC" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
+								<textElement textAlignment="Center">
+									<font fontName="SansSerif" size="20"/>
+								</textElement>
+								<text><![CDATA[Email]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="210" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
+								<box leftPadding="15"/>
+								<textElement>
+									<font fontName="Serif" size="16"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="280" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="280" height="30" backcolor="#BCF5DC" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
+								<textElement textAlignment="Center">
+									<font fontName="SansSerif" size="20"/>
+								</textElement>
+								<text><![CDATA[Source]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField>
+								<reportElement x="0" y="0" width="280" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
+								<box leftPadding="15">
+									<leftPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font fontName="Serif" size="16"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+				</jr:table>
+			</componentElement>
+		</band>
+		<band height="672">
+			<componentElement>
+				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="5" y="380" width="551" height="270" forecolor="#FFFFFF" uuid="93210bf6-88d5-478a-8a20-ed19cc654fae">
+					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
+				</reportElement>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
+					<datasetRun subDataset="UserSites" uuid="26cb1b83-a5a1-4f9e-b0e0-5790ffea528a">
+						<datasetParameter name="subReport">
+							<datasetParameterExpression><![CDATA[$P{subReport}]]></datasetParameterExpression>
+						</datasetParameter>
+						<datasetParameter name="UserVisitsSubreport">
+							<datasetParameterExpression><![CDATA[$P{UserVisitsSubreport}]]></datasetParameterExpression>
+						</datasetParameter>
+						<dataSourceExpression><![CDATA[$P{UserVisitsSubreport}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="270" width="551">
+						<subreport>
+							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="11" y="11" width="520" height="250" isRemoveLineWhenBlank="true" uuid="465a7797-ac90-4a6d-bb26-ab3b198a70c0"/>
+							<subreportParameter name="userWebsites">
+								<subreportParameterExpression><![CDATA[$F{userWebsites}]]></subreportParameterExpression>
+							</subreportParameter>
+							<subreportParameter name="userName">
+								<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
+							</subreportParameter>
+							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
+						</subreport>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="60" uuid="994fdc5d-c9d2-4948-8c03-c94fb446923f"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[3 - Visited Websites]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="6d14cf0f-5893-494a-8060-e63ecf38c944"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
+				</textElement>
+				<text><![CDATA[3.1 - Visited Websites - Total Visit Count ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="-1" y="320" width="555" height="60" uuid="c8fb6088-c69d-4acc-bb5d-3a62e71659d0"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
+				</textElement>
+				<text><![CDATA[3.2 - Visited Websites - Visits by User]]></text>
 			</staticText>
 			<barChart>
-				<chart evaluationTime="Report">
-					<reportElement positionType="FixRelativeToBottom" stretchType="ContainerBottom" x="90" y="70" width="391" height="200" uuid="79643d63-0ad8-4170-b2ec-aa2bd47edca4">
-						<printWhenExpression><![CDATA[$P{isBlokedSitesEnabled}]]></printWhenExpression>
-					</reportElement>
+				<chart isShowLegend="false" evaluationTime="Report" theme="default">
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="10422738-f2f6-4eef-8acd-2c8a13806e71"/>
 					<chartTitle/>
 					<chartSubtitle/>
-					<chartLegend position="Bottom"/>
+					<chartLegend/>
 				</chart>
 				<categoryDataset>
 					<dataset>
-						<datasetRun subDataset="BlockedWebSitesChart" uuid="c1c51e6e-21de-410e-9c43-a76ff9a99c36">
+						<datasetRun subDataset="Chart" uuid="6d974e85-abea-4f88-9306-c4be08b25f6b">
+							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
+						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
+						<seriesColor seriesOrder="0" color="#5494D1"/>
+						<seriesColor seriesOrder="1" color="#5494D1"/>
+						<seriesColor seriesOrder="2" color="#5494D1"/>
+					</plot>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="35.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
+		</band>
+		<band height="644">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="60" isRemoveLineWhenBlank="true" uuid="31e14af3-9e21-48c8-8551-26347491a814"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[4 - Blocked Websites]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="24e699c6-29d8-4b78-8d72-58d843339a3d"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
+				</textElement>
+				<text><![CDATA[4.1 - Blocked Websites - Total Visit Count ]]></text>
+			</staticText>
+			<barChart>
+				<chart isShowLegend="false" evaluationTime="Report" theme="default">
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="83acf90d-ce91-457c-8f7a-e0d0eb52f855"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="BlockedWebSitesChart" uuid="d961ff5c-d593-44f7-bd76-b6f89ffc52d7">
 							<dataSourceExpression><![CDATA[$P{Blocked}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
@@ -204,9 +464,13 @@
 					</categorySeries>
 				</categoryDataset>
 				<barPlot>
-					<plot/>
+					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
+						<seriesColor seriesOrder="0" color="#5494D1"/>
+						<seriesColor seriesOrder="1" color="#5494D1"/>
+						<seriesColor seriesOrder="2" color="#5494D1"/>
+					</plot>
 					<itemLabel/>
-					<categoryAxisFormat>
+					<categoryAxisFormat labelRotation="35.0">
 						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
 					</categoryAxisFormat>
 					<valueAxisFormat>
@@ -214,181 +478,36 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
-		</band>
-		<band height="231">
-			<componentElement>
-				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="40" y="50" width="490" height="160" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-					<datasetRun subDataset="Emails" uuid="0e965368-6c50-43c4-b35f-0bca8ef1ae60">
-						<dataSourceExpression><![CDATA[$P{Emails}]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="245" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="245" height="30" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
-								<text><![CDATA[Email]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="245" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
-								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="245" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
-						<jr:tableHeader style="Table_TH" height="30" rowSpan="1"/>
-						<jr:tableFooter style="Table_TH" height="30" rowSpan="1"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement x="0" y="0" width="245" height="30" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
-								<text><![CDATA[Source]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30" rowSpan="1"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="245" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
-								<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
 			<staticText>
-				<reportElement positionType="Float" x="150" y="20" width="255" height="20" uuid="66a7e028-094b-4fba-833c-d34e712a08a9"/>
-				<textElement textAlignment="Center">
-					<font size="14"/>
+				<reportElement positionType="Float" x="0" y="310" width="555" height="60" uuid="d24a461f-593e-4d23-92cb-dad69252ee0e"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
 				</textElement>
-				<text><![CDATA[Emails Used by the User]]></text>
+				<text><![CDATA[4.2 -  Blocked Websites - Visits by User]]></text>
 			</staticText>
-		</band>
-		<band height="240">
 			<componentElement>
-				<reportElement positionType="Float" stretchType="ContainerBottom" x="32" y="70" width="490" height="170" uuid="3addd31d-0cb3-40a9-aa50-d9038336949b">
-					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
-					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
-					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
-					<property name="com.jaspersoft.studio.table.style.detail" value="Table_TD"/>
-					<property name="com.jaspersoft.studio.components.autoresize.proportional" value="true"/>
-					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
-					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
-				</reportElement>
-				<jr:table xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" whenNoDataType="Blank">
-					<datasetRun subDataset="FrequencyTable" uuid="a5a126d5-7e6a-43c3-8fbb-fb56f0d8dcca">
-						<dataSourceExpression><![CDATA[$P{Frequency}]]></dataSourceExpression>
-					</datasetRun>
-					<jr:column width="124" uuid="ed726b88-04dc-45c2-8909-90351006ff61">
-						<jr:tableHeader style="Table_TH" height="30"/>
-						<jr:tableFooter style="Table_TH" height="30"/>
-						<jr:columnHeader style="Table_CH" height="30">
-							<staticText>
-								<reportElement x="0" y="0" width="124" height="30" uuid="320e40f8-fcfd-4d2f-ad15-caf03025c102"/>
-								<text><![CDATA[domain]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="124" height="30" uuid="ec803b4e-d237-405a-8413-9d785d5783e3"/>
-								<textFieldExpression><![CDATA[$F{domain}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="124" uuid="114d87f6-1468-4438-96b2-050667f93a64">
-						<jr:tableHeader style="Table_TH" height="30"/>
-						<jr:tableFooter style="Table_TH" height="30"/>
-						<jr:columnHeader style="Table_CH" height="30">
-							<staticText>
-								<reportElement x="0" y="0" width="124" height="30" uuid="4c6bec2c-2f9b-4d71-a5cb-51fd2d258969"/>
-								<text><![CDATA[frequency]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="124" height="30" uuid="f6f60899-3f28-436a-8039-35ded4331c66"/>
-								<textFieldExpression><![CDATA[$F{frequency}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="121" uuid="551a597b-37ac-4dbe-9b87-0439ee139de8">
-						<jr:tableHeader style="Table_TH" height="30"/>
-						<jr:tableFooter style="Table_TH" height="30"/>
-						<jr:columnHeader style="Table_CH" height="30">
-							<staticText>
-								<reportElement x="0" y="0" width="121" height="30" uuid="9d29085c-5657-43c2-a8c7-a7a5de63fdbb"/>
-								<text><![CDATA[totalDaysVisited]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="121" height="30" uuid="f8b33536-3821-4cae-871e-cdfb043694db"/>
-								<textFieldExpression><![CDATA[$F{totalDaysVisited}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="121" uuid="966a2239-d6d0-4815-8d90-8c9638f2e90e">
-						<jr:tableHeader style="Table_TH" height="30"/>
-						<jr:tableFooter style="Table_TH" height="30"/>
-						<jr:columnHeader style="Table_CH" height="30">
-							<staticText>
-								<reportElement x="0" y="0" width="121" height="30" uuid="8cc323d2-e7a3-47d7-936a-dc57c61dbfa5"/>
-								<text><![CDATA[totalDaysDB]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:columnFooter style="Table_CH" height="30"/>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="121" height="30" uuid="79602d88-c918-4fbf-8549-6481304d6e4c"/>
-								<textFieldExpression><![CDATA[$F{totalDaysDB}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-				</jr:table>
-			</componentElement>
-			<staticText>
-				<reportElement x="149" y="20" width="255" height="20" uuid="d693e76c-07be-4cc9-97d8-eb9da68e6646">
-					<printWhenExpression><![CDATA[$P{isDomainDailyVisitsEnabled}]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Center">
-					<font size="14"/>
-				</textElement>
-				<text><![CDATA[Url Frequency]]></text>
-			</staticText>
-		</band>
-		<band height="385">
-			<componentElement>
-				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="10" y="20" width="540" height="270" forecolor="#FFFFFF" uuid="93210bf6-88d5-478a-8a20-ed19cc654fae">
+				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="2" y="370" width="551" height="270" forecolor="#FFFFFF" uuid="6cf1fb3c-7d89-4c20-bbef-6fd8aca311a5">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
-					<datasetRun subDataset="UserSites" uuid="d67d7018-8513-47cb-b465-6575abc02958">
+					<datasetRun subDataset="UserSites" uuid="4cdb4535-256f-4942-8aa1-96388ae6f0cd">
 						<datasetParameter name="subReport">
 							<datasetParameterExpression><![CDATA[$P{subReport}]]></datasetParameterExpression>
 						</datasetParameter>
-						<datasetParameter name="VisitsTesting2">
-							<datasetParameterExpression><![CDATA[$P{UserVisitsSubreport}]]></datasetParameterExpression>
+						<datasetParameter name="UserBlockedSubreport_">
+							<datasetParameterExpression><![CDATA[$P{UserBlockedSubreport}]]></datasetParameterExpression>
 						</datasetParameter>
-						<dataSourceExpression><![CDATA[$P{UserVisitsSubreport}]]></dataSourceExpression>
+						<dataSourceExpression><![CDATA[$P{UserBlockedSubreport}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:listContents height="270" width="540">
+					<jr:listContents height="270" width="551">
 						<subreport>
-							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="11" y="11" width="520" height="250" uuid="465a7797-ac90-4a6d-bb26-ab3b198a70c0"/>
+							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="11" y="11" width="520" height="250" isRemoveLineWhenBlank="true" uuid="82622eb4-0930-4ab3-9013-7053f3d84b43"/>
 							<subreportParameter name="userWebsites">
 								<subreportParameterExpression><![CDATA[$F{userWebsites}]]></subreportParameterExpression>
+							</subreportParameter>
+							<subreportParameter name="userName">
+								<subreportParameterExpression><![CDATA[$F{name}]]></subreportParameterExpression>
 							</subreportParameter>
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
@@ -396,6 +515,59 @@
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
+		</band>
+		<band height="318">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="60" isRemoveLineWhenBlank="true" uuid="e338e00e-3969-4c9c-b665-acfd386a565c"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[5 - Most Searched Words (Google)]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="dccd57dc-c0c7-4957-a351-ade082d6e6b7"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
+				</textElement>
+				<text><![CDATA[5.1 - Most Searched Words - Total for all users]]></text>
+			</staticText>
+			<barChart>
+				<chart isShowLegend="false" evaluationTime="Report" theme="default">
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="9b0faf66-75d9-4546-921c-fc5e47ad19ce"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="Words" uuid="6f344734-c222-48f8-9057-c622a6dbcaea">
+							<dataSourceExpression><![CDATA[$P{Words}]]></dataSourceExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{description}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{description}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{useCount}]]></valueExpression>
+						<labelExpression><![CDATA[$F{description}]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
+						<seriesColor seriesOrder="0" color="#5494D1"/>
+						<seriesColor seriesOrder="1" color="#5494D1"/>
+						<seriesColor seriesOrder="2" color="#5494D1"/>
+					</plot>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="35.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
 		</band>
 	</detail>
 	<pageFooter>

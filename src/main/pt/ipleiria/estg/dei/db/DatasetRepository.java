@@ -53,9 +53,8 @@ public class DatasetRepository {
         return website;
     }
 
-    public List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException, ConnectionException, ClassNotFoundException {
+    public List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException {
         List<Website> website = new ArrayList<>();
-        Statement statement =  DataWarehouseConnection.getConnection().createStatement();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT url_domain, count (*) as total " +
@@ -89,6 +88,25 @@ public class DatasetRepository {
         }
         return website;
     }
+    
+    public List<Website> getBlockedWebsiteVisited(int limit, String userName) throws SQLException {
+        List<Website> website = new ArrayList<>();
+
+        ResultSet rs = statement.executeQuery(
+                " SELECT url_domain, count(*) as total " +
+                        " FROM t_clean_url " +
+                        " WHERE url_domain IN (SELECT DOMAIN " +
+                        "                       FROM t_clean_blocked_websites) " +
+                        " and url_user_origin  = '" + userName + "'"   +
+                        " group by url_domain " +
+                        " order by total desc " +
+                        " limit " + limit);
+
+        while (rs.next()) {
+            website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
+        }
+        return website;
+    }
 
     public List<Email> getEmailsUsed() throws SQLException {
         List<Email> emails = new ArrayList<>();
@@ -109,8 +127,9 @@ public class DatasetRepository {
 
         ResultSet rs = statement.executeQuery(
                 "SELECT  word, count(word) as times_used " +
-                        "FROM t_clean_words " +
-                        "group by word ");
+                        " FROM t_clean_words " +
+                        " group by word " +
+                        " order by times_used desc ");
 
         while (rs.next()) {
             words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));

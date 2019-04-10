@@ -78,24 +78,36 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
            //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
            List<User> usersVisitedSites = new ArrayList<>();
+           List<User> usersBlockedSites = new ArrayList<>();
+           
            List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
            for (String nome: userNames ) {
-               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getTopVisitedWebsiteByUser(5, nome))));
+               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome))));
+               usersBlockedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome))));
            }
-
-
+           
+           //Temporary prob there is a way to show a list of string with no class associated
+           JRDataSource userList = new JRBeanCollectionDataSource(usersVisitedSites);
+           reportData.put("UsersList", userList);
+           
+           
+           //Visited Subreport List (by user) 
            JRDataSource jrBeanCollectionDataSource3 = new JRBeanCollectionDataSource(usersVisitedSites);
            reportData.put("UserVisitsSubreport", jrBeanCollectionDataSource3);
+           
+           //Blocked Subreport List (by user)       
+           JRDataSource userBlockedList = new JRBeanCollectionDataSource(usersBlockedSites);
+           reportData.put("UserBlockedSubreport", userBlockedList);
 
+           
+           
+           
 
             //Adding SubReport (most people online said that if you want to repeat an element / group of elements the best way is to place them in a subreport and pass the variables)
            InputStream templateFile2 = getClass().getResourceAsStream("/resources/template/user_graf.jrxml");
            JasperReport subReport = JasperCompileManager.compileReport(templateFile2);
            reportData.put("subReport", subReport);
-
-
-
 
 
             generator.setReportData(reportData);
@@ -116,7 +128,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
                 byteArrayOutputStream.writeTo(outputStream);
             }
 
-        } catch(IOException | GenerateReportException | SQLException | JRException | ConnectionException | ClassNotFoundException e){
+        } catch(IOException | GenerateReportException | SQLException | JRException | ConnectionException e){
             IngestMessage message = IngestMessage.createMessage( IngestMessage.MessageType.INFO, BrowserHistoryReportModule.getDefault().getName(),"Failed to create report");
             IngestServices.getInstance().postMessage(message);
         }

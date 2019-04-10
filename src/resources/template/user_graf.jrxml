@@ -15,13 +15,14 @@
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
 	<parameter name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="userName" class="java.lang.String"/>
 	<field name="domain" class="java.lang.String"/>
 	<field name="visitCount" class="java.lang.Integer"/>
 	<title>
-		<band height="209">
+		<band height="210">
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="0" y="10" width="480" height="199" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7"/>
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="0" y="0" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7"/>
 					<chartTitle/>
 					<chartSubtitle/>
 					<chartLegend/>
@@ -54,12 +55,19 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
-			<staticText>
-				<reportElement x="120" y="-10" width="218" height="20" uuid="fd7a2f14-736b-4b85-b927-b0cafc6b013f"/>
+			<textField>
+				<reportElement x="0" y="180" width="480" height="30" uuid="ec803b4e-d237-405a-8413-9d785d5783e3"/>
 				<textElement textAlignment="Center">
-					<font size="14"/>
+					<font size="20"/>
 				</textElement>
-				<text><![CDATA[Most Visited Sites]]></text>
+				<textFieldExpression><![CDATA[$P{userName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="180" width="100" height="30" uuid="1108029b-0a83-479d-850f-4d2bcd7f3a9d"/>
+				<textElement>
+					<font size="20"/>
+				</textElement>
+				<text><![CDATA[User:]]></text>
 			</staticText>
 		</band>
 	</title>
