@@ -9,9 +9,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.sleuthkit.datamodel.Content;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.sql.PreparedStatement;
@@ -23,6 +21,11 @@ import java.util.Set;
 
 public class BlockedWebsites extends Module implements ETLProcess {
     Logger<BlockedWebsites> logger = new Logger<>(BlockedWebsites.class);
+    private String chosenFile;
+
+    public BlockedWebsites(String chosenFile) {
+        this.chosenFile = chosenFile;
+    }
 
     @Override
     public void run(Content dataSource) throws ConnectionException {
@@ -33,12 +36,11 @@ public class BlockedWebsites extends Module implements ETLProcess {
         logger.info("[" + getModuleName() +"] - Finished");
     }
 
-
-
     @Override
     public void extractAllTables() throws ConnectionException {
         try {
-            Set<String> urlSet = readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json").keySet();
+            Set<String> urlSet = chosenFile != null ? parseCSVFile(chosenFile).keySet() : readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json").keySet();
+
             PreparedStatement preparedStatement = DataWarehouseConnection
                     .getConnection().prepareStatement("INSERT INTO main.t_ext_blocked_websites (domain) VALUES (?)");
 
@@ -82,6 +84,7 @@ public class BlockedWebsites extends Module implements ETLProcess {
     @Override
     public void deleteCleanTables() {
     }
+
     public HashMap readJsonFromUrl(String url) throws IOException, JSONException {
         String jsonText = getLockedWebsites(url);
         JSONObject json = new JSONObject(jsonText);
@@ -103,6 +106,23 @@ public class BlockedWebsites extends Module implements ETLProcess {
         }
 
         return result.toString();
+    }
+
+    public HashMap parseCSVFile(String csvFile) throws IOException {
+
+        String line;
+        HashMap blockedSites = new HashMap();
+        String[] webSite;
+
+        try(BufferedReader buffer = new BufferedReader(new FileReader(csvFile))) {
+
+            while ((line = buffer.readLine()) != null) {
+                webSite = line.split(",");
+                blockedSites.put(webSite[0],webSite[0]);
+            }
+
+        }
+        return blockedSites;
     }
 
     private HashMap parseFile(JSONObject json) throws JSONException {

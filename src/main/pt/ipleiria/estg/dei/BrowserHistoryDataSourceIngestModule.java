@@ -26,9 +26,10 @@ import java.util.List;
 class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
     private Logger logger = new Logger<>(BrowserHistoryDataSourceIngestModule.class);
     private List<Module> modulesToRun;
-
+    private String chosenFile;
 
     BrowserHistoryDataSourceIngestModule(BrowserHistoryModuleIngestJobSettings settings) {
+        this.chosenFile = settings.getFileChoosed();
     }
 
     @Override
@@ -38,7 +39,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             modulesToRun = new ArrayList<>();
             modulesToRun.add(new Chrome(context));
             modulesToRun.add(new Firefox(context));
-            modulesToRun.add(new BlockedWebsites());
+            modulesToRun.add(new BlockedWebsites(chosenFile));
         } catch (MigrationException e) {
             logger.error("Migration couldn't be run. Please look at the logs for more information!");
             throw new BrowserHistoryIngestModuleExpection(e.getMessage());
