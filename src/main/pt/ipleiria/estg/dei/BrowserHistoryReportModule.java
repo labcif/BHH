@@ -79,12 +79,20 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
            //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
            List<User> usersVisitedSites = new ArrayList<>();
            List<User> usersBlockedSites = new ArrayList<>();
-           
+           List<Website> topVisitedWebsiteByUser;
+           List<Website> blockedWebsiteVisited;
+
            List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
            for (String nome: userNames ) {
-               usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome))));
-               usersBlockedSites.add(new User(nome, new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome))));
+              topVisitedWebsiteByUser = DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome);
+               blockedWebsiteVisited = DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome);
+               if(!topVisitedWebsiteByUser.isEmpty()){
+                   usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(topVisitedWebsiteByUser)));
+               }
+               if(!blockedWebsiteVisited.isEmpty()) {
+                   usersBlockedSites.add(new User(nome, new JRBeanCollectionDataSource(blockedWebsiteVisited)));
+               }
            }
            
            //Temporary prob there is a way to show a list of string with no class associated
