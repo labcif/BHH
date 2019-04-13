@@ -3,10 +3,7 @@ package main.pt.ipleiria.estg.dei;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
-import main.pt.ipleiria.estg.dei.model.Email;
-import main.pt.ipleiria.estg.dei.model.User;
-import main.pt.ipleiria.estg.dei.model.Website;
-import main.pt.ipleiria.estg.dei.model.Word;
+import main.pt.ipleiria.estg.dei.model.*;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.JRDataSource;
@@ -75,7 +72,6 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             }
 
 
-
            //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
            List<User> usersVisitedSites = new ArrayList<>();
            List<User> usersBlockedSites = new ArrayList<>();
@@ -108,9 +104,8 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
            JRDataSource userBlockedList = new JRBeanCollectionDataSource(usersBlockedSites);
            reportData.put("UserBlockedSubreport", userBlockedList);
 
-           
-           
-           
+
+
 
             //Adding SubReport (most people online said that if you want to repeat an element / group of elements the best way is to place them in a subreport and pass the variables)
            InputStream templateFile2 = getClass().getResourceAsStream("/resources/template/user_graf.jrxml");

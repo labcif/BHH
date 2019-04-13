@@ -6,6 +6,7 @@ import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.sleuthkit.autopsy.coreutils.Version;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class DatasetRepository {
     private static DatasetRepository datasetRepository;
@@ -128,17 +130,19 @@ public class DatasetRepository {
 
     public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
-
         ResultSet rs = statement.executeQuery(
-                "SELECT  word, count(word) as times_used " +
+                " SELECT  word, count(word) as times_used " +
                         " FROM t_clean_words " +
+                        " WHERE trim(upper(word)) not IN (SELECT trim(upper(word)) " +
+                        "                     FROM t_clean_stop_words) " +
                         " group by word " +
                         " order by times_used desc " +
-                        " limit 10 ");
+                        " limit 10  ");
 
         while (rs.next()) {
             words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));
         }
+
         return words;
     }
 
