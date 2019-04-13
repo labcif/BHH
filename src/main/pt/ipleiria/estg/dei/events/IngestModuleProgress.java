@@ -41,7 +41,7 @@ public class IngestModuleProgress {
         currentWork = 0;
         instance = null;
         counter = 0;
-        logger.info("Ingest module finished with success");
+        logger.info("Ingest module has finished");
     }
 
     public static IngestModuleProgress getInstance() {

@@ -7,6 +7,7 @@ import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -28,9 +29,12 @@ public class DatasetRepository {
     }
 
 
-    public static DatasetRepository getInstance() throws ConnectionException {
+    public static DatasetRepository getInstance() throws ConnectionException, SQLException, ClassNotFoundException {
         if (datasetRepository == null) {
             datasetRepository = new DatasetRepository();
+        }
+        if (statement.isClosed()) {
+            statement = DataWarehouseConnection.getConnection().createStatement();
         }
         return datasetRepository;
     }
@@ -150,5 +154,28 @@ public class DatasetRepository {
             users.add(rs.getString("user"));
         }
         return users;
+    }
+
+    public boolean isFirstRunningImage(String imageName) throws SQLException {
+        ResultSet rs = statement.executeQuery("SELECT name FROM t_info_extract WHERE name = '" + imageName + "';");
+        return !rs.next();//It is the first time if there no results.
+    }
+
+    public int cleanAllData() throws SQLException, ConnectionException, ClassNotFoundException {
+        int tableDeleted = 0;
+        ResultSet rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
+        Statement stmn = DataWarehouseConnection.getConnection().createStatement();
+        while (rs.next()) {
+            stmn.execute("DELETE FROM '"+ rs.getString("name") + "'");
+            tableDeleted++;
+        }
+        logger.info("All previous data deleted.");
+        return tableDeleted;
+    }
+
+    public void addToInfoExtract(String name) throws ConnectionException, SQLException, ClassNotFoundException {
+        PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement("INSERT INTO t_info_extract (name, last_extraction) VALUES (?, date('now'));");
+        preparedStatement.setString(1, name);
+        preparedStatement.executeUpdate();
     }
 }

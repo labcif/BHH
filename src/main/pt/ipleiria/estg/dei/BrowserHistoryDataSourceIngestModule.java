@@ -1,7 +1,7 @@
 
 package main.pt.ipleiria.estg.dei;
 
-import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
+import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.db.etl.DatabaseCreator;
 import main.pt.ipleiria.estg.dei.events.IngestModuleProgress;
 import main.pt.ipleiria.estg.dei.exceptions.BrowserHistoryIngestModuleExpection;
@@ -16,9 +16,10 @@ import main.pt.ipleiria.estg.dei.utils.Logger;
 import org.sleuthkit.autopsy.ingest.DataSourceIngestModule;
 import org.sleuthkit.autopsy.ingest.DataSourceIngestModuleProgress;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
-import org.sleuthkit.autopsy.ingest.IngestModule;
 import org.sleuthkit.datamodel.Content;
 
+import javax.swing.*;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,7 +56,30 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
     @Override
     public ProcessResult process(Content dataSource, DataSourceIngestModuleProgress progressBar) {
         IngestModuleProgress.getInstance().init(dataSource, modulesToRun, progressBar);
+        try {
+            if (!isFirstTimeRunning(dataSource.getName())) {
+                int result = showConfirmationPanel();
+                if (result == JOptionPane.YES_OPTION) {
+                    DatasetRepository.getInstance().cleanAllData();
+                } else {
+                    logger.warn("Ingest Module has been cancelled.");
+                    return ProcessResult.OK;
+                }
+            }
+            runModules(dataSource);
+            return ProcessResult.OK;
+        } catch (SQLException | ConnectionException | ClassNotFoundException e) {
+            logger.error("Connection couldn't be established. Please look at the logs for more information!");
+            throw new BrowserHistoryIngestModuleExpection(e.getMessage());
+        }finally {
+            IngestModuleProgress.getInstance().finishProgress();
+        }
+    }
 
+    private int showConfirmationPanel() {
+        return JOptionPane.showConfirmDialog(null, "You have already run this image. Proceeding will clean all the database. Do you want to proceed?", "WARNING", JOptionPane.YES_NO_OPTION);
+    }
+    private void runModules(Content dataSource) throws ConnectionException, SQLException, ClassNotFoundException {
         modulesToRun.forEach(browser -> {
             try {
                 browser.run(dataSource);
@@ -64,10 +88,9 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
                 throw new BrowserHistoryIngestModuleExpection(e.getMessage());
             }
         });
-
-        IngestModuleProgress.getInstance().finishProgress();
-        DataWarehouseConnection.getInstance().closeConnection();
-
-        return IngestModule.ProcessResult.OK;
+        DatasetRepository.getInstance().addToInfoExtract(dataSource.getName());
+    }
+    private boolean isFirstTimeRunning(String name) throws ConnectionException, SQLException, ClassNotFoundException {
+        return DatasetRepository.getInstance().isFirstRunningImage(name);
     }
 }

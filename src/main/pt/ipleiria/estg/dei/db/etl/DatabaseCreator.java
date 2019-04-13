@@ -35,9 +35,9 @@ public class DatabaseCreator {
     }
 
     private void setupDB() throws MigrationException, DatabaseInitializationException, ConnectionException {
-        logger.info("Creating database...");
+        logger.info("Preparing database...");
         createDB();
-        logger.info("Database created");
+        logger.info("Database prepared");
 
         logger.info("Start running migrations");
         runMigrations();
@@ -129,13 +129,8 @@ public class DatabaseCreator {
         try {
             Class.forName("org.sqlite.JDBC");
             Connection conn = DriverManager.getConnection(FULL_PATH_CONNECTION);
-            if (conn != null) {
-                DatabaseMetaData meta = conn.getMetaData();
-                logger.info("The driver name is " + meta.getDriverName());
-                logger.info("A new database has been created.");
                 Statement stmt = conn.createStatement();
 
-                logger.info("Creating version table...");
                 stmt.execute("create table if not exists schema_version " +
                         "( " +
                         "  id INTEGER " +
@@ -148,8 +143,7 @@ public class DatabaseCreator {
                         "  on schema_version (name); ");
                 stmt.execute("create unique index if not exists schema_version_version_uindex " +
                         "  on schema_version (version); ");
-                logger.info("Version table created");
-            }
+
         } catch (ClassNotFoundException | SQLException e) {
             throw new DatabaseInitializationException(e.getMessage());
         }

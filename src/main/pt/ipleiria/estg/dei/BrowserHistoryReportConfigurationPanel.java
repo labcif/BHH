@@ -51,7 +51,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
             users.forEach(dlm::addElement);
             this.users.setModel(dlm);
-        } catch (ConnectionException | SQLException e) {
+        } catch (ConnectionException | SQLException | ClassNotFoundException e) {
             e.printStackTrace();//TODO: If the ingest module has been run yet it can't be executed
         }
     }
