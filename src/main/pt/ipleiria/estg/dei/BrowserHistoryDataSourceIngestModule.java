@@ -13,6 +13,7 @@ import main.pt.ipleiria.estg.dei.model.browsers.Chrome;
 import main.pt.ipleiria.estg.dei.model.browsers.Firefox;
 import main.pt.ipleiria.estg.dei.model.browsers.Module;
 import main.pt.ipleiria.estg.dei.utils.Logger;
+import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.ingest.DataSourceIngestModule;
 import org.sleuthkit.autopsy.ingest.DataSourceIngestModuleProgress;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
@@ -48,7 +49,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             logger.error("Database couldn't be initialized. Please look at the logs for more information!");
             throw new BrowserHistoryIngestModuleExpection(e.getMessage());
         } catch (ConnectionException e) {
-            logger.error("Connection couldn't be established. Please look at the logs for more information!");
+            logger.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
             throw new BrowserHistoryIngestModuleExpection(e.getMessage());
         }
     }
@@ -69,7 +70,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             runModules(dataSource);
             return ProcessResult.OK;
         } catch (SQLException | ConnectionException | ClassNotFoundException e) {
-            logger.error("Connection couldn't be established. Please look at the logs for more information!");
+            logger.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
             throw new BrowserHistoryIngestModuleExpection(e.getMessage());
         }finally {
             IngestModuleProgress.getInstance().finishProgress();
@@ -84,7 +85,7 @@ class BrowserHistoryDataSourceIngestModule implements DataSourceIngestModule {
             try {
                 browser.run(dataSource);
             } catch (ConnectionException e) {
-                logger.error("Connection couldn't be established. Please look at the logs for more information!");
+                logger.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
                 throw new BrowserHistoryIngestModuleExpection(e.getMessage());
             }
         });

@@ -25,12 +25,12 @@ import main.pt.ipleiria.estg.dei.utils.Logger;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.table.DefaultTableModel;
 import java.io.*;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Set;
+import java.util.Map;
 
 /**
  * The panel shown for all TableReportModules when configuring report modules.
@@ -39,7 +39,7 @@ import java.util.Set;
 public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private List<String> usersSelected;
     private Logger logger = new Logger<>(BrowserHistoryReportConfigurationPanel.class);
-
+    private Map<String, String> queries = new HashMap<>();
     /**
      * Creates new form BrowserHistoryReportConfigurationPanel
      */
@@ -51,7 +51,22 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
             }
         });
         fillUsers();
+        fillQueries();
     }
+
+    private void fillQueries() {
+        String alias = "max_url_10";
+        String query = "SELECT * FROM t_clean_url LIMIT 10;";
+        DefaultTableModel model = (DefaultTableModel) queriesTable.getModel();
+        model.addRow(new Object[]{query, alias});
+        queries.put(alias, query);
+
+        alias = "max_url_20";
+        query = "SELECT * FROM t_clean_url LIMIT 20;";
+        model.addRow(new Object[]{query, alias});
+        queries.put(alias, query);
+    }
+
     private void fillUsers() {
         DefaultListModel dlm = new DefaultListModel();
         try {
@@ -103,7 +118,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList<>();
+        users = new javax.swing.JList<String>();
         selectDefaultUsers = new javax.swing.JRadioButton();
         selectAllUsers = new javax.swing.JRadioButton();
         panel1 = new java.awt.Panel();
@@ -117,11 +132,11 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         wordsSearch = new javax.swing.JCheckBox();
         domainDailyVisits = new javax.swing.JCheckBox();
         jPanel2 = new javax.swing.JPanel();
-        jScrollPane2 = new javax.swing.JScrollPane();
-        querieTextArea = new javax.swing.JTextArea();
         importFilterButton = new javax.swing.JButton();
         exportFilterButton = new javax.swing.JButton();
         querieFilePath = new javax.swing.JTextField();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        queriesTable = new javax.swing.JTable();
 
         setFont(getFont().deriveFont(getFont().getStyle() & ~java.awt.Font.BOLD, 11));
         setLayout(null);
@@ -265,10 +280,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.panel1.TabConstraints.tabTitle"), panel1); // NOI18N
 
-        querieTextArea.setColumns(20);
-        querieTextArea.setRows(5);
-        jScrollPane2.setViewportView(querieTextArea);
-
         importFilterButton.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.importFilterButton.text")); // NOI18N
         importFilterButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -286,34 +297,61 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         querieFilePath.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.querieFilePath.text")); // NOI18N
         querieFilePath.setEnabled(false);
 
+        queriesTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Query", "Alias"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        queriesTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        queriesTable.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                queriesTablePropertyChange(evt);
+            }
+        });
+        jScrollPane3.setViewportView(queriesTable);
+        if (queriesTable.getColumnModel().getColumnCount() > 0) {
+            queriesTable.getColumnModel().getColumn(0).setHeaderValue(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.queriesTable.columnModel.title0")); // NOI18N
+            queriesTable.getColumnModel().getColumn(1).setHeaderValue(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.queriesTable.columnModel.title1")); // NOI18N
+        }
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(45, 45, 45)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 316, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addComponent(querieFilePath, javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel2Layout.createSequentialGroup()
-                            .addComponent(importFilterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                            .addComponent(exportFilterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(importFilterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exportFilterButton, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(67, 67, 67)
+                .addComponent(querieFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(22, 22, 22)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(8, 8, 8)
-                .addComponent(querieFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(17, 17, 17)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(23, 23, 23)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(importFilterButton)
-                    .addComponent(exportFilterButton))
-                .addContainerGap(69, Short.MAX_VALUE))
+                    .addComponent(querieFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(exportFilterButton)
+                    .addComponent(importFilterButton))
+                .addContainerGap(90, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
@@ -342,44 +380,56 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         JFileChooser chooser = new JFileChooser();
         FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
         chooser.setFileFilter(filter);
-
-        int returnVal = chooser.showOpenDialog(this);
-        String chosenFile;
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            chosenFile = chooser.getSelectedFile().getAbsolutePath();
-
+        if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String chosenFile = chooser.getSelectedFile().getAbsolutePath();
             querieFilePath.setText(chosenFile);
-
             String line;
-            String[] word;
-
             try(BufferedReader buffer = new BufferedReader(new FileReader(chosenFile))) {
                 while ((line = buffer.readLine()) != null) {
-                    word = line.split(",");
-                    querieTextArea.append(word[0] + ";\n");
+                    String[] split = line.split(";");
+                    String query = split[0];
+                    String alias = split[1];
+                    if (!queries.containsKey(alias)) {
+                        DefaultTableModel model = (DefaultTableModel) queriesTable.getModel();
+                        model.addRow(new Object[]{query, alias});
+                    }
+                    queries.put(alias, query);
                 }
             } catch (IOException e) {
                 logger.error("File couldn't be read. Please look at the logs for more information!");
                 throw new BrowserHistoryReportModuleExpection(e.getMessage());
             }
-        }else{
-            JOptionPane.showMessageDialog(this, "Something went wrong");
         }
 
     }//GEN-LAST:event_importQuerieButtonActionPerformed
 
     private void exportQuerieButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportQuerieButtonActionPerformed
-        if(!querieTextArea.getText().isEmpty()){
+        if(queriesTable.getRowCount() != 0){
+            StringBuilder sb = new StringBuilder();
             try (PrintWriter writer = new PrintWriter(new File("queries.csv"))) {
-                writer.write(querieTextArea.getText());
-            } catch (FileNotFoundException e) {
-                System.out.println(e.getMessage());
+                for (int row = 0; row < queriesTable.getRowCount(); row++) {
+                    sb.append(queriesTable.getValueAt(row, 1))
+                            .append(", ")
+                            .append(queriesTable.getValueAt(row, 0))
+                            .append("\n");
+                }
+                writer.write(sb.toString());
+                JOptionPane.showMessageDialog(this, "Exported successfuly");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error exporting: " +e.getMessage());
             }
         }else{
             JOptionPane.showMessageDialog(this, "Nothing to export");
         }
     }//GEN-LAST:event_exportQuerieButtonActionPerformed
 
+    private void queriesTablePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_queriesTablePropertyChange
+        //TODO: this is not efficient, although it is really not important for now. Feel free to optimize.
+        queries.clear();
+        for (int row = 0; row < queriesTable.getRowCount(); row++) {
+            queries.put(queriesTable.getValueAt(row, 1).toString(), queriesTable.getValueAt(row, 0).toString());
+        }
+    }//GEN-LAST:event_queriesTablePropertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JRadioButton barGraf;
     private javax.swing.JCheckBox blokedSites;
@@ -396,18 +446,21 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JScrollPane jScrollPane2;
+    private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JCheckBox mostVisitedSites;
     private java.awt.Panel panel1;
     private javax.swing.JRadioButton pieChart;
     private javax.swing.JTextField querieFilePath;
-    private javax.swing.JTextArea querieTextArea;
+    private javax.swing.JTable queriesTable;
     private javax.swing.JRadioButton selectAllUsers;
     private javax.swing.JRadioButton selectDefaultUsers;
     private javax.swing.JList<String> users;
     private javax.swing.JCheckBox wordsSearch;
     // End of variables declaration//GEN-END:variables
 
-    
+
+    public Map<String, String> getQueries() {
+        return queries;
+    }
 }

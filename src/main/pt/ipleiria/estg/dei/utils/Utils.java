@@ -1,12 +1,11 @@
 package main.pt.ipleiria.estg.dei.utils;
 
-import org.sleuthkit.autopsy.coreutils.Logger;
 
 import java.io.*;
-import java.util.logging.Level;
+import java.util.List;
 
 public abstract class Utils{
-    private static Logger logger = Logger.getLogger(Utils.class.getName());
+    private static Logger logger = new Logger<>(Utils.class);
 
     public static byte[] convertToByte(Object object) {
         try ( ByteArrayOutputStream bos = new ByteArrayOutputStream()){
@@ -16,7 +15,7 @@ public abstract class Utils{
             out.close();
             return bos.toByteArray();
         } catch (IOException e) {
-            logger.log(Level.SEVERE, "Couldn't convert to byte: " + e.getMessage());
+            logger.error( "Couldn't convert to byte: " + e.getMessage());
             throw new IllegalArgumentException("Couldn't convert to byte: " + e.getMessage());
         }
     }
@@ -26,8 +25,20 @@ public abstract class Utils{
             ObjectInput in = new ObjectInputStream(bis);
             return in.readObject();
         } catch (IOException | ClassNotFoundException e) {
-            logger.log(Level.SEVERE, "Couldn't convert to byte: " + e.getMessage());
+            logger.error("Couldn't convert to byte: " + e.getMessage());
             throw new IllegalArgumentException("Couldn't convert to byte: " + e.getMessage());
+        }
+    }
+
+    public static void writeCsv(List<List<String>>  rs, String pathname) {
+        StringBuilder sb = new StringBuilder();
+        try (PrintWriter writer = new PrintWriter(new File(pathname + ".csv"))) {
+            rs.forEach(result->{
+                sb.append( String.join(", ", result)).append("\n");
+            });
+            writer.write(sb.toString());
+        }catch (FileNotFoundException e) {
+            logger.warn(e.getMessage());
         }
     }
 }

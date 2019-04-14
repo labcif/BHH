@@ -6,15 +6,10 @@ import main.pt.ipleiria.estg.dei.model.Email;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
-import org.sleuthkit.autopsy.coreutils.Version;
 
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class DatasetRepository {
     private static DatasetRepository datasetRepository;
@@ -131,13 +126,11 @@ public class DatasetRepository {
     public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
         ResultSet rs = statement.executeQuery(
-                " SELECT  word, count(word) as times_used " +
+                "SELECT  word, count(word) as times_used " +
                         " FROM t_clean_words " +
-                        " WHERE trim(upper(word)) not IN (SELECT trim(upper(word)) " +
-                        "                     FROM t_clean_stop_words) " +
                         " group by word " +
                         " order by times_used desc " +
-                        " limit 10  ");
+                        " limit 10 ");
 
         while (rs.next()) {
             words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));
@@ -181,5 +174,20 @@ public class DatasetRepository {
         PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement("INSERT INTO t_info_extract (name, last_extraction) VALUES (?, date('now'));");
         preparedStatement.setString(1, name);
         preparedStatement.executeUpdate();
+    }
+
+    public List<List<String>> execute(String query) throws SQLException {
+        ResultSet rs = statement.executeQuery(query);
+        ResultSetMetaData metaData = rs.getMetaData();
+        int totalColumns = metaData.getColumnCount();
+        List<List<String>> results = new ArrayList<>();
+        while (rs.next()) {
+            List<String> temp = new ArrayList<>();
+            for (int i = 0; i < totalColumns; i++) {
+                temp.add(rs.getString(i+1));
+            }
+            results.add(temp);
+        }
+        return results;
     }
 }
