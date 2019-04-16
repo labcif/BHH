@@ -20,41 +20,38 @@
 	<field name="visitCount" class="java.lang.Integer"/>
 	<title>
 		<band height="210">
-			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="0" y="0" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7"/>
+			<pieChart>
+				<chart evaluationTime="Report">
+					<reportElement x="0" y="0" width="480" height="210" uuid="84eb4705-d52c-4f62-b228-039684882254"/>
 					<chartTitle/>
 					<chartSubtitle/>
-					<chartLegend/>
+					<chartLegend position="Right"/>
 				</chart>
-				<categoryDataset>
+				<pieDataset>
 					<dataset>
-						<datasetRun subDataset="Graf_subreport" uuid="ac21e36e-1e19-4913-bffb-97784aaa783a">
+						<datasetRun subDataset="Graf_subreport" uuid="69ee4fc5-fa78-4dc8-966f-5faf6871eb2f">
 							<dataSourceExpression><![CDATA[$P{userWebsites}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
-					<categorySeries>
-						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
-					</categorySeries>
-				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
-						<seriesColor seriesOrder="0" color="#5494D1"/>
-						<seriesColor seriesOrder="1" color="#5494D1"/>
-						<seriesColor seriesOrder="2" color="#5494D1"/>
+					<keyExpression><![CDATA[$F{domain}]]></keyExpression>
+					<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
+				</pieDataset>
+				<piePlot isShowLabels="true" isCircular="true" labelFormat="{1}">
+					<plot backgroundAlpha="1.0" foregroundAlpha="0.74">
+						<seriesColor seriesOrder="0" color="#FFFC49"/>
+						<seriesColor seriesOrder="1" color="#FFBC2A"/>
+						<seriesColor seriesOrder="2" color="#DE49A0"/>
+						<seriesColor seriesOrder="3" color="#FF0000"/>
+						<seriesColor seriesOrder="4" color="#672572"/>
+						<seriesColor seriesOrder="5" color="#00025E"/>
+						<seriesColor seriesOrder="6" color="#156396"/>
+						<seriesColor seriesOrder="7" color="#60C7FF"/>
+						<seriesColor seriesOrder="8" color="#00FF1E"/>
+						<seriesColor seriesOrder="9" color="#ADEB81"/>
 					</plot>
 					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</categoryAxisFormat>
-					<valueAxisFormat>
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</valueAxisFormat>
-				</barPlot>
-			</barChart>
+				</piePlot>
+			</pieChart>
 		</band>
 	</title>
 </jasperReport>

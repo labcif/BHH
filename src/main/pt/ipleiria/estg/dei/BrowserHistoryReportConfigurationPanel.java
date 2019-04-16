@@ -94,8 +94,12 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         return domainDailyVisits.isSelected();
     }
 
-    public String getGraphType() {
-        return buttonGroup2.getSelection().toString();
+    public boolean isChartBarTipe() {
+        return histogram.isSelected();
+    }
+
+    public boolean isChartPieTipe() {
+        return pieChart.isSelected();
     }
 
     public List<String> getUsersSelected() {
@@ -118,12 +122,11 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList<String>();
+        users = new javax.swing.JList<>();
         selectDefaultUsers = new javax.swing.JRadioButton();
         selectAllUsers = new javax.swing.JRadioButton();
         panel1 = new java.awt.Panel();
         histogram = new javax.swing.JRadioButton();
-        barGraf = new javax.swing.JRadioButton();
         pieChart = new javax.swing.JRadioButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel3 = new javax.swing.JLabel();
@@ -200,9 +203,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
             }
         });
 
-        buttonGroup2.add(barGraf);
-        barGraf.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.barGraf.text")); // NOI18N
-
         buttonGroup2.add(pieChart);
         pieChart.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.pieChart.text")); // NOI18N
 
@@ -242,7 +242,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                         .addGap(11, 11, 11)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(histogram)
-                            .addComponent(barGraf, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(pieChart, javax.swing.GroupLayout.Alignment.LEADING))
                         .addGap(66, 66, 66)
                         .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -266,16 +265,15 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(blokedSites)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(wordsSearch)
+                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(wordsSearch)
+                            .addComponent(pieChart))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(domainDailyVisits))
                     .addGroup(panel1Layout.createSequentialGroup()
-                        .addComponent(histogram)
-                        .addGap(18, 18, 18)
-                        .addComponent(barGraf)
-                        .addGap(18, 18, 18)
-                        .addComponent(pieChart)))
-                .addContainerGap(60, Short.MAX_VALUE))
+                        .addGap(23, 23, 23)
+                        .addComponent(histogram)))
+                .addContainerGap(56, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.panel1.TabConstraints.tabTitle"), panel1); // NOI18N
@@ -431,7 +429,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_queriesTablePropertyChange
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JRadioButton barGraf;
     private javax.swing.JCheckBox blokedSites;
     private javax.swing.ButtonGroup buttonGroup1;
     private javax.swing.ButtonGroup buttonGroup2;

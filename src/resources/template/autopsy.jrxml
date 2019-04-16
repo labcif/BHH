@@ -59,12 +59,6 @@
 			<rightPen lineWidth="0.5" lineColor="#000000"/>
 		</box>
 	</style>
-	<subDataset name="GroupData" uuid="9874384d-ef9a-48e7-80f6-2cf2011ac1d2">
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-	</subDataset>
 	<subDataset name="Chart" uuid="3fe999e0-66be-4ed7-9a6a-cde744f46e1b">
 		<queryString>
 			<![CDATA[]]>
@@ -81,14 +75,6 @@
 		<field name="totalDaysVisited" class="java.lang.Integer"/>
 		<field name="totalDaysDB" class="java.lang.Float"/>
 	</subDataset>
-	<subDataset name="Blocked" uuid="5e55c336-5274-4a9b-8264-a48081b149ed">
-		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-		<field name="domain" class="java.lang.String"/>
-		<field name="visitCount" class="java.lang.Integer"/>
-	</subDataset>
 	<subDataset name="Words" uuid="716a207c-b704-4953-9c4f-209efaf4d924">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 		<queryString>
@@ -96,13 +82,6 @@
 		</queryString>
 		<field name="description" class="java.lang.String"/>
 		<field name="useCount" class="java.lang.Integer"/>
-	</subDataset>
-	<subDataset name="BlockedWebSitesChart" uuid="413527c0-1481-44ee-9434-929cb4d701cc">
-		<queryString>
-			<![CDATA[]]>
-		</queryString>
-		<field name="domain" class="java.lang.String"/>
-		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
 	<subDataset name="Emails" uuid="7a261ebe-d037-4ed7-9b11-65c5ebd613e7">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -336,9 +315,33 @@
 				</jr:table>
 			</componentElement>
 		</band>
-		<band height="672">
+		<band height="694">
+			<staticText>
+				<reportElement positionType="Float" x="0" y="0" width="555" height="60" uuid="994fdc5d-c9d2-4948-8c03-c94fb446923f"/>
+				<box topPadding="30" leftPadding="40"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="20"/>
+				</textElement>
+				<text><![CDATA[3 - Visited Websites]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="6d14cf0f-5893-494a-8060-e63ecf38c944"/>
+				<box topPadding="30" leftPadding="60"/>
+				<textElement textAlignment="Left">
+					<font fontName="Serif" size="18"/>
+				</textElement>
+				<text><![CDATA[3.1 - Visited Websites - Total Visit Count ]]></text>
+			</staticText>
+			<subreport>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="110" width="520" height="250" isRemoveLineWhenBlank="true" uuid="b508519c-713b-4bdb-b964-6023d836377b"/>
+				<subreportParameter name="userWebsites">
+					<subreportParameterExpression><![CDATA[$P{Visits}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
+			</subreport>
 			<componentElement>
-				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="5" y="380" width="551" height="270" forecolor="#FFFFFF" uuid="93210bf6-88d5-478a-8a20-ed19cc654fae">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="5" y="410" width="551" height="270" forecolor="#FFFFFF" uuid="93210bf6-88d5-478a-8a20-ed19cc654fae">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
@@ -363,70 +366,33 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
 						</subreport>
+						<textField>
+							<reportElement x="41" y="231" width="480" height="30" uuid="9106f1cc-5823-4445-b2ea-b514f59cd756"/>
+							<textElement textAlignment="Center">
+								<font size="20"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+						</textField>
+						<staticText>
+							<reportElement x="161" y="232" width="100" height="30" uuid="fd1f6c84-604e-4eba-9aff-aee81b579238"/>
+							<textElement>
+								<font size="20"/>
+							</textElement>
+							<text><![CDATA[User:]]></text>
+						</staticText>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="0" width="555" height="60" uuid="994fdc5d-c9d2-4948-8c03-c94fb446923f"/>
-				<box topPadding="30" leftPadding="40"/>
-				<textElement textAlignment="Left">
-					<font fontName="Serif" size="20"/>
-				</textElement>
-				<text><![CDATA[3 - Visited Websites]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="6d14cf0f-5893-494a-8060-e63ecf38c944"/>
-				<box topPadding="30" leftPadding="60"/>
-				<textElement textAlignment="Left">
-					<font fontName="Serif" size="18"/>
-				</textElement>
-				<text><![CDATA[3.1 - Visited Websites - Total Visit Count ]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="-1" y="320" width="555" height="60" uuid="c8fb6088-c69d-4acc-bb5d-3a62e71659d0"/>
+				<reportElement positionType="Float" x="3" y="350" width="555" height="60" uuid="c8fb6088-c69d-4acc-bb5d-3a62e71659d0"/>
 				<box topPadding="30" leftPadding="60"/>
 				<textElement textAlignment="Left">
 					<font fontName="Serif" size="18"/>
 				</textElement>
 				<text><![CDATA[3.2 - Visited Websites - Visits by User]]></text>
 			</staticText>
-			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="10422738-f2f6-4eef-8acd-2c8a13806e71"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<categoryDataset>
-					<dataset>
-						<datasetRun subDataset="Chart" uuid="6d974e85-abea-4f88-9306-c4be08b25f6b">
-							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-					<categorySeries>
-						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
-					</categorySeries>
-				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
-						<seriesColor seriesOrder="0" color="#5494D1"/>
-						<seriesColor seriesOrder="1" color="#5494D1"/>
-						<seriesColor seriesOrder="2" color="#5494D1"/>
-					</plot>
-					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</categoryAxisFormat>
-					<valueAxisFormat>
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</valueAxisFormat>
-				</barPlot>
-			</barChart>
 		</band>
-		<band height="644">
+		<band height="710">
 			<staticText>
 				<reportElement positionType="Float" x="0" y="0" width="555" height="60" isRemoveLineWhenBlank="true" uuid="31e14af3-9e21-48c8-8551-26347491a814"/>
 				<box topPadding="30" leftPadding="40"/>
@@ -443,43 +409,8 @@
 				</textElement>
 				<text><![CDATA[4.1 - Blocked Websites - Total Visit Count ]]></text>
 			</staticText>
-			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="83acf90d-ce91-457c-8f7a-e0d0eb52f855"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<categoryDataset>
-					<dataset>
-						<datasetRun subDataset="BlockedWebSitesChart" uuid="d961ff5c-d593-44f7-bd76-b6f89ffc52d7">
-							<dataSourceExpression><![CDATA[$P{Blocked}]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-					<categorySeries>
-						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
-					</categorySeries>
-				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
-						<seriesColor seriesOrder="0" color="#5494D1"/>
-						<seriesColor seriesOrder="1" color="#5494D1"/>
-						<seriesColor seriesOrder="2" color="#5494D1"/>
-					</plot>
-					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</categoryAxisFormat>
-					<valueAxisFormat>
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</valueAxisFormat>
-				</barPlot>
-			</barChart>
 			<staticText>
-				<reportElement positionType="Float" x="0" y="310" width="555" height="60" uuid="d24a461f-593e-4d23-92cb-dad69252ee0e"/>
+				<reportElement positionType="Float" x="0" y="380" width="555" height="60" uuid="d24a461f-593e-4d23-92cb-dad69252ee0e"/>
 				<box topPadding="30" leftPadding="60"/>
 				<textElement textAlignment="Left">
 					<font fontName="Serif" size="18"/>
@@ -487,7 +418,7 @@
 				<text><![CDATA[4.2 -  Blocked Websites - Visits by User]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement style="Table 1_TD" positionType="Float" stretchType="ContainerHeight" x="2" y="370" width="551" height="270" forecolor="#FFFFFF" uuid="6cf1fb3c-7d89-4c20-bbef-6fd8aca311a5">
+				<reportElement positionType="Float" stretchType="ContainerHeight" x="2" y="440" width="551" height="270" forecolor="#FFFFFF" uuid="6cf1fb3c-7d89-4c20-bbef-6fd8aca311a5">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
 				</reportElement>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Horizontal">
@@ -512,62 +443,31 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
 						</subreport>
+						<textField>
+							<reportElement x="41" y="231" width="480" height="30" uuid="fb6465d4-4789-4421-b48c-1e925477ac66"/>
+							<textElement textAlignment="Center">
+								<font size="20"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
+						</textField>
+						<staticText>
+							<reportElement x="161" y="232" width="100" height="30" uuid="cc7ba830-9098-46ea-a2ab-76f53dc13f3c"/>
+							<textElement>
+								<font size="20"/>
+							</textElement>
+							<text><![CDATA[User:]]></text>
+						</staticText>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
-		</band>
-		<band height="318">
-			<staticText>
-				<reportElement positionType="Float" x="0" y="0" width="555" height="60" isRemoveLineWhenBlank="true" uuid="e338e00e-3969-4c9c-b665-acfd386a565c"/>
-				<box topPadding="30" leftPadding="40"/>
-				<textElement textAlignment="Left">
-					<font fontName="Serif" size="20"/>
-				</textElement>
-				<text><![CDATA[5 - Most Searched Words (Google)]]></text>
-			</staticText>
-			<staticText>
-				<reportElement positionType="Float" x="0" y="40" width="555" height="60" uuid="dccd57dc-c0c7-4957-a351-ade082d6e6b7"/>
-				<box topPadding="30" leftPadding="60"/>
-				<textElement textAlignment="Left">
-					<font fontName="Serif" size="18"/>
-				</textElement>
-				<text><![CDATA[5.1 - Most Searched Words - Total for all users]]></text>
-			</staticText>
-			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="9b0faf66-75d9-4546-921c-fc5e47ad19ce"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<categoryDataset>
-					<dataset>
-						<datasetRun subDataset="Words" uuid="6f344734-c222-48f8-9057-c622a6dbcaea">
-							<dataSourceExpression><![CDATA[$P{Words}]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-					<categorySeries>
-						<seriesExpression><![CDATA[$F{description}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{description}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{useCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{description}]]></labelExpression>
-					</categorySeries>
-				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
-						<seriesColor seriesOrder="0" color="#5494D1"/>
-						<seriesColor seriesOrder="1" color="#5494D1"/>
-						<seriesColor seriesOrder="2" color="#5494D1"/>
-					</plot>
-					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</categoryAxisFormat>
-					<valueAxisFormat>
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</valueAxisFormat>
-				</barPlot>
-			</barChart>
+			<subreport>
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="120" width="520" height="250" isRemoveLineWhenBlank="true" uuid="cfd1be8d-fadb-41f2-9d6b-5dcce8a1fe77"/>
+				<subreportParameter name="userWebsites">
+					<subreportParameterExpression><![CDATA[$P{Blocked}]]></subreportParameterExpression>
+				</subreportParameter>
+				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
+				<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
 	<pageFooter>

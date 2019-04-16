@@ -106,9 +106,14 @@ public class FileGenerator {
 
 
 
-        //Adding SubReport (most people online said that if you want to repeat an element / group of elements the best way is to place them in a subreport and pass the variables)
-        InputStream templateFile2 = from.getResourceAsStream("/resources/template/user_graf.jrxml");
-        JasperReport subReport = JasperCompileManager.compileReport(templateFile2);
+        //Adding SubReport (Chart Type)
+        InputStream chartTipe;
+        if(configPanel.isChartBarTipe()){
+            chartTipe = from.getResourceAsStream("/resources/template/user_graf.jrxml");
+        }else{
+            chartTipe = from.getResourceAsStream("/resources/template/user_graf_pie.jrxml");
+        }
+        JasperReport subReport = JasperCompileManager.compileReport(chartTipe);
         reportData.put("subReport", subReport);
 
 
