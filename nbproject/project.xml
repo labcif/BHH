@@ -54,10 +54,6 @@
                 <binary-origin>release/modules/ext/commons-beanutils-1.9.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jdt-compiler-3.1.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jdt-compiler-3.1.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/com.lowagie.text-2.1.7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.lowagie.text-2.1.7.jar</binary-origin>
             </class-path-extension>
@@ -74,28 +70,40 @@
                 <binary-origin>release/modules/ext/commons-logging-1.2.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/jasperreports-6.7.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jasperreports-6.7.1.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
                 <runtime-relative-path>ext/jcommon-1.0.23.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/jcommon-1.0.23.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/jfreechart-1.0.19.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/jfreechart-1.0.19.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/system-rules-1.19.0.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/system-rules-1.19.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/commons-collections-20040616.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/commons-collections-20040616.jar</binary-origin>
+                <runtime-relative-path>ext/jna-5.2.0.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jna-5.2.0.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/org.json.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/org.json.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jdt-compiler-3.1.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jdt-compiler-3.1.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jna-platform-4.2.2.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jna-platform-4.2.2.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jasperreports-6.7.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jasperreports-6.7.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/jfreechart-1.0.19.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/jfreechart-1.0.19.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/commons-collections-20040616.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/commons-collections-20040616.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

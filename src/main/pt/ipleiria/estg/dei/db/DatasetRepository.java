@@ -113,12 +113,14 @@ public class DatasetRepository {
         List<Email> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT  email, source_full " +
+                "SELECT  email, source_full, count(*) as total, available_password " +
                         "FROM t_clean_emails " +
-                        "group by email ");
+                        "group by email " +
+                        "order by total desc ");
 
         while (rs.next()) {
-            emails.add(new Email(rs.getString("email"),rs.getString("source_full") ));
+            emails.add(new Email(rs.getString("email"),rs.getString("source_full"),
+                    rs.getInt("total"), rs.getString("available_password")));
         }
         return emails;
     }

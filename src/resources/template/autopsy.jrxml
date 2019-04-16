@@ -90,6 +90,7 @@
 		</queryString>
 		<field name="description" class="java.lang.String"/>
 		<field name="source" class="java.lang.String"/>
+		<field name="total" class="java.lang.Integer"/>
 	</subDataset>
 	<subDataset name="Graf_subreport" uuid="8ffb5b9b-7a53-4786-bd75-50d7bbaefa4c">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -244,7 +245,7 @@
 				<textElement textAlignment="Left">
 					<font fontName="Serif" size="20"/>
 				</textElement>
-				<text><![CDATA[2 - Emails found]]></text>
+				<text><![CDATA[2 - Logins found]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="-1" y="60" width="562" height="30" uuid="5eaff89a-a43c-4553-be7c-ec9a73d82e53"/>
@@ -252,7 +253,7 @@
 				<textElement textAlignment="Left">
 					<font fontName="Serif" size="16"/>
 				</textElement>
-				<text><![CDATA[	    The analysed historie showed the following Emails:]]></text>
+				<text><![CDATA[	    The analysed history found the following logins:]]></text>
 			</staticText>
 			<componentElement>
 				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="35" y="110" width="490" height="60" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
@@ -266,11 +267,11 @@
 					<datasetRun subDataset="Emails" uuid="0e965368-6c50-43c4-b35f-0bca8ef1ae60">
 						<dataSourceExpression><![CDATA[$P{Emails}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="210" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
+					<jr:column width="146" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="210" height="30" backcolor="#BCF5DC" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
+								<reportElement mode="Opaque" x="0" y="0" width="146" height="30" backcolor="#BCF5DC" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
 								<textElement textAlignment="Center">
 									<font fontName="SansSerif" size="20"/>
 								</textElement>
@@ -278,21 +279,21 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="210" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="146" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
 								<box leftPadding="15"/>
 								<textElement>
-									<font fontName="Serif" size="16"/>
+									<font fontName="Serif" size="11"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="280" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
+					<jr:column width="174" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="280" height="30" backcolor="#BCF5DC" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
+								<reportElement mode="Opaque" x="0" y="0" width="174" height="30" backcolor="#BCF5DC" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
 								<textElement textAlignment="Center">
 									<font fontName="SansSerif" size="20"/>
 								</textElement>
@@ -300,15 +301,39 @@
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
-							<textField>
-								<reportElement x="0" y="0" width="280" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="174" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
 								<box leftPadding="15">
 									<leftPen lineWidth="1.0"/>
 								</box>
 								<textElement>
-									<font fontName="Serif" size="16"/>
+									<font fontName="Serif" size="11"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
+					<jr:column width="170" uuid="fa0590e8-6698-40e4-bd1f-7341f25aa345">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="170" height="30" backcolor="#BCF5DC" uuid="56af756b-2c93-4246-9db7-8ff769787a13"/>
+								<textElement textAlignment="Center">
+									<font fontName="SansSerif" size="20"/>
+								</textElement>
+								<text><![CDATA[Count]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="170" height="30" uuid="729d4cda-a4c7-4518-8fc6-0396ba174c75"/>
+								<box leftPadding="15">
+									<leftPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font fontName="Serif" size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
 					</jr:column>

@@ -103,4 +103,9 @@ public class Firefox extends Browser {
     public String getHistoryFilename() {
         return "places.sqlite";
     }
+
+    @Override
+    public String getLoginDataFilename() {
+        return "TODO: not implemented yet";
+    }
 }

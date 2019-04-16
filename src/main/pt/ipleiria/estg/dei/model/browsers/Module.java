@@ -12,7 +12,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Module implements ETLProcess{
+public abstract class Module implements ETLProcess {
     private Connection connection;
     protected final static String EXTERNAL_URL = "externalUrls";
 
@@ -101,7 +101,7 @@ public abstract class Module implements ETLProcess{
 
 
     protected static String getTempPath(Case aCase, String filename) {
-        String tmpDir = aCase.getTempDirectory() + File.separator + "RecentActivity" + File.separator + filename;
+        String tmpDir = aCase.getTempDirectory() + File.separator + "BrowserHistory" + File.separator + filename;
         File dir = new File(tmpDir);
         if (!dir.exists()) {
             dir.mkdirs();

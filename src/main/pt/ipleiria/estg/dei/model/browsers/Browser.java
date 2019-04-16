@@ -46,26 +46,32 @@ public abstract class Browser extends Module {
         try {
             FileManager fileManager = currentCase.getServices().getFileManager();
             List<AbstractFile> history = fileManager.findFiles(dataSource,  getHistoryFilename(), getPathToBrowserHistory());
+            execute(history, "history-");
 
-            for (AbstractFile file:history) {
-                String userName = file.getParentPath().split("/")[2];
-
-                //We have to copy this file to the temp directory
-                String tempPath = getTempPath(currentCase, getModuleName()) + File.separator + "places" + userName + ".db";
-                try {
-                    ContentUtils.writeToFile(file, new File(tempPath), context::dataSourceIngestIsCancelled);
-                    runETLProcess(tempPath, userName);
-                } catch (IOException | NoCriticalException e) {
-                    logger.warn(e.getMessage());//We don't want to stop the process when it is a non critical exception
-                }
-            }
+            List<AbstractFile> loginData = fileManager.findFiles(dataSource, getLoginDataFilename(), getPathToBrowserHistory());
+            execute(loginData, "login-");
         } catch (TskCoreException e) {
             logger.warn("[" + getModuleName() +"] Issue when running: " + e.getMessage());
         }
     }
+    private void execute(List<AbstractFile> files, String prefixName) throws ConnectionException {
+        for (AbstractFile file: files) {
+            String userName = file.getParentPath().split("/")[2];
 
+            //We have to copy this file to the temp directory
+            String tempPath = getTempPath(currentCase, getModuleName()) + File.separator + prefixName + userName + ".db";
+            try {
+                ContentUtils.writeToFile(file, new File(tempPath), context::dataSourceIngestIsCancelled);
+                runETLProcess(tempPath, userName);
+            } catch (IOException | NoCriticalException e) {
+                logger.warn(e.getMessage());//We don't want to stop the process when it is a non critical exception
+            }
+        }
+    }
 
     public abstract String getPathToBrowserHistory();
     public abstract String getHistoryFilename();
+    public abstract String getLoginDataFilename();
+
 
 }

@@ -39,12 +39,11 @@ public class Chrome extends Browser {
         extractTable("t_ext_chrome_segments", "segments", EXTERNAL_URL);
         extractTable("t_ext_chrome_sqlite_sequence", "sqlite_sequence", EXTERNAL_URL);
         extractTable("t_ext_chrome_typed_url_sync_metadata", "typed_url_sync_metadata", EXTERNAL_URL);
-        extractTable("t_ext_chrome_login_data", "logins", "externalLogins");
+        extractTable("t_ext_chrome_login_data", "logins", EXTERNAL_URL);
     }
 
     @Override
     public void runTransformation(String user) throws ConnectionException {
-        //deleteCleanTables();TODO: only on first time
         transformAllTables(user);
     }
 
@@ -153,10 +152,10 @@ public class Chrome extends Browser {
 
             Matcher email;
             String encoded, substring, decode;
-
+            
             while(rs.next()){
                 encoded = rs.getString("url");
-                substring = encoded.substring(0, encoded.indexOf("&") != -1 ? encoded.indexOf("&") : encoded.length() -1);
+                substring = encoded.substring(0, encoded.contains("&") ? encoded.indexOf("&") : encoded.length() -1);
                 //In case the string has been decoded already
                 try {
                     decode = URLDecoder.decode(substring, "UTF-8"); }
@@ -167,10 +166,10 @@ public class Chrome extends Browser {
                 while (email.find()) {
                     preparedStatement.setString(1, email.group());
                     preparedStatement.setString(2, rs.getString("url_domain"));
-                    preparedStatement.setString(3, null);
-                    preparedStatement.setString(4, null);
-                    preparedStatement.setString(5, null);
-                    preparedStatement.setString(6, null);
+                    preparedStatement.setString(3, null);//original_url
+                    preparedStatement.setString(4, null);//username_value
+                    preparedStatement.setString(5, null);//available_password
+                    preparedStatement.setString(6, null);//date
                     preparedStatement.setString(7, user);
                     preparedStatement.setString(8, getModuleName());
                     preparedStatement.addBatch();
@@ -178,7 +177,9 @@ public class Chrome extends Browser {
             }
             preparedStatement.executeBatch();
 
-            rs = statement.executeQuery(" SELECT  origin_url, username_value ,  ifnull(password_value, false) as available_password, date_created as date " +
+            rs = statement.executeQuery(" SELECT  origin_url, username_value , " +
+                                        " ifnull(password_value, false) as available_password, " +
+                                        "date_created as date " +
                     "  FROM t_ext_chrome_login_data");
 
 
@@ -191,7 +192,7 @@ public class Chrome extends Browser {
                     preparedStatement.setString(2, null);
                     preparedStatement.setString(3, rs.getString("origin_url"));
                     preparedStatement.setString(4, rs.getString("username_value"));
-                    preparedStatement.setString(5, rs.getString("available_password"));
+                    preparedStatement.setString(5, "");
                     preparedStatement.setString(6, rs.getString("date"));
                     preparedStatement.setString(7, user);
                     preparedStatement.setString(8, getModuleName());
@@ -259,6 +260,11 @@ public class Chrome extends Browser {
     @Override
     public String getHistoryFilename() {
         return "History";
+    }
+
+    @Override
+    public String getLoginDataFilename() {
+        return "Login Data";
     }
 
 }
