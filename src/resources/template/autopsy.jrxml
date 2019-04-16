@@ -337,6 +337,30 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
+					<jr:column width="170" uuid="fa0590e8-6698-40e4-bd1f-7341f25aa345">
+						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
+						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
+							<staticText>
+								<reportElement mode="Opaque" x="0" y="0" width="170" height="30" backcolor="#BCF5DC" uuid="56af756b-2c93-4246-9db7-8ff769787a13"/>
+								<textElement textAlignment="Center">
+									<font fontName="SansSerif" size="20"/>
+								</textElement>
+								<text><![CDATA[Count]]></text>
+							</staticText>
+						</jr:columnHeader>
+						<jr:detailCell style="Table_TD" height="30">
+							<textField isBlankWhenNull="true">
+								<reportElement x="0" y="0" width="170" height="30" uuid="729d4cda-a4c7-4518-8fc6-0396ba174c75"/>
+								<box leftPadding="15">
+									<leftPen lineWidth="1.0"/>
+								</box>
+								<textElement>
+									<font fontName="Serif" size="11"/>
+								</textElement>
+								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+							</textField>
+						</jr:detailCell>
+					</jr:column>
 				</jr:table>
 			</componentElement>
 		</band>
@@ -416,6 +440,41 @@
 				</textElement>
 				<text><![CDATA[3.2 - Visited Websites - Visits by User]]></text>
 			</staticText>
+			<barChart>
+				<chart isShowLegend="true" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomLegendList" theme="default">
+					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="10422738-f2f6-4eef-8acd-2c8a13806e71"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<categoryDataset>
+					<dataset>
+						<datasetRun subDataset="Chart" uuid="6d974e85-abea-4f88-9306-c4be08b25f6b">
+							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
+						</datasetRun>
+					</dataset>
+					<categorySeries>
+						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
+						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
+						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
+						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
+					</categorySeries>
+				</categoryDataset>
+				<barPlot>
+					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
+						<seriesColor seriesOrder="0" color="#5494D1"/>
+						<seriesColor seriesOrder="1" color="#5494D1"/>
+						<seriesColor seriesOrder="2" color="#5494D1"/>
+					</plot>
+					<itemLabel/>
+					<categoryAxisFormat labelRotation="35.0">
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</barChart>
 		</band>
 		<band height="710">
 			<staticText>

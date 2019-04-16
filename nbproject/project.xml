@@ -54,6 +54,10 @@
                 <binary-origin>release/modules/ext/commons-beanutils-1.9.3.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
+                <runtime-relative-path>ext/charts.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/charts.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
                 <runtime-relative-path>ext/com.lowagie.text-2.1.7.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/com.lowagie.text-2.1.7.jar</binary-origin>
             </class-path-extension>
