@@ -21,7 +21,7 @@
 	<title>
 		<band height="210">
 			<pieChart>
-				<chart evaluationTime="Report">
+				<chart evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomPieChart">
 					<reportElement x="0" y="0" width="480" height="210" uuid="84eb4705-d52c-4f62-b228-039684882254"/>
 					<chartTitle/>
 					<chartSubtitle/>

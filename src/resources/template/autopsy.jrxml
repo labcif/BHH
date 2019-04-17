@@ -256,7 +256,7 @@
 				<text><![CDATA[	    The analysed history found the following logins:]]></text>
 			</staticText>
 			<componentElement>
-				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="35" y="110" width="490" height="60" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
+				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="30" y="110" width="490" height="60" uuid="c418dd06-e479-42cf-801e-04ebd14e9db2">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -267,11 +267,11 @@
 					<datasetRun subDataset="Emails" uuid="0e965368-6c50-43c4-b35f-0bca8ef1ae60">
 						<dataSourceExpression><![CDATA[$P{Emails}]]></dataSourceExpression>
 					</datasetRun>
-					<jr:column width="146" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
+					<jr:column width="180" uuid="160bfbe4-daa8-4689-8f42-314c039ad3b7">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column1"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="146" height="30" backcolor="#BCF5DC" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
+								<reportElement mode="Opaque" x="0" y="0" width="180" height="30" backcolor="#BCF5DC" uuid="ab6fa375-1837-44f9-aa17-c73628e70485"/>
 								<textElement textAlignment="Center">
 									<font fontName="SansSerif" size="20"/>
 								</textElement>
@@ -280,7 +280,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="146" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
+								<reportElement x="0" y="0" width="180" height="30" uuid="a16415cc-cb5e-43fc-b130-1520dce521e6"/>
 								<box leftPadding="15"/>
 								<textElement>
 									<font fontName="Serif" size="11"/>
@@ -289,11 +289,11 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="174" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
+					<jr:column width="240" uuid="54071937-d8f1-4c33-acce-e663cb5973ea">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column2"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="174" height="30" backcolor="#BCF5DC" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
+								<reportElement mode="Opaque" x="0" y="0" width="240" height="30" backcolor="#BCF5DC" uuid="588eebd9-5aba-483a-a887-40986c456042"/>
 								<textElement textAlignment="Center">
 									<font fontName="SansSerif" size="20"/>
 								</textElement>
@@ -302,7 +302,7 @@
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="174" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
+								<reportElement x="0" y="0" width="240" height="30" uuid="26a48686-3f8a-4041-9bb7-aede9550b568"/>
 								<box leftPadding="15">
 									<leftPen lineWidth="1.0"/>
 								</box>
@@ -313,11 +313,11 @@
 							</textField>
 						</jr:detailCell>
 					</jr:column>
-					<jr:column width="170" uuid="fa0590e8-6698-40e4-bd1f-7341f25aa345">
+					<jr:column width="70" uuid="fa0590e8-6698-40e4-bd1f-7341f25aa345">
 						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
 						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
 							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="170" height="30" backcolor="#BCF5DC" uuid="56af756b-2c93-4246-9db7-8ff769787a13"/>
+								<reportElement mode="Opaque" x="0" y="0" width="70" height="30" backcolor="#BCF5DC" uuid="56af756b-2c93-4246-9db7-8ff769787a13"/>
 								<textElement textAlignment="Center">
 									<font fontName="SansSerif" size="20"/>
 								</textElement>
@@ -326,35 +326,11 @@
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="170" height="30" uuid="729d4cda-a4c7-4518-8fc6-0396ba174c75"/>
+								<reportElement x="0" y="0" width="70" height="30" uuid="729d4cda-a4c7-4518-8fc6-0396ba174c75"/>
 								<box leftPadding="15">
 									<leftPen lineWidth="1.0"/>
 								</box>
-								<textElement>
-									<font fontName="Serif" size="11"/>
-								</textElement>
-								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
-							</textField>
-						</jr:detailCell>
-					</jr:column>
-					<jr:column width="170" uuid="fa0590e8-6698-40e4-bd1f-7341f25aa345">
-						<property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
-						<jr:columnHeader style="Table_CH" height="30" rowSpan="1">
-							<staticText>
-								<reportElement mode="Opaque" x="0" y="0" width="170" height="30" backcolor="#BCF5DC" uuid="56af756b-2c93-4246-9db7-8ff769787a13"/>
 								<textElement textAlignment="Center">
-									<font fontName="SansSerif" size="20"/>
-								</textElement>
-								<text><![CDATA[Count]]></text>
-							</staticText>
-						</jr:columnHeader>
-						<jr:detailCell style="Table_TD" height="30">
-							<textField isBlankWhenNull="true">
-								<reportElement x="0" y="0" width="170" height="30" uuid="729d4cda-a4c7-4518-8fc6-0396ba174c75"/>
-								<box leftPadding="15">
-									<leftPen lineWidth="1.0"/>
-								</box>
-								<textElement>
 									<font fontName="Serif" size="11"/>
 								</textElement>
 								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
@@ -415,20 +391,6 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
 						</subreport>
-						<textField>
-							<reportElement x="41" y="231" width="480" height="30" uuid="9106f1cc-5823-4445-b2ea-b514f59cd756"/>
-							<textElement textAlignment="Center">
-								<font size="20"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
-						</textField>
-						<staticText>
-							<reportElement x="161" y="232" width="100" height="30" uuid="fd1f6c84-604e-4eba-9aff-aee81b579238"/>
-							<textElement>
-								<font size="20"/>
-							</textElement>
-							<text><![CDATA[User:]]></text>
-						</staticText>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
@@ -440,41 +402,6 @@
 				</textElement>
 				<text><![CDATA[3.2 - Visited Websites - Visits by User]]></text>
 			</staticText>
-			<barChart>
-				<chart isShowLegend="true" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomLegendList" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="40" y="110" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="10422738-f2f6-4eef-8acd-2c8a13806e71"/>
-					<chartTitle/>
-					<chartSubtitle/>
-					<chartLegend/>
-				</chart>
-				<categoryDataset>
-					<dataset>
-						<datasetRun subDataset="Chart" uuid="6d974e85-abea-4f88-9306-c4be08b25f6b">
-							<dataSourceExpression><![CDATA[$P{Visits}]]></dataSourceExpression>
-						</datasetRun>
-					</dataset>
-					<categorySeries>
-						<seriesExpression><![CDATA[$F{domain}]]></seriesExpression>
-						<categoryExpression><![CDATA[$F{domain}]]></categoryExpression>
-						<valueExpression><![CDATA[$F{visitCount}]]></valueExpression>
-						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
-					</categorySeries>
-				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
-						<seriesColor seriesOrder="0" color="#5494D1"/>
-						<seriesColor seriesOrder="1" color="#5494D1"/>
-						<seriesColor seriesOrder="2" color="#5494D1"/>
-					</plot>
-					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</categoryAxisFormat>
-					<valueAxisFormat>
-						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
-					</valueAxisFormat>
-				</barPlot>
-			</barChart>
 		</band>
 		<band height="710">
 			<staticText>
@@ -527,20 +454,6 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
 						</subreport>
-						<textField>
-							<reportElement x="41" y="231" width="480" height="30" uuid="fb6465d4-4789-4421-b48c-1e925477ac66"/>
-							<textElement textAlignment="Center">
-								<font size="20"/>
-							</textElement>
-							<textFieldExpression><![CDATA[$F{name}]]></textFieldExpression>
-						</textField>
-						<staticText>
-							<reportElement x="161" y="232" width="100" height="30" uuid="cc7ba830-9098-46ea-a2ab-76f53dc13f3c"/>
-							<textElement>
-								<font size="20"/>
-							</textElement>
-							<text><![CDATA[User:]]></text>
-						</staticText>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>

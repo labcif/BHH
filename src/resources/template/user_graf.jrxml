@@ -22,8 +22,13 @@
 		<band height="210">
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerHeight" mode="Transparent" x="0" y="0" width="480" height="189" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7"/>
-					<chartTitle/>
+					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="0" y="0" width="480" height="210" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="0ab2342f-9035-4a4c-88b1-9070b99054f7">
+						<property name="net.sf.jasperreports.customizer.class.0" value="pt.ipleiria.estg.dei.CustomBarChart"/>
+					</reportElement>
+					<chartTitle>
+						<font size="14" isBold="false" isUnderline="false" isStrikeThrough="false"/>
+						<titleExpression><![CDATA[$P{userName}]]></titleExpression>
+					</chartTitle>
 					<chartSubtitle/>
 					<chartLegend/>
 				</chart>
@@ -40,14 +45,14 @@
 						<labelExpression><![CDATA[$F{domain}]]></labelExpression>
 					</categorySeries>
 				</categoryDataset>
-				<barPlot>
-					<plot backgroundAlpha="1.0" foregroundAlpha="1.0" labelRotation="35.0">
+				<barPlot isShowLabels="false" isShowTickLabels="true" isShowTickMarks="true">
+					<plot backgroundAlpha="1.0" foregroundAlpha="1.0">
 						<seriesColor seriesOrder="0" color="#5494D1"/>
 						<seriesColor seriesOrder="1" color="#5494D1"/>
 						<seriesColor seriesOrder="2" color="#5494D1"/>
 					</plot>
 					<itemLabel/>
-					<categoryAxisFormat labelRotation="35.0">
+					<categoryAxisFormat>
 						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
 					</categoryAxisFormat>
 					<valueAxisFormat>
