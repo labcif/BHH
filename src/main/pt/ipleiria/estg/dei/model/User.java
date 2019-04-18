@@ -1,17 +1,22 @@
 package main.pt.ipleiria.estg.dei.model;
 
 import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import java.util.List;
 
 public class User {
     private String name;
-    private JRDataSource userWebsites;
+    private JRDataSource userWebsitesVisited;
+    private JRDataSource userWebsitesBlocked;
 
     public User() {
     }
 
-    public User(String name, JRDataSource userWebsites) {
+    public User(String name, List<Website> userWebsitesVisited, List<Website> userWebsitesBlocked ) {
         this.name = name;
-        this.userWebsites = userWebsites;
+        this.userWebsitesVisited = new JRBeanCollectionDataSource(userWebsitesVisited);
+        this.userWebsitesBlocked = new JRBeanCollectionDataSource(userWebsitesBlocked);
     }
 
     public String getName() {
@@ -22,12 +27,20 @@ public class User {
         this.name = name;
     }
 
-    public JRDataSource getUserWebsites() {
-        return userWebsites;
+    public JRDataSource getUserWebsitesVisited() {
+        return userWebsitesVisited;
     }
 
-    public void setUserWebsites(JRDataSource userWebsites) {
-        this.userWebsites = userWebsites;
+    public void setUserWebsitesVisited(JRDataSource userWebsitesVisited) {
+        this.userWebsitesVisited = userWebsitesVisited;
+    }
+
+    public JRDataSource getUserWebsitesBlocked() {
+        return userWebsitesBlocked;
+    }
+
+    public void setUserWebsitesBlocked(JRDataSource userWebsitesBlocked) {
+        this.userWebsitesBlocked = userWebsitesBlocked;
     }
 }
 

@@ -70,10 +70,7 @@ public class FileGenerator {
             reportData.put("Emails", jrBeanCollectionDataSource);
         }
 
-
-        //Adding a new var for testing, since when printing if a graph uses the same var only the first one will be used
-        List<User> usersVisitedSites = new ArrayList<>();
-        List<User> usersBlockedSites = new ArrayList<>();
+        List<User> usersInfo = new ArrayList<>();
         List<Website> topVisitedWebsiteByUser;
         List<Website> blockedWebsiteVisited;
 
@@ -82,28 +79,15 @@ public class FileGenerator {
         for (String nome: userNames ) {
             topVisitedWebsiteByUser = DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome);
             blockedWebsiteVisited = DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome);
-            if(!topVisitedWebsiteByUser.isEmpty()){
-                usersVisitedSites.add(new User(nome, new JRBeanCollectionDataSource(topVisitedWebsiteByUser)));
-            }
-            if(!blockedWebsiteVisited.isEmpty()) {
-                usersBlockedSites.add(new User(nome, new JRBeanCollectionDataSource(blockedWebsiteVisited)));
-            }
+
+            usersInfo.add(new User(nome, topVisitedWebsiteByUser, blockedWebsiteVisited));
         }
 
-        //Temporary prob there is a way to show a list of string with no class associated
-        JRDataSource userList = new JRBeanCollectionDataSource(usersVisitedSites);
-        reportData.put("UsersList", userList);
 
+        JRDataSource userInfo = new JRBeanCollectionDataSource(usersInfo);
 
         //Visited Subreport List (by user)
-        JRDataSource jrBeanCollectionDataSource3 = new JRBeanCollectionDataSource(usersVisitedSites);
-        reportData.put("UserVisitsSubreport", jrBeanCollectionDataSource3);
-
-        //Blocked Subreport List (by user)
-        JRDataSource userBlockedList = new JRBeanCollectionDataSource(usersBlockedSites);
-        reportData.put("UserBlockedSubreport", userBlockedList);
-
-
+        reportData.put("UserInfo", userInfo);
 
 
         //Adding SubReport (Chart Type)
@@ -113,8 +97,10 @@ public class FileGenerator {
         }else{
             chartTipe = from.getResourceAsStream("/resources/template/user_graf_pie.jrxml");
         }
-        JasperReport subReport = JasperCompileManager.compileReport(chartTipe);
-        reportData.put("subReport", subReport);
+
+
+        JasperReport subReportChart = JasperCompileManager.compileReport(chartTipe);
+        reportData.put("subReport", subReportChart);
 
 
         generator.setReportData(reportData);
