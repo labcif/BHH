@@ -21,7 +21,7 @@
 	<title>
 		<band height="210">
 			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" bookmarkLevel="2" theme="default">
+				<chart isShowLegend="false" evaluationTime="Report" theme="default">
 					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="0" y="0" width="480" height="210" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="3404f9ab-ea0d-4124-af9b-7f204b2b4c9c">
 						<property name="net.sf.jasperreports.customizer.class.0" value="pt.ipleiria.estg.dei.CustomBarChart"/>
 					</reportElement>
@@ -31,7 +31,6 @@
 					</chartTitle>
 					<chartSubtitle/>
 					<chartLegend/>
-					<anchorNameExpression><![CDATA[$P{username}]]></anchorNameExpression>
 				</chart>
 				<categoryDataset>
 					<dataset>

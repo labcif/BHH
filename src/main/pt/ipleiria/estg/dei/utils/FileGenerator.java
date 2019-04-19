@@ -2,6 +2,7 @@ package main.pt.ipleiria.estg.dei.utils;
 
 import main.pt.ipleiria.estg.dei.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.dtos.UserDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.model.adapters.UserInfo;
@@ -40,6 +41,7 @@ public class FileGenerator {
         List<UserInfo> userInfoDataSource = new ArrayList<>();
 
         List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+        List<UserDto> listOfNamesToIterate = new ArrayList<>();
 
         if (userNames.size() > 1) {
             userInfoDataSource.add(addGlobalSearchToReport());
@@ -50,10 +52,13 @@ public class FileGenerator {
                     new UserInfo(nome,
                             DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome),
                             DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome)));
+            listOfNamesToIterate.add(new UserDto(nome));
         }
 
         //Information by user
         reportData.put("userInfoDataSource", new JRBeanCollectionDataSource(userInfoDataSource));
+        reportData.put("userNamesDataSource", new JRBeanCollectionDataSource(listOfNamesToIterate));
+
 
         // Type of chart
         reportData.put("chartType", getChartType());

@@ -41,8 +41,16 @@
 		<field name="mostVisitedWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 		<field name="blockedVisitedWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	</subDataset>
+	<subDataset name="UsernamesDataSet" uuid="96e650c5-4c79-4f9f-823a-ec887942d66f">
+		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="username" class="java.lang.String"/>
+	</subDataset>
 	<parameter name="chartType" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="userInfoDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="userNamesDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -143,25 +151,50 @@
 				<hyperlinkAnchorExpression><![CDATA[" 4.1 - Blocked Websites - Total Visit Count"]]></hyperlinkAnchorExpression>
 			</textField>
 		</band>
-		<band height="182">
+		<band height="509">
 			<property name="com.jaspersoft.studio.layout"/>
-			<staticText>
-				<reportElement x="0" y="70" width="557" height="90" uuid="7d4afef3-cd97-4e90-b242-caa895563a02"/>
-				<box leftPadding="20"/>
-				<textElement textAlignment="Left">
-					<font fontName="Serif" size="16"/>
-				</textElement>
-				<text><![CDATA[	    The equipment analyzed was a "Desktop computer"  ID:  A.PC03.
-	    Was made a copy of the hard drive and later proceeded the forensics analysis of the information available on the browser's history. 					    	    The operations done were:]]></text>
-			</staticText>
 			<textField bookmarkLevel="1">
-				<reportElement x="30" y="10" width="524" height="50" uuid="67cd6d2a-f38b-4577-a308-8d3f4a6750ac"/>
+				<reportElement x="30" y="10" width="524" height="50" uuid="97eaa035-c5c2-4dfa-b577-b042e32ec289"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="24" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1 - Report History"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["1 - Report History"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["1 - Introdução"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["1 - Introdução"]]></anchorNameExpression>
 			</textField>
+			<componentElement>
+				<reportElement x="60" y="80" width="494" height="120" uuid="405e4aab-5c52-4872-907d-66486209c1dc"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
+					<datasetRun subDataset="UsernamesDataSet" uuid="a0f2a307-a218-4c66-964c-60a69227eb71">
+						<dataSourceExpression><![CDATA[$P{userNamesDataSource}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="120" width="494">
+						<textField hyperlinkType="LocalAnchor">
+							<reportElement x="0" y="15" width="494" height="30" uuid="24abd86b-73b4-4c2a-aa46-ed07585378ba"/>
+							<textElement>
+								<font size="20" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA["User: " +$F{username}]]></textFieldExpression>
+							<hyperlinkAnchorExpression><![CDATA[$F{username}]]></hyperlinkAnchorExpression>
+						</textField>
+						<textField hyperlinkType="LocalAnchor">
+							<reportElement x="40" y="45" width="454" height="30" uuid="20f925d8-9c44-429e-9a20-9c53a8f96991"/>
+							<textElement>
+								<font size="20" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA["1 - Total visites per Websites"]]></textFieldExpression>
+							<hyperlinkAnchorExpression><![CDATA[$F{username} + "_1 - Visits Per Website"]]></hyperlinkAnchorExpression>
+						</textField>
+						<textField hyperlinkType="LocalAnchor">
+							<reportElement x="40" y="75" width="454" height="30" uuid="46b36e31-dbc2-4fbc-90f6-0987bad23eb3"/>
+							<textElement>
+								<font size="20" isBold="false"/>
+							</textElement>
+							<textFieldExpression><![CDATA["2 - Blocked Websites visited"]]></textFieldExpression>
+							<hyperlinkAnchorExpression><![CDATA[$F{username} + "_1 - Blocked Websites"]]></hyperlinkAnchorExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
 		</band>
 		<band height="234">
 			<staticText>
@@ -195,7 +228,7 @@
 					</datasetRun>
 					<jr:listContents height="689" width="554">
 						<subreport>
-							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="17" y="80" width="520" height="250" isRemoveLineWhenBlank="true" uuid="28137bf4-e9e8-4277-8b31-9e6f218a0bdb"/>
+							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="17" y="110" width="520" height="250" isRemoveLineWhenBlank="true" uuid="28137bf4-e9e8-4277-8b31-9e6f218a0bdb"/>
 							<subreportParameter name="websites">
 								<subreportParameterExpression><![CDATA[$F{mostVisitedWebsites}]]></subreportParameterExpression>
 							</subreportParameter>
@@ -205,16 +238,8 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{chartType}]]></subreportExpression>
 						</subreport>
-						<staticText>
-							<reportElement positionType="Float" x="0" y="20" width="554" height="60" uuid="99562c4b-6918-4ece-bd9a-23064c0d396f"/>
-							<box topPadding="30" leftPadding="60"/>
-							<textElement textAlignment="Left">
-								<font fontName="Serif" size="18"/>
-							</textElement>
-							<text><![CDATA[1 - Total visites per Websites ]]></text>
-						</staticText>
 						<subreport>
-							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="400" width="520" height="250" isRemoveLineWhenBlank="true" uuid="7209fd73-3d8b-4ae4-976f-e91a672836c8"/>
+							<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="430" width="520" height="250" isRemoveLineWhenBlank="true" uuid="7209fd73-3d8b-4ae4-976f-e91a672836c8"/>
 							<subreportParameter name="websites">
 								<subreportParameterExpression><![CDATA[$F{blockedVisitedWebsites}]]></subreportParameterExpression>
 							</subreportParameter>
@@ -224,23 +249,39 @@
 							<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
 							<subreportExpression><![CDATA[$P{chartType}]]></subreportExpression>
 						</subreport>
-						<staticText>
-							<reportElement positionType="Float" x="0" y="340" width="554" height="60" uuid="c4650eec-1dbd-462e-b09c-47dc9db0d7ed"/>
-							<box topPadding="30" leftPadding="60"/>
-							<textElement textAlignment="Left">
-								<font fontName="Serif" size="18"/>
+						<textField hyperlinkTarget="Blank" bookmarkLevel="2">
+							<reportElement x="30" y="0" width="490" height="60" uuid="77f632fb-ea57-45fa-8429-1ca98ac80fa5"/>
+							<textElement verticalAlignment="Middle">
+								<font fontName="Serif" size="20"/>
 							</textElement>
-							<text><![CDATA[2 - Blocked Websites visited]]></text>
-						</staticText>
+							<textFieldExpression><![CDATA["User : " + $F{username}]]></textFieldExpression>
+							<anchorNameExpression><![CDATA[$F{username}]]></anchorNameExpression>
+						</textField>
+						<textField hyperlinkTarget="Blank" bookmarkLevel="2">
+							<reportElement x="64" y="40" width="490" height="60" uuid="a2b9aba4-08e2-4c3d-a89f-39b439346b99"/>
+							<textElement verticalAlignment="Bottom">
+								<font fontName="Serif" size="20"/>
+							</textElement>
+							<textFieldExpression><![CDATA["1 - Total Visites per Websites"]]></textFieldExpression>
+							<anchorNameExpression><![CDATA[$F{username}+ "_1 - Visits Per Website"]]></anchorNameExpression>
+						</textField>
+						<textField hyperlinkTarget="Blank" bookmarkLevel="2">
+							<reportElement x="64" y="360" width="490" height="60" uuid="70f5892d-aba2-4c97-90f4-4660b0bc6cc8"/>
+							<textElement verticalAlignment="Bottom">
+								<font fontName="Serif" size="20"/>
+							</textElement>
+							<textFieldExpression><![CDATA["2 - Blocked Websites visited"]]></textFieldExpression>
+							<anchorNameExpression><![CDATA[$F{username} + "_1 - Blocked Websites"]]></anchorNameExpression>
+						</textField>
 					</jr:listContents>
 				</jr:list>
 			</componentElement>
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="-1" y="0" width="555" height="60" uuid="fbddf139-4d98-477b-a71f-9e71cac1ca2b"/>
+				<reportElement x="30" y="0" width="524" height="60" uuid="fbddf139-4d98-477b-a71f-9e71cac1ca2b"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	5 - User details"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["5 - User details"]]></textFieldExpression>
 				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
 			</textField>
 		</band>
