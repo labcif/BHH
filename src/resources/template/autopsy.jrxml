@@ -91,7 +91,7 @@
 				<reportElement x="0" y="671" width="555" height="1" uuid="cf4dacd0-45cd-4ffd-beb2-22bb0147cbb8"/>
 			</break>
 		</band>
-		<band height="271">
+		<band height="353">
 			<textField bookmarkLevel="1">
 				<reportElement x="30" y="40" width="500" height="30" uuid="5343b901-e4b2-4964-89e1-2e3d48dadca1"/>
 				<textElement>

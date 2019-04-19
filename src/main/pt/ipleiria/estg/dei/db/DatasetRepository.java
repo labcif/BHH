@@ -73,7 +73,7 @@ public class DatasetRepository {
         return website;
     }
 
-    public List<Website> getBlockedWebsiteVisited() throws SQLException {
+    public List<Website> getBlockedWebsiteVisited(int limit) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -82,7 +82,8 @@ public class DatasetRepository {
                         " WHERE url_domain IN (SELECT DOMAIN " +
                         "                       FROM t_clean_blocked_websites) " +
                         " group by url_domain " +
-                        " order by total desc ");
+                        " order by total desc " +
+                        "limit " +limit );
 
         while (rs.next()) {
             website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));

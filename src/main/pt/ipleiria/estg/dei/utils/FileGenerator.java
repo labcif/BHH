@@ -41,6 +41,10 @@ public class FileGenerator {
 
         List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
+        if (userNames.size() > 1) {
+            userInfoDataSource.add(addGlobalSearchToReport());
+        }
+
         for (String nome: userNames ) {
             userInfoDataSource.add(
                     new UserInfo(nome,
@@ -71,6 +75,12 @@ public class FileGenerator {
         try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport"+ dateNoTime +".pdf")) {
             byteArrayOutputStream.writeTo(outputStream);
         }
+    }
+
+    private UserInfo addGlobalSearchToReport() throws ConnectionException, SQLException, ClassNotFoundException {
+        return new UserInfo("Global Search",
+                DatasetRepository.getInstance().getTopVisitedWebsite(10),
+                DatasetRepository.getInstance().getBlockedWebsiteVisited(10));
     }
 
     private JasperReport getChartType() throws JRException {

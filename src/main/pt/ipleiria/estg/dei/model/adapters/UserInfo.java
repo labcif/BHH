@@ -11,8 +11,6 @@ public class UserInfo {
     private JRDataSource mostVisitedWebsites;
     private JRDataSource blockedVisitedWebsites;
 
-    public UserInfo() {
-    }
 
     public UserInfo(String username, List<Website> mostVisitedWebsites, List<Website> blockedVisitedWebsites ) {
         this.mostVisitedWebsites = new JRBeanCollectionDataSource(mostVisitedWebsites);
