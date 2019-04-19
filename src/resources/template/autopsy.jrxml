@@ -239,55 +239,38 @@
 				<hyperlinkAnchorExpression><![CDATA["1 - Report History"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="31" y="160" width="500" height="30" uuid="d39902f3-f946-4af7-ba44-64de4a5858b0"/>
+				<reportElement x="31" y="132" width="500" height="30" uuid="d39902f3-f946-4af7-ba44-64de4a5858b0"/>
 				<textElement>
 					<font size="20" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["		3.1 - Visited Websites - Total Visit Count ..... 3"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["		2.1 - Login Found ............................. 3"]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["3.1 - Visited Websites - Total Visit Count"]]></hyperlinkReferenceExpression>
 				<hyperlinkAnchorExpression><![CDATA["3.1 - Visited Websites - Total Visit Count"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="31" y="130" width="500" height="30" uuid="d064e81d-de49-45f5-8a0b-55612828eba9"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	3. Visited Websites .............................................. 3"]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA["3 - Visited Websites"]]></hyperlinkReferenceExpression>
-				<hyperlinkAnchorExpression><![CDATA["3 - Visited Websites"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
 				<reportElement x="31" y="100" width="500" height="30" uuid="e22989b0-af8f-493e-8103-dfcaf8f681c7"/>
 				<textElement>
 					<font size="20" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	2. Logins found .................................................... 3"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	2. Global Search  .................................................... 3"]]></textFieldExpression>
 				<hyperlinkReferenceExpression><![CDATA["2 - Logins Found"]]></hyperlinkReferenceExpression>
 				<hyperlinkAnchorExpression><![CDATA["2 - Logins Found"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="250" width="500" height="30" uuid="ebc9ed0d-7f2e-4b84-9891-6d26ae320d14"/>
+				<reportElement x="30" y="194" width="500" height="30" uuid="ebc9ed0d-7f2e-4b84-9891-6d26ae320d14"/>
 				<textElement>
 					<font size="20" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	5. User details ...................................................... 4"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["	3. Search By User ............................................... 4"]]></textFieldExpression>
 				<hyperlinkAnchorExpression><![CDATA["5 - User details"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="220" width="500" height="30" uuid="13020e5c-d350-4739-9b4a-38bfd5a2d3e1"/>
+				<reportElement x="30" y="164" width="500" height="30" uuid="13020e5c-d350-4739-9b4a-38bfd5a2d3e1"/>
 				<textElement>
 					<font size="20" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["		4.1 - Blocked Websites - Total Visit Count ... 4"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["		2.2 - Most Visited websites -  ... 4"]]></textFieldExpression>
 				<hyperlinkAnchorExpression><![CDATA[" 4.1 - Blocked Websites - Total Visit Count"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="190" width="500" height="30" uuid="59757ae3-11e6-4fac-9016-d13f7ce58cfd"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	4. Blocked Websites ............................................ 4"]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA["4 - Blocked Websites"]]></hyperlinkAnchorExpression>
 			</textField>
 		</band>
 		<band height="182">
@@ -310,7 +293,7 @@
 				<anchorNameExpression><![CDATA["1 - Report History"]]></anchorNameExpression>
 			</textField>
 		</band>
-		<band height="233">
+		<band height="234">
 			<staticText>
 				<reportElement x="-1" y="60" width="562" height="30" uuid="5eaff89a-a43c-4553-be7c-ec9a73d82e53"/>
 				<box leftPadding="20"/>
@@ -408,60 +391,8 @@
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
-				<textFieldExpression><![CDATA["2 - Logins found"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["2 - Global Search"]]></textFieldExpression>
 				<anchorNameExpression><![CDATA["2 - Logins Found"]]></anchorNameExpression>
-			</textField>
-		</band>
-		<band height="395">
-			<subreport>
-				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="110" width="520" height="250" isRemoveLineWhenBlank="true" uuid="b508519c-713b-4bdb-b964-6023d836377b"/>
-				<subreportParameter name="userWebsites">
-					<subreportParameterExpression><![CDATA[$P{Visits}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
-			</subreport>
-			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="30" y="0" width="525" height="60" uuid="83b232ef-6cd7-4dfd-8b71-32a8ec168769"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Serif" size="22"/>
-				</textElement>
-				<textFieldExpression><![CDATA["3 - Visited Websites"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["3 - Visited Websites"]]></anchorNameExpression>
-			</textField>
-			<textField hyperlinkTarget="Blank" bookmarkLevel="2">
-				<reportElement x="60" y="40" width="493" height="60" uuid="a025c05e-69ad-450b-9660-bb2e6a35b7c9"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Serif" size="22"/>
-				</textElement>
-				<textFieldExpression><![CDATA[" 3.1 - Visited Websites - Total Visit Count "]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["3.1 - Visited Websites - Total Visit Count"]]></anchorNameExpression>
-			</textField>
-		</band>
-		<band height="394">
-			<subreport>
-				<reportElement positionType="Float" stretchType="ElementGroupHeight" x="20" y="120" width="520" height="250" isRemoveLineWhenBlank="true" uuid="cfd1be8d-fadb-41f2-9d6b-5dcce8a1fe77"/>
-				<subreportParameter name="userWebsites">
-					<subreportParameterExpression><![CDATA[$P{Blocked}]]></subreportParameterExpression>
-				</subreportParameter>
-				<connectionExpression><![CDATA[$P{REPORT_CONNECTION}]]></connectionExpression>
-				<subreportExpression><![CDATA[$P{subReport}]]></subreportExpression>
-			</subreport>
-			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="31" y="0" width="524" height="60" uuid="cbe3ba85-4b6b-46c2-8660-7b388f4177f7"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Serif" size="22"/>
-				</textElement>
-				<textFieldExpression><![CDATA["4 - Blocked Websites"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["4 - Blocked Websites"]]></anchorNameExpression>
-			</textField>
-			<textField hyperlinkTarget="Blank" bookmarkLevel="2">
-				<reportElement x="60" y="40" width="494" height="60" uuid="fbed0489-bafe-4f34-bd8a-15858e614874"/>
-				<textElement verticalAlignment="Bottom">
-					<font fontName="Serif" size="22"/>
-				</textElement>
-				<textFieldExpression><![CDATA["4.1 - Blocked Websites - Total Visit Count "]]></textFieldExpression>
-				<anchorNameExpression><![CDATA[" 4.1 - Blocked Websites - Total Visit Count"]]></anchorNameExpression>
 			</textField>
 		</band>
 		<band height="749">
