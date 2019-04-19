@@ -14,8 +14,8 @@
 		<field name="domain" class="java.lang.String"/>
 		<field name="visitCount" class="java.lang.Integer"/>
 	</subDataset>
-	<parameter name="userWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
-	<parameter name="userName" class="java.lang.String"/>
+	<parameter name="websites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="username" class="java.lang.String"/>
 	<field name="domain" class="java.lang.String"/>
 	<field name="visitCount" class="java.lang.Integer"/>
 	<title>
@@ -30,7 +30,7 @@
 				<pieDataset>
 					<dataset>
 						<datasetRun subDataset="Graf_subreport" uuid="69ee4fc5-fa78-4dc8-966f-5faf6871eb2f">
-							<dataSourceExpression><![CDATA[$P{userWebsites}]]></dataSourceExpression>
+							<dataSourceExpression><![CDATA[$P{websites}]]></dataSourceExpression>
 						</datasetRun>
 					</dataset>
 					<keyExpression><![CDATA[$F{domain}]]></keyExpression>

@@ -2,7 +2,7 @@ package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
-import main.pt.ipleiria.estg.dei.model.Email;
+import main.pt.ipleiria.estg.dei.model.Login;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
@@ -109,8 +109,8 @@ public class DatasetRepository {
         return website;
     }
 
-    public List<Email> getEmailsUsed() throws SQLException {
-        List<Email> emails = new ArrayList<>();
+    public List<Login> getEmailsUsed() throws SQLException {
+        List<Login> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT  email, source_full, count(*) as total, available_password " +
@@ -119,7 +119,7 @@ public class DatasetRepository {
                         "order by total desc ");
 
         while (rs.next()) {
-            emails.add(new Email(rs.getString("email"),rs.getString("source_full"),
+            emails.add(new Login(rs.getString("email"),rs.getString("source_full"),
                     rs.getInt("total"), rs.getString("available_password")));
         }
         return emails;

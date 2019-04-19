@@ -1,12 +1,12 @@
 package main.pt.ipleiria.estg.dei.model;
 
-public class Email {
+public class Login {
     private String description;
     private String source;
     private int total;
     private String password;
 
-    public Email(String word, String source, int total, String password) {
+    public Login(String word, String source, int total, String password) {
         this.description = word;
         this.source = source;
         this.total = total;
