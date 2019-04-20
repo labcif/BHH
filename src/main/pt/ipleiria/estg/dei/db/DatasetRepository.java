@@ -36,7 +36,7 @@ public class DatasetRepository {
         return datasetRepository;
     }
 
-    public List<Website> getTopVisitedWebsite(int limit) throws SQLException {
+    public List<Website> getMostVisitedWebsite(int limit) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -47,68 +47,68 @@ public class DatasetRepository {
                         "limit " + limit);
 
         while (rs.next()) {
-            String domain = rs.getString("url_domain");
-            int visitNumber = Integer.parseInt(rs.getString("total"));
-            website.add(new Website(domain, visitNumber));
+            website.add(getWebsites(rs));
         }
         return website;
     }
-
-    public List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException {
+    public List<Website> getMostVisitedWebsite(int limit, String username) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT url_domain, count (*) as total " +
                         "FROM t_clean_url " +
-                        "where url_user_origin  = '" + userName + "'"   +
+                        "WHERE url_user_origin = '" + username+"' " +
                         "group by url_domain " +
                         "order by count (*) desc " +
                         "limit " + limit);
 
         while (rs.next()) {
-            String domain = rs.getString("url_domain");
-            int visitNumber = Integer.parseInt(rs.getString("total"));
-            website.add(new Website(domain, visitNumber));
+            website.add(getWebsites(rs));
         }
         return website;
     }
 
-    public List<Website> getBlockedWebsiteVisited(int limit) throws SQLException {
+
+
+    private Website getWebsites(ResultSet rs) throws SQLException {
+        String domain = rs.getString("url_domain");
+        int visitNumber = Integer.parseInt(rs.getString("total"));
+        return new Website(domain, visitNumber);
+    }
+
+    public List<Website> getBlockedVisitedWebsite() throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                " SELECT url_domain, count(*) as total " +
-                        " FROM t_clean_url " +
-                        " WHERE url_domain IN (SELECT DOMAIN " +
-                        "                       FROM t_clean_blocked_websites) " +
-                        " group by url_domain " +
-                        " order by total desc " +
-                        "limit " +limit );
+                "SELECT url_domain, count (*) as total " +
+                        "FROM t_clean_url tcl " +
+                        "INNER JOIN  t_clean_blocked_websites tcbw ON tcl.url_domain = tcbw.domain " +
+                        "group by url_domain " +
+                        "order by total desc ");
 
         while (rs.next()) {
-            website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
+            website.add(getWebsites(rs));
+        }
+        return website;
+    }
+    public List<Website> getBlockedVisitedWebsite(String username) throws SQLException {
+        List<Website> website = new ArrayList<>();
+
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, count(*) as total " +
+                        "FROM t_clean_url tcl " +
+                        "INNER JOIN  t_clean_blocked_websites tcbw ON tcl.url_domain = tcbw.domain " +
+                        "WHERE url_user_origin = '" + username +"' " +
+                        "GROUP BY url_domain " +
+                        "order by total desc " );
+
+        while (rs.next()) {
+            website.add(getWebsites(rs));
         }
         return website;
     }
     
-    public List<Website> getBlockedWebsiteVisited(int limit, String userName) throws SQLException {
-        List<Website> website = new ArrayList<>();
 
-        ResultSet rs = statement.executeQuery(
-                " SELECT url_domain, count(*) as total " +
-                        " FROM t_clean_url " +
-                        " WHERE url_domain IN (SELECT DOMAIN " +
-                        "                       FROM t_clean_blocked_websites) " +
-                        " and url_user_origin  = '" + userName + "'"   +
-                        " group by url_domain " +
-                        " order by total desc " +
-                        " limit " + limit);
-
-        while (rs.next()) {
-            website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
-        }
-        return website;
-    }
 
     public List<Login> getEmailsUsed() throws SQLException {
         List<Login> emails = new ArrayList<>();

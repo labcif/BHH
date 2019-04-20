@@ -50,8 +50,8 @@ public class FileGenerator {
         for (String nome: userNames ) {
             userInfoDataSource.add(
                     new UserInfo(nome,
-                            DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome),
-                            DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome)));
+                            DatasetRepository.getInstance().getMostVisitedWebsite(10, nome),
+                            DatasetRepository.getInstance().getBlockedVisitedWebsite( nome)));
             listOfNamesToIterate.add(new UserDto(nome));
         }
 
@@ -88,8 +88,8 @@ public class FileGenerator {
 
     private UserInfo addGlobalSearchToReport() throws ConnectionException, SQLException, ClassNotFoundException {
         return new UserInfo("Global Search",
-                DatasetRepository.getInstance().getTopVisitedWebsite(10),
-                DatasetRepository.getInstance().getBlockedWebsiteVisited(10));
+                DatasetRepository.getInstance().getMostVisitedWebsite(10),
+                DatasetRepository.getInstance().getBlockedVisitedWebsite());
     }
 
     private JasperReport getChartType() throws JRException {

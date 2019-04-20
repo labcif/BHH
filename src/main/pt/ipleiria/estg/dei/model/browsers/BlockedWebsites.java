@@ -39,7 +39,9 @@ public class BlockedWebsites extends Module implements ETLProcess {
     @Override
     public void extractAllTables() throws ConnectionException {
         try {
-            Set<String> urlSet = chosenFile != null ? parseCSVFile(chosenFile).keySet() : readJsonFromUrl("https://tofran.github.io/PortugalWebBlocking/blockList.json").keySet();
+            InputStream backup = getClass().getResourceAsStream("/resources/blocked_websites.csv");
+
+            Set<String> urlSet = chosenFile != null ? parseCSVFile(new FileInputStream(chosenFile)).keySet() : parseCSVFile(backup).keySet();
 
             PreparedStatement preparedStatement = DataWarehouseConnection
                     .getConnection().prepareStatement("INSERT INTO main.t_ext_blocked_websites (domain) VALUES (?)");
@@ -49,7 +51,7 @@ public class BlockedWebsites extends Module implements ETLProcess {
                 preparedStatement.addBatch();
             }
             preparedStatement.executeBatch();
-        } catch (SQLException | ClassNotFoundException | IOException | JSONException e) {
+        } catch (SQLException | ClassNotFoundException | IOException  e) {
             throw new ExtractionException(getModuleName(), "t_ext_blocked_websites",e.getMessage());
         }
     }
@@ -108,13 +110,13 @@ public class BlockedWebsites extends Module implements ETLProcess {
         return result.toString();
     }
 
-    public HashMap parseCSVFile(String csvFile) throws IOException {
+    public HashMap parseCSVFile(InputStream locationFile) throws IOException {
 
         String line;
         HashMap blockedSites = new HashMap();
         String[] webSite;
 
-        try(BufferedReader buffer = new BufferedReader(new FileReader(csvFile))) {
+        try(BufferedReader buffer = new BufferedReader(new InputStreamReader(locationFile))) {
 
             while ((line = buffer.readLine()) != null) {
                 webSite = line.split(",");

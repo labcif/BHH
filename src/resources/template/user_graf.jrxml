@@ -21,10 +21,8 @@
 	<title>
 		<band height="210">
 			<barChart>
-				<chart isShowLegend="false" evaluationTime="Report" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="0" y="0" width="480" height="210" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="3404f9ab-ea0d-4124-af9b-7f204b2b4c9c">
-						<property name="net.sf.jasperreports.customizer.class.0" value="pt.ipleiria.estg.dei.CustomBarChart"/>
-					</reportElement>
+				<chart isShowLegend="false" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomBarChart" theme="default">
+					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="0" y="0" width="480" height="210" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="3404f9ab-ea0d-4124-af9b-7f204b2b4c9c"/>
 					<chartTitle>
 						<font size="14" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 						<titleExpression><![CDATA[$P{username}]]></titleExpression>
