@@ -63,6 +63,10 @@ public class FileGenerator {
         // Type of chart
         reportData.put("chartType", getChartType());
 
+        // Images of the report
+        reportData.put("imgAutopsyLogo", from.getResource("/resources/images/img_1_autopsy_logo.png").toString());
+        reportData.put("imgArrowUp", from.getResource("/resources/images/img_2_arrow_up_icon.png").toString());
+
         generator.setReportData(reportData);
 
         ReportParameterMap reportParameters = new ReportParameterMap();

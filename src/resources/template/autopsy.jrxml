@@ -1,10 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.6.0.final using JasperReports Library version 6.6.0  -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autopsy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8aca9d9-d729-4688-b0c1-34d28d5385eb">
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="autopsy" pageWidth="595" pageHeight="1000" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a8aca9d9-d729-4688-b0c1-34d28d5385eb">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
 	<style name="Table 1_TD" mode="Opaque" backcolor="#FFFFFF">
 		<box>
 			<pen lineWidth="0.5" lineColor="#000000"/>
@@ -51,6 +60,8 @@
 	<parameter name="chartType" class="net.sf.jasperreports.engine.JasperReport"/>
 	<parameter name="userInfoDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="userNamesDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="imgAutopsyLogo" class="java.lang.String"/>
+	<parameter name="imgArrowUp" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -98,23 +109,28 @@
 			<break>
 				<reportElement x="0" y="671" width="555" height="1" uuid="cf4dacd0-45cd-4ffd-beb2-22bb0147cbb8"/>
 			</break>
+			<image>
+				<reportElement x="0" y="-30" width="240" height="90" uuid="0b702de9-2a41-4c2f-bfb5-1e6b0d36e56d"/>
+				<imageExpression><![CDATA[$P{imgAutopsyLogo}]]></imageExpression>
+			</image>
 		</band>
 		<band height="353">
-			<textField bookmarkLevel="1">
+			<textField hyperlinkType="LocalAnchor" bookmarkLevel="1">
 				<reportElement x="30" y="40" width="500" height="30" uuid="5343b901-e4b2-4964-89e1-2e3d48dadca1"/>
 				<textElement>
 					<font size="20" isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Índice"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["Índice"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["Table of Contents"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["Table of Contents"]]></anchorNameExpression>
+				<hyperlinkAnchorExpression><![CDATA["Table of Contents"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
 				<reportElement x="30" y="70" width="500" height="30" uuid="efd9b6aa-7042-4b4d-b4b0-3e79ff7b057d"/>
 				<textElement>
 					<font size="20" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["	1. Introdução ........................................................ 3"]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA["1 - Report History"]]></hyperlinkAnchorExpression>
+				<textFieldExpression><![CDATA["	1. Introduction ........................................................ 3"]]></textFieldExpression>
+				<hyperlinkAnchorExpression><![CDATA["1 - Introduction"]]></hyperlinkAnchorExpression>
 			</textField>
 			<textField hyperlinkType="LocalAnchor">
 				<reportElement x="31" y="132" width="500" height="30" uuid="d39902f3-f946-4af7-ba44-64de4a5858b0"/>
@@ -154,15 +170,15 @@
 		<band height="509">
 			<property name="com.jaspersoft.studio.layout"/>
 			<textField bookmarkLevel="1">
-				<reportElement x="30" y="10" width="524" height="50" uuid="97eaa035-c5c2-4dfa-b577-b042e32ec289"/>
+				<reportElement x="30" y="10" width="524" height="50" isRemoveLineWhenBlank="true" uuid="97eaa035-c5c2-4dfa-b577-b042e32ec289"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="24" isBold="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["1 - Introdução"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["1 - Introdução"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["1 - Introduction"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["1 - Introduction"]]></anchorNameExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="60" y="80" width="494" height="120" uuid="405e4aab-5c52-4872-907d-66486209c1dc"/>
+				<reportElement x="61" y="70" width="494" height="120" isRemoveLineWhenBlank="true" uuid="405e4aab-5c52-4872-907d-66486209c1dc"/>
 				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="UsernamesDataSet" uuid="a0f2a307-a218-4c66-964c-60a69227eb71">
 						<dataSourceExpression><![CDATA[$P{userNamesDataSource}]]></dataSourceExpression>
@@ -190,7 +206,7 @@
 								<font size="20" isBold="false"/>
 							</textElement>
 							<textFieldExpression><![CDATA["2 - Blocked Websites visited"]]></textFieldExpression>
-							<hyperlinkAnchorExpression><![CDATA[$F{username} + "_1 - Blocked Websites"]]></hyperlinkAnchorExpression>
+							<hyperlinkAnchorExpression><![CDATA[$F{username} + "_2 - Blocked Websites"]]></hyperlinkAnchorExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -214,7 +230,7 @@
 				<anchorNameExpression><![CDATA["2 - Logins Found"]]></anchorNameExpression>
 			</textField>
 		</band>
-		<band height="749">
+		<band height="753">
 			<componentElement>
 				<reportElement positionType="Float" stretchType="ContainerHeight" x="0" y="60" width="554" height="689" isRemoveLineWhenBlank="true" forecolor="#FFFFFF" uuid="6cf1fb3c-7d89-4c20-bbef-6fd8aca311a5">
 					<property name="net.sf.jasperreports.export.headertoolbar.table.name" value=""/>
@@ -271,7 +287,7 @@
 								<font fontName="Serif" size="20"/>
 							</textElement>
 							<textFieldExpression><![CDATA["2 - Blocked Websites visited"]]></textFieldExpression>
-							<anchorNameExpression><![CDATA[$F{username} + "_1 - Blocked Websites"]]></anchorNameExpression>
+							<anchorNameExpression><![CDATA[$F{username} + "_2 - Blocked Websites"]]></anchorNameExpression>
 						</textField>
 					</jr:listContents>
 				</jr:list>
@@ -284,12 +300,19 @@
 				<textFieldExpression><![CDATA["5 - User details"]]></textFieldExpression>
 				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
 			</textField>
+			<image hyperlinkType="LocalAnchor">
+				<reportElement x="481" y="723" width="30" height="30" uuid="b43fde2d-b7a4-4490-891b-5c00c8cd60d8">
+					<printWhenExpression><![CDATA[new Boolean( $V{PAGE_NUMBER}.intValue() > 2 )]]></printWhenExpression>
+				</reportElement>
+				<imageExpression><![CDATA[$P{imgArrowUp}]]></imageExpression>
+				<hyperlinkAnchorExpression><![CDATA["Table of Contents"]]></hyperlinkAnchorExpression>
+			</image>
 		</band>
 	</detail>
 	<pageFooter>
-		<band height="52">
+		<band height="53">
 			<textField>
-				<reportElement x="450" y="19" width="100" height="20" uuid="ee86c45b-6a3c-4650-863c-08a2abd31285"/>
+				<reportElement x="450" y="30" width="100" height="20" uuid="ee86c45b-6a3c-4650-863c-08a2abd31285"/>
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
