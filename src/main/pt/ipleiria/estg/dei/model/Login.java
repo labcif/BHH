@@ -4,13 +4,11 @@ public class Login {
     private String description;
     private String source;
     private int total;
-    private String password;
 
-    public Login(String word, String source, int total, String password) {
+    public Login(String word, String source, int total) {
         this.description = word;
         this.source = source;
         this.total = total;
-        this.password = password;
     }
 
     public String getDescription() {
@@ -37,11 +35,4 @@ public class Login {
         this.total = total;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
 }

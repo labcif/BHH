@@ -1,5 +1,6 @@
 package main.pt.ipleiria.estg.dei.model.adapters;
 
+import main.pt.ipleiria.estg.dei.model.Login;
 import main.pt.ipleiria.estg.dei.model.Website;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -10,12 +11,14 @@ public class UserInfo {
     private String username;
     private JRDataSource mostVisitedWebsites;
     private JRDataSource blockedVisitedWebsites;
+    private JRDataSource logins;
 
 
-    public UserInfo(String username, List<Website> mostVisitedWebsites, List<Website> blockedVisitedWebsites ) {
+    public UserInfo(String username, List<Website> mostVisitedWebsites, List<Website> blockedVisitedWebsites, List<Login> logins) {
         this.mostVisitedWebsites = new JRBeanCollectionDataSource(mostVisitedWebsites);
         this.blockedVisitedWebsites = new JRBeanCollectionDataSource(blockedVisitedWebsites);
         this.username = username;
+        this.logins = new JRBeanCollectionDataSource(logins);
     }
 
     public String getUsername() {
@@ -40,6 +43,14 @@ public class UserInfo {
 
     public void setBlockedVisitedWebsites(JRDataSource blockedVisitedWebsites) {
         this.blockedVisitedWebsites = blockedVisitedWebsites;
+    }
+
+    public JRDataSource getLogins() {
+        return logins;
+    }
+
+    public void setLogins(JRDataSource logins) {
+        this.logins = logins;
     }
 }
 

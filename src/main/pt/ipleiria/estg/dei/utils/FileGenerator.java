@@ -2,22 +2,18 @@ package main.pt.ipleiria.estg.dei.utils;
 
 import main.pt.ipleiria.estg.dei.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
-import main.pt.ipleiria.estg.dei.dtos.UserDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
-import main.pt.ipleiria.estg.dei.model.adapters.UserInfo;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.*;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FileGenerator {
     private Logger<FileGenerator> logger;
@@ -34,70 +30,65 @@ public class FileGenerator {
 
     public void generatePDF() throws ConnectionException, SQLException, ClassNotFoundException, JRException, GenerateReportException, IOException {
         InputStream templateFile = from.getResourceAsStream("/resources/template/autopsy.jrxml");
-
         Generator generator = new Generator(templateFile);
 
-        Map<String, Object> reportData = new HashMap<>();
-        List<UserInfo> userInfoDataSource = new ArrayList<>();
+        List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
-        List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
-        List<UserDto> listOfNamesToIterate = new ArrayList<>();
+        String logoImg = from.getResource("/resources/images/img_1_autopsy_logo.png").toString();
+        String arrowImg = from.getResource("/resources/images/img_2_arrow_up_icon.png").toString();
 
-        if (userNames.size() > 1) {
-            userInfoDataSource.add(addGlobalSearchToReport());
+        if (usernames.size() > 1) {
+            Map<String, Object> reportData = new HashMap<>();
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10)));
+            reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
+            generator.setReportData(reportData);
+
+            ReportParameterMap reportParameters = new ReportParameterMap();
+
+            // Generate the document into a byte array.
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            reportParameters.setOutputStream(byteArrayOutputStream);
+            generator.setReportParameters(reportParameters);
+
+            generator.generateReport();
+            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\Global"+".pdf")) {
+                byteArrayOutputStream.writeTo(outputStream);
+            }
+            byteArrayOutputStream.close();
+            templateFile.reset();
         }
+        for (String username: usernames ) {
 
-        for (String nome: userNames ) {
-            userInfoDataSource.add(
-                    new UserInfo(nome,
-                            DatasetRepository.getInstance().getMostVisitedWebsite(10, nome),
-                            DatasetRepository.getInstance().getBlockedVisitedWebsite( nome)));
-            listOfNamesToIterate.add(new UserDto(nome));
-        }
+            Map<String, Object> reportData = new HashMap<>();
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed(username)));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10, username)));
+            reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
 
-        //Information by user
-        reportData.put("userInfoDataSource", new JRBeanCollectionDataSource(userInfoDataSource));
-        reportData.put("userNamesDataSource", new JRBeanCollectionDataSource(listOfNamesToIterate));
+            // Images of the report
+            reportData.put("imgAutopsyLogo", logoImg);
+            reportData.put("imgArrowUp",arrowImg);
 
 
-        // Type of chart
-        reportData.put("chartType", getChartType());
+            generator.setReportData(reportData);
 
-        // Images of the report
-        reportData.put("imgAutopsyLogo", from.getResource("/resources/images/img_1_autopsy_logo.png").toString());
-        reportData.put("imgArrowUp", from.getResource("/resources/images/img_2_arrow_up_icon.png").toString());
+            ReportParameterMap reportParameters = new ReportParameterMap();
 
-        generator.setReportData(reportData);
+            // Generate the document into a byte array.
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            reportParameters.setOutputStream(byteArrayOutputStream);
+            generator.setReportParameters(reportParameters);
 
-        ReportParameterMap reportParameters = new ReportParameterMap();
-        // Generate the document into a byte array.
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        reportParameters.setOutputStream(byteArrayOutputStream);
-        generator.setReportParameters(reportParameters);
-
-        generator.generateReport();
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SS");
-        Date date = new Date();
-        String dateNoTime = dateFormat.format(date);
-
-        try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport"+ dateNoTime +".pdf")) {
-            byteArrayOutputStream.writeTo(outputStream);
+            generator.generateReport();
+            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport-" +username +".pdf")) {
+                byteArrayOutputStream.writeTo(outputStream);
+            }
+            byteArrayOutputStream.close();
+            templateFile.reset();
         }
     }
 
-    private UserInfo addGlobalSearchToReport() throws ConnectionException, SQLException, ClassNotFoundException {
-        return new UserInfo("Global Search",
-                DatasetRepository.getInstance().getMostVisitedWebsite(10),
-                DatasetRepository.getInstance().getBlockedVisitedWebsite());
-    }
 
-    private JasperReport getChartType() throws JRException {
-        InputStream chartTipe = configPanel.isChartBarTipe()?
-                from.getResourceAsStream("/resources/template/user_graf.jrxml"):
-                from.getResourceAsStream("/resources/template/user_graf_pie.jrxml");
-        return JasperCompileManager.compileReport(chartTipe);
-    }
 
 
     public  void generateCSV() {

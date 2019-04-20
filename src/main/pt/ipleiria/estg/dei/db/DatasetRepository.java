@@ -110,18 +110,35 @@ public class DatasetRepository {
     
 
 
-    public List<Login> getEmailsUsed() throws SQLException {
+    public List<Login> getLoginsUsed() throws SQLException {
         List<Login> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT  email, source_full, count(*) as total, available_password " +
+                "SELECT  email, source_full, count(*) as total " +
                         "FROM t_clean_emails " +
                         "group by email " +
                         "order by total desc ");
 
         while (rs.next()) {
             emails.add(new Login(rs.getString("email"),rs.getString("source_full"),
-                    rs.getInt("total"), rs.getString("available_password")));
+                    rs.getInt("total")));
+        }
+        return emails;
+    }
+
+    public List<Login> getLoginsUsed(String username) throws SQLException {
+        List<Login> emails = new ArrayList<>();
+
+        ResultSet rs = statement.executeQuery(
+                "SELECT  email, source_full, count(*) as total " +
+                        "FROM t_clean_emails " +
+                        "WHERE url_user_origin = '" + username + "' " +
+                        "group by email " +
+                        "order by total desc ");
+
+        while (rs.next()) {
+            emails.add(new Login(rs.getString("email"),rs.getString("source_full"),
+                    rs.getInt("total")));
         }
         return emails;
     }
