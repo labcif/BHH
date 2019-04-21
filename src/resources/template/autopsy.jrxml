@@ -205,7 +205,7 @@
 				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
 			</textField>
 			<componentElement>
-				<reportElement x="23" y="70" width="523" height="60" uuid="7140d9c9-7717-4745-8ad0-19c766239c04">
+				<reportElement positionType="Float" mode="Opaque" x="23" y="70" width="523" height="60" uuid="7140d9c9-7717-4745-8ad0-19c766239c04">
 					<property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
 					<property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
 					<property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -221,12 +221,14 @@
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="175" height="30" uuid="e9877e29-1dbc-4415-aa20-0712e06daabd"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[description]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="175" height="30" uuid="2b03ec1e-fb97-454e-9cc1-66eec6a6d50b"/>
+								<reportElement mode="Opaque" x="0" y="0" width="175" height="30" uuid="2b03ec1e-fb97-454e-9cc1-66eec6a6d50b"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -236,12 +238,14 @@
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="174" height="30" uuid="ec16e399-ba87-4850-be0b-26360b9d73ea"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[source]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="174" height="30" uuid="ac0fb88d-6d2a-47ab-9b71-8472adc766a7"/>
+								<reportElement mode="Opaque" x="0" y="0" width="174" height="30" uuid="ac0fb88d-6d2a-47ab-9b71-8472adc766a7"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$F{source}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -251,12 +255,14 @@
 						<jr:columnHeader style="Table_CH" height="30">
 							<staticText>
 								<reportElement x="0" y="0" width="174" height="30" uuid="9c49cda7-7108-4a20-a656-352fa242d18f"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<text><![CDATA[total]]></text>
 							</staticText>
 						</jr:columnHeader>
 						<jr:detailCell style="Table_TD" height="30">
 							<textField>
-								<reportElement x="0" y="0" width="174" height="30" uuid="23f336ae-5af5-40f5-ba21-4496fd48607f"/>
+								<reportElement mode="Opaque" x="0" y="0" width="174" height="30" uuid="23f336ae-5af5-40f5-ba21-4496fd48607f"/>
+								<textElement textAlignment="Center" verticalAlignment="Middle"/>
 								<textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
 							</textField>
 						</jr:detailCell>
@@ -264,8 +270,8 @@
 				</jr:table>
 			</componentElement>
 			<staticText>
-				<reportElement positionType="Float" x="31" y="150" width="225" height="20" uuid="bed27db3-1a15-4ecc-89ae-4edb16ee3a6f">
-					<printWhenExpression><![CDATA[new Boolean($P{loginsDataSource}==null)]]></printWhenExpression>
+				<reportElement positionType="Float" x="32" y="74" width="225" height="20" uuid="bed27db3-1a15-4ecc-89ae-4edb16ee3a6f">
+					<printWhenExpression><![CDATA[new Boolean($P{loginsDataSource}.getData().isEmpty())]]></printWhenExpression>
 				</reportElement>
 				<text><![CDATA[No data found]]></text>
 			</staticText>

@@ -34,61 +34,46 @@ public class FileGenerator {
 
         List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
-        String logoImg = from.getResource("/resources/images/img_1_autopsy_logo.png").toString();
-        String arrowImg = from.getResource("/resources/images/img_2_arrow_up_icon.png").toString();
 
         if (usernames.size() > 1) {
             Map<String, Object> reportData = new HashMap<>();
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
-            generator.setReportData(reportData);
 
-            ReportParameterMap reportParameters = new ReportParameterMap();
-
-            // Generate the document into a byte array.
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            reportParameters.setOutputStream(byteArrayOutputStream);
-            generator.setReportParameters(reportParameters);
-
-            generator.generateReport();
-            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\Global"+".pdf")) {
-                byteArrayOutputStream.writeTo(outputStream);
-            }
-            byteArrayOutputStream.close();
+            generate(generator, reportData, "GlobalSearch");
             templateFile.reset();
         }
         for (String username: usernames ) {
-
             Map<String, Object> reportData = new HashMap<>();
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed(username)));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10, username)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
 
-            // Images of the report
-            reportData.put("imgAutopsyLogo", logoImg);
-            reportData.put("imgArrowUp",arrowImg);
 
-
-            generator.setReportData(reportData);
-
-            ReportParameterMap reportParameters = new ReportParameterMap();
-
-            // Generate the document into a byte array.
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            reportParameters.setOutputStream(byteArrayOutputStream);
-            generator.setReportParameters(reportParameters);
-
-            generator.generateReport();
-            try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport-" +username +".pdf")) {
-                byteArrayOutputStream.writeTo(outputStream);
-            }
-            byteArrayOutputStream.close();
+            generate(generator, reportData, username);
             templateFile.reset();
         }
     }
 
+    private void generate(Generator generator, Map<String, Object> reportData, String username) throws GenerateReportException, IOException {
+        // Images of the report
+        reportData.put("imgAutopsyLogo", from.getResource("/resources/images/img_1_autopsy_logo.png").toString());
+        reportData.put("imgArrowUp",from.getResource("/resources/images/img_2_arrow_up_icon.png").toString());
+        ReportParameterMap reportParameters = new ReportParameterMap();
+        generator.setReportData(reportData);
+        // Generate the document into a byte array.
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        reportParameters.setOutputStream(byteArrayOutputStream);
+        generator.setReportParameters(reportParameters);
 
+        generator.generateReport();
+        try(OutputStream outputStream = new FileOutputStream(reportDir + "\\"+ username+".pdf")) {
+            byteArrayOutputStream.writeTo(outputStream);
+        }
+        byteArrayOutputStream.close();
+
+    }
 
 
     public  void generateCSV() {
