@@ -28,6 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private List<String> usersSelected;
     private Logger logger = new Logger<>(BrowserHistoryReportConfigurationPanel.class);
     private Map<String, String> queries = new HashMap<>();
+    private List<String> websites = new ArrayList<>();
     /**
      * Creates new form BrowserHistoryReportConfigurationPanel
      */
@@ -52,6 +54,17 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         });
         fillUsers();
         fillQueries();
+        fillWebsites();
+    }
+
+    private void fillWebsites() {
+        String website = "facebook.com";
+        DefaultTableModel model = (DefaultTableModel) websiteTable.getModel();
+        model.addRow(new Object[]{website});
+        websites.add(website);
+        website = "youtube.com";
+        model.addRow(new Object[]{website});
+        websites.add(website);
     }
 
     private void fillQueries() {
@@ -122,7 +135,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList<>();
+        users = new javax.swing.JList<String>();
         selectDefaultUsers = new javax.swing.JRadioButton();
         selectAllUsers = new javax.swing.JRadioButton();
         panel1 = new java.awt.Panel();
@@ -140,6 +153,11 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         querieFilePath = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         queriesTable = new javax.swing.JTable();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane4 = new javax.swing.JScrollPane();
+        websiteTable = new javax.swing.JTable();
+        importWebsitesBtn = new javax.swing.JButton();
+        exportWebsitesBtn = new javax.swing.JButton();
 
         setFont(getFont().deriveFont(getFont().getStyle() & ~java.awt.Font.BOLD, 11));
         setLayout(null);
@@ -149,7 +167,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jScrollPane1.setViewportView(users);
 
         buttonGroup1.add(selectDefaultUsers);
-        selectDefaultUsers.setSelected(true);
         selectDefaultUsers.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.selectDefaultUsers.text")); // NOI18N
         selectDefaultUsers.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -176,7 +193,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(selectDefaultUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectAllUsers))
-                .addContainerGap(33, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -195,7 +212,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
 
         buttonGroup2.add(histogram);
-        histogram.setSelected(true);
         histogram.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.histogram.text")); // NOI18N
         histogram.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
@@ -249,7 +265,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                             .addComponent(blokedSites)
                             .addComponent(wordsSearch)
                             .addComponent(domainDailyVisits))))
-                .addContainerGap(53, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
         panel1Layout.setVerticalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -354,6 +370,75 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
 
+        websiteTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Domain"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+        });
+        websiteTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        websiteTable.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                websiteTablePropertyChange(evt);
+            }
+        });
+        jScrollPane4.setViewportView(websiteTable);
+        if (websiteTable.getColumnModel().getColumnCount() > 0) {
+            websiteTable.getColumnModel().getColumn(0).setHeaderValue(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.queriesTable.columnModel.title0")); // NOI18N
+        }
+
+        importWebsitesBtn.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.importWebsitesBtn.text")); // NOI18N
+        importWebsitesBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                importWebsitesBtnActionPerformed(evt);
+            }
+        });
+
+        exportWebsitesBtn.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.exportWebsitesBtn.text")); // NOI18N
+        exportWebsitesBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                exportWebsitesBtnexActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap(46, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel3Layout.createSequentialGroup()
+                        .addComponent(importWebsitesBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 151, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(exportWebsitesBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 157, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 315, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(44, 44, 44))
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(exportWebsitesBtn)
+                    .addComponent(importWebsitesBtn))
+                .addContainerGap(96, Short.MAX_VALUE))
+        );
+
+        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel3.TabConstraints.tabTitle"), jPanel3); // NOI18N
+
         add(jTabbedPane1);
         jTabbedPane1.setBounds(0, 0, 410, 270);
     }// </editor-fold>//GEN-END:initComponents
@@ -428,6 +513,62 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
             queries.put(queriesTable.getValueAt(row, 1).toString(), queriesTable.getValueAt(row, 0).toString());
         }
     }//GEN-LAST:event_queriesTablePropertyChange
+
+    private void websiteTablePropertyChange(java.beans.PropertyChangeEvent evt) {//GEN-FIRST:event_websiteTablePropertyChange
+        websites.clear();
+        for (int row = 0; row < websiteTable.getRowCount(); row++) {
+            websites.add(websiteTable.getValueAt(row, 0).toString());
+        }
+    }//GEN-LAST:event_websiteTablePropertyChange
+
+    private void importWebsitesBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_importWebsitesBtnActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
+        chooser.setFileFilter(filter);
+        if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
+            String chosenFile = chooser.getSelectedFile().getAbsolutePath();
+            querieFilePath.setText(chosenFile);
+            String domain;
+            try(BufferedReader buffer = new BufferedReader(new FileReader(chosenFile))) {
+                while ((domain = buffer.readLine()) != null) {
+                    String finalDomain = domain;//needed because stream only accept final values.
+                    long qt = websites.stream().filter(site -> site.equals(finalDomain)).count();
+                    if (qt == 0) {
+                        DefaultTableModel model = (DefaultTableModel) websiteTable.getModel();
+                        model.addRow(new Object[]{domain});
+                        websites.add(domain);
+                    }
+
+                }
+            } catch (IOException e) {
+                logger.error("File couldn't be read. Please look at the logs for more information!");
+                throw new BrowserHistoryReportModuleExpection(e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_importWebsitesBtnActionPerformed
+
+    private void exportWebsitesBtnexActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_exportWebsitesBtnexActionPerformed
+        if(websiteTable.getRowCount() != 0){
+            JFileChooser chooser = new JFileChooser();
+            int returnValue = chooser.showSaveDialog(BrowserHistoryReportConfigurationPanel.this);
+            if (returnValue ==  JFileChooser.APPROVE_OPTION) {
+                File file = chooser.getSelectedFile();
+                StringBuilder sb = new StringBuilder();
+                try (PrintWriter writer = new PrintWriter(file)) {
+                    for (int row = 0; row < websiteTable.getRowCount(); row++) {
+                        sb.append(websiteTable.getValueAt(row, 0)).append("\n");
+                    }
+                    writer.write(sb.toString());
+                    JOptionPane.showMessageDialog(this, "Exported successfuly");
+                } catch (IOException e) {
+                    JOptionPane.showMessageDialog(this, "Error exporting: " + e.getMessage());
+                }
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Nothing to export");
+        }
+    }//GEN-LAST:event_exportWebsitesBtnexActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JCheckBox blokedSites;
     private javax.swing.ButtonGroup buttonGroup1;
@@ -435,15 +576,19 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JCheckBox domainDailyVisits;
     private javax.swing.JButton exportFilterButton;
+    private javax.swing.JButton exportWebsitesBtn;
     private javax.swing.Box.Filler filler1;
     private javax.swing.JRadioButton histogram;
     private javax.swing.JButton importFilterButton;
+    private javax.swing.JButton importWebsitesBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JCheckBox mostVisitedSites;
     private java.awt.Panel panel1;
@@ -453,11 +598,16 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JRadioButton selectAllUsers;
     private javax.swing.JRadioButton selectDefaultUsers;
     private javax.swing.JList<String> users;
+    private javax.swing.JTable websiteTable;
     private javax.swing.JCheckBox wordsSearch;
     // End of variables declaration//GEN-END:variables
 
 
     public Map<String, String> getQueries() {
         return queries;
+    }
+
+    public List<String> getWebsites() {
+        return websites;
     }
 }

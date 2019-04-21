@@ -41,7 +41,9 @@ public class FileGenerator {
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
             reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed()));
-
+            if (!configPanel.getWebsites().isEmpty()) {
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites())));
+            }
             generate(generator, reportData, "GlobalSearch");
             templateFile.reset();
         }
@@ -51,6 +53,9 @@ public class FileGenerator {
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10, username)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
             reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed(username)));
+            if (!configPanel.getWebsites().isEmpty()) {
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username)));
+            }
 
             generate(generator, reportData, username);
             templateFile.reset();

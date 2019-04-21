@@ -230,4 +230,34 @@ public class DatasetRepository {
         }
         return results;
     }
+
+    public List<Website> getActivityInWebsite(List<String> domains, String username) throws SQLException {
+        List<Website> websites = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, url_user_origin, url_visit_time, url_full " +
+                        "from t_clean_url " +
+                        "where url_domain in ('"+ String.join("', '", domains)+"') " +
+                        "and url_user_origin ='"+ username +"' " +
+                        "ORDER BY url_domain asc, url_user_origin, url_visit_time desc");
+
+        while (rs.next()) {
+            websites.add(new Website(rs.getString("url_domain"), rs.getString("url_visit_time"),
+                        rs.getString("url_full"), username));
+        }
+        return websites;
+    }
+    public List<Website> getActivityInWebsite(List<String> domains) throws SQLException {
+        List<Website> websites = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, url_user_origin, url_visit_time, url_full " +
+                        "from t_clean_url " +
+                        "where url_domain in ('"+ String.join("', '", domains)+"') " +
+                        "ORDER BY url_domain asc, url_user_origin, url_visit_time desc");
+
+        while (rs.next()) {
+            websites.add(new Website(rs.getString("url_domain"), rs.getString("url_visit_time"),
+                        rs.getString("url_full"), rs.getString("url_user_origin")));
+        }
+        return websites;
+    }
 }
