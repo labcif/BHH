@@ -40,6 +40,7 @@ public class FileGenerator {
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed()));
 
             generate(generator, reportData, "GlobalSearch");
             templateFile.reset();
@@ -49,7 +50,7 @@ public class FileGenerator {
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed(username)));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10, username)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
-
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed(username)));
 
             generate(generator, reportData, username);
             templateFile.reset();

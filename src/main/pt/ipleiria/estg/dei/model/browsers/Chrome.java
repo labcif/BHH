@@ -206,43 +206,14 @@ public class Chrome extends Browser {
     }
 
 
-    public void transformWordsTable(String user){
+    private void transformWordsTable(String user){
         try {
             Statement statement = DataWarehouseConnection.getConnection().createStatement();
-            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full  " +
+            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                                            "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
                     "FROM t_ext_chrome_urls " +
                     "where url like '%google.%' and url like '%?q=%'");
-
-            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
-                    " INSERT INTO t_clean_words (word, source_full, url_user_origin, url_browser_origin) " +
-                            " VALUES (?,?,?,?)");
-
-            String encoded;
-            String substring;
-            String decode;
-            String[] words;
-
-            while (rs.next()) {
-                encoded = rs.getString("word");
-                substring = encoded.substring(0, encoded.indexOf("&") != -1 ? encoded.indexOf("&") : encoded.length() -1);
-
-                //In case the string has been decoded already
-                try {
-                    decode = URLDecoder.decode(substring, "UTF-8"); }
-                catch(Exception ex) {
-                    decode = substring;
-                }
-                words = decode.split("\\s+");
-                for (String s: words) {
-                    preparedStatement.setString(1, s);
-                    preparedStatement.setString(2, rs.getString("url_full"));
-                    preparedStatement.setString(3, user);
-                    preparedStatement.setString(4, getModuleName());
-                    preparedStatement.addBatch();
-                }
-            }
-
-            preparedStatement.executeBatch();
+            insertWordInTable(rs, user);
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_words", "Error cleaning extracted - " + e.getMessage());
         }

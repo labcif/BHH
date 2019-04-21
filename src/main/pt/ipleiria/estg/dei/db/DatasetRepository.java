@@ -146,17 +146,37 @@ public class DatasetRepository {
     public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
         ResultSet rs = statement.executeQuery(
-                "SELECT  word, count(word) as times_used " +
+                "SELECT  word, count(word) as times_used, url_user_origin, url_domain " +
                         " FROM t_clean_words " +
                         " group by word " +
-                        " order by times_used desc " +
-                        " limit 10 ");
+                        " order by times_used desc ");
 
         while (rs.next()) {
-            words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));
+            words.add(getWord(rs));
         }
-
         return words;
+    }
+
+    public List<Word> getWordsUsed(String username) throws SQLException {
+        List<Word> words = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "SELECT  word, count(word) as times_used, url_user_origin, url_domain " +
+                        " FROM t_clean_words " +
+                        "WHERE url_user_origin='" + username + "' " +
+                        " group by word " +
+                        " order by times_used desc ");
+
+        while (rs.next()) {
+            words.add(getWord(rs));
+        }
+        return words;
+    }
+
+    private Word getWord(ResultSet rs) throws SQLException {
+        return new Word(rs.getString("word"),
+                Integer.parseInt(rs.getString("times_used")),
+                rs.getString("url_user_origin"),
+                rs.getString("url_domain"));
     }
 
     public List<String> getUsers() throws SQLException {

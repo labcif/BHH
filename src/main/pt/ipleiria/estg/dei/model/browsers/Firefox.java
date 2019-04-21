@@ -8,6 +8,7 @@ import main.pt.ipleiria.estg.dei.utils.Logger;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -43,6 +44,7 @@ public class Firefox extends Browser {
     @Override
     public void transformAllTables(String user) throws ConnectionException {
         transformUrlTable(user);
+        transformWordsTable(user);
     }
 
     @Override
@@ -87,6 +89,24 @@ public class Firefox extends Browser {
             throw new TransformationException(getModuleName(), "t_clean_url","Error transforming tables: " + e.getMessage());
         }
     }
+
+    private void transformWordsTable(String user){
+        try {
+            Statement statement = DataWarehouseConnection.getConnection().createStatement();
+            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                                                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                    "FROM t_ext_mozila_places " +
+                    "where url like '%google.%' and url like '%?q=%'");
+
+
+            insertWordInTable(rs, user);
+
+        }catch (SQLException | ClassNotFoundException | ConnectionException e) {
+            throw new ExtractionException(getModuleName(), "t_clean_words", "Error cleaning extracted - " + e.getMessage());
+        }
+    }
+
+
 
 
     @Override
