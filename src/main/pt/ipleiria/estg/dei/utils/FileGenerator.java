@@ -38,7 +38,7 @@ public class FileGenerator {
         if (usernames.size() > 1) {
             Map<String, Object> reportData = new HashMap<>();
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
-            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10)));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart())));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
             reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed()));
             if (!configPanel.getWebsites().isEmpty()) {
@@ -50,7 +50,7 @@ public class FileGenerator {
         for (String username: usernames ) {
             Map<String, Object> reportData = new HashMap<>();
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed(username)));
-            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(10, username)));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart(), username)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
             reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed(username)));
             if (!configPanel.getWebsites().isEmpty()) {

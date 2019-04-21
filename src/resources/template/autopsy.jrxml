@@ -345,7 +345,7 @@
 				<text><![CDATA[No data found]]></text>
 			</staticText>
 		</band>
-		<band height="352">
+		<band height="453">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
 				<reportElement x="18" y="10" width="524" height="60" uuid="aed27119-18ad-4810-bad0-2de387bd1216"/>
 				<textElement verticalAlignment="Bottom">
@@ -356,7 +356,7 @@
 			</textField>
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomBarChart" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="23" y="100" width="480" height="200" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="448e4403-55d1-402c-bc19-4f749c27e653"/>
+					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="-2" y="90" width="560" height="340" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="448e4403-55d1-402c-bc19-4f749c27e653"/>
 					<chartTitle>
 						<font size="14" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 					</chartTitle>
@@ -392,7 +392,7 @@
 				</barPlot>
 			</barChart>
 		</band>
-		<band height="335">
+		<band height="463">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
 				<reportElement x="18" y="10" width="524" height="60" uuid="db1a294b-8a61-4279-9419-9e777eccefc0"/>
 				<textElement verticalAlignment="Bottom">
@@ -403,7 +403,7 @@
 			</textField>
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomBarChart" theme="default">
-					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="23" y="100" width="480" height="200" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="be4a3800-9fa7-4761-b5f9-a5b3eddb20ce"/>
+					<reportElement positionType="Float" stretchType="ContainerBottom" mode="Transparent" x="4" y="100" width="560" height="340" isPrintInFirstWholeBand="true" backcolor="#AB8B8A" uuid="be4a3800-9fa7-4761-b5f9-a5b3eddb20ce"/>
 					<chartTitle>
 						<font size="14" isBold="false" isUnderline="false" isStrikeThrough="false"/>
 					</chartTitle>
