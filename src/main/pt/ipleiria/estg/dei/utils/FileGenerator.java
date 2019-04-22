@@ -35,7 +35,7 @@ public class FileGenerator {
         List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
 
 
-        if (usernames.size() > 1) {
+        if (configPanel.isMultipleUsers()) {
             Map<String, Object> reportData = new HashMap<>();
             reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart())));
