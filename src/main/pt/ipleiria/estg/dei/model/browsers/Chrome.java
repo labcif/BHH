@@ -77,16 +77,15 @@ public class Chrome extends Browser {
     }
 
     private void transformUrlTable(String user) {
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
-                            "url_visit_time, url_user_origin, url_browser_origin ) " +
+                            "url_visit_time, url_user_origin, url_browser_origin, url_visit_duration ) " +
                             "SELECT teu.url as url_full, " +
                             "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
                             "'TODO: path', title as url_title, typed_count as url_typed_count, " +
-                            "strftime('%d-%m-%Y  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, " +
-                            "'" + user + "',  '" + getModuleName() + "' " +
+                            "strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, " +
+                            "'" + user + "',  '" + getModuleName() + "', visit_duration " +
                             "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                             "WHERE teu.id = tev.url " +
                             "and url_domain <> ''; ");

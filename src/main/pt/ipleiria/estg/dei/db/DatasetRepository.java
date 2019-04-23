@@ -8,8 +8,16 @@ import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import static main.pt.ipleiria.estg.dei.utils.Utils.atEndOfDay;
+import static main.pt.ipleiria.estg.dei.utils.Utils.parse;
 
 public class DatasetRepository {
     private static DatasetRepository datasetRepository;
@@ -203,7 +211,7 @@ public class DatasetRepository {
         ResultSet rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
         Statement stmn = DataWarehouseConnection.getConnection().createStatement();
         while (rs.next()) {
-            stmn.execute("DELETE FROM '"+ rs.getString("name") + "'");
+            stmn.execute("DROP TABLE '"+ rs.getString("name") + "'");
             tableDeleted++;
         }
         logger.info("All previous data deleted.");
@@ -259,5 +267,56 @@ public class DatasetRepository {
                         rs.getString("url_full"), rs.getString("url_user_origin")));
         }
         return websites;
+    }
+
+    public List<Website> getVisitedWebsiteInDay(String username, Date date) throws SQLException {
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_domain, url_user_origin,url_visit_time, sum(url_visit_duration)/(1000000) as totalTime " +
+                "FROM t_clean_url " +
+                "WHERE url_user_origin='"+ username+ "' " +
+                "  and url_visit_time > '" + parse(date) +"' " +
+                        "      AND url_visit_time < '" + atEndOfDay(date) +"'" +
+                "GROUP BY url_domain, url_visit_time");
+
+        return getWebsitesInADay(rs);
+    }
+
+    public List<Website> getVisitedWebsiteInDay(Date date) throws SQLException {
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_domain, url_user_origin, url_visit_time, sum(url_visit_duration)/(60000000) as totalTime " +
+                "FROM t_clean_url " +
+                "WHERE url_visit_time > '" + parse(date) +" '" +
+                "      AND url_visit_time < '" + atEndOfDay(date) +"'" +
+                "GROUP BY url_domain, url_visit_time, url_user_origin ");
+        return getWebsitesInADay(rs);
+    }
+
+    private List<Website> getWebsitesInADay(ResultSet rs) throws SQLException {
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy  HH:mm:ss");
+            List<Website> websites = new ArrayList<>();
+            Calendar calendar = Calendar.getInstance();
+            long timeStart, timeEnd;
+            Date start;
+            String domain, user;
+            int totalTime;
+            while (rs.next()) {
+                start = dateFormat.parse(rs.getString("url_visit_time"));
+                timeStart = start.getTime();
+                calendar.setTime(start);
+
+                //For the sake of representation, unit min is 15 minutes.
+                totalTime = rs.getInt("totalTime") < 15? 15: rs.getInt("totalTime");
+                calendar.add(Calendar.MINUTE, totalTime);
+                timeEnd = calendar.getTime().getTime();
+                domain = rs.getString("url_domain");
+                user = rs.getString("url_user_origin");
+                websites.add(new Website(domain, user, new Timestamp(timeStart), new Timestamp(timeEnd)));
+            }
+            return websites;
+        } catch (ParseException e) {
+            logger.warn("There was an issue when parsing a date: " + e.getMessage());
+            return null;
+        }
     }
 }

@@ -71,16 +71,15 @@ public class Firefox extends Browser {
     }
 
     private void transformUrlTable(String user) throws ConnectionException {
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
-                                                    "url_visit_time, url_user_origin, url_browser_origin ) " +
+                                                    "url_visit_time, url_user_origin, url_browser_origin, url_visit_duration ) " +
                             "SELECT  mp.url as url_full, " +
                                     "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
                                     "'TODO: path', title as url_title, typed as url_typed_count, " +
-                                    "strftime('%d-%m-%Y %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
-                                    "'" + user + "', '" + getModuleName() + "' " +
+                                    "strftime('%Y-%m-%d %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
+                                    "'" + user + "', '" + getModuleName() + "', 0 " +
                             "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                             "WHERE mp.id = mh.place_id " +
                             "and url_domain <> ''; ");

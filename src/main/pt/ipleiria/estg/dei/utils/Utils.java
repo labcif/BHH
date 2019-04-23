@@ -2,6 +2,12 @@ package main.pt.ipleiria.estg.dei.utils;
 
 
 import java.io.*;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.List;
 
 public abstract class Utils{
@@ -40,5 +46,28 @@ public abstract class Utils{
         }catch (FileNotFoundException e) {
             logger.warn(e.getMessage());
         }
+    }
+
+    public static String parse(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+        return dateFormat.format(date);
+    }
+
+    public static String parseToDay(Date date) {
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        return dateFormat.format(date);
+    }
+
+    public static String atEndOfDay(Date date) {
+        LocalDateTime localDateTime = dateToLocalDateTime(date);
+        LocalDateTime endOfDay = localDateTime.with(LocalTime.MAX);
+        return parse(localDateTimeToDate(endOfDay));
+    }
+    private static LocalDateTime dateToLocalDateTime(Date date) {
+        return LocalDateTime.ofInstant(date.toInstant(), ZoneId.systemDefault());
+    }
+
+    private static Date localDateTimeToDate(LocalDateTime localDateTime) {
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 }

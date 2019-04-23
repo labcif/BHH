@@ -141,6 +141,9 @@
 		<field name="urlFull" class="java.lang.String"/>
 		<field name="date" class="java.lang.String"/>
 		<field name="username" class="java.lang.String"/>
+		<field name="dateStart" class="java.sql.Timestamp"/>
+		<field name="dateEnd" class="java.sql.Timestamp"/>
+		<field name="percentage" class="java.lang.Double"/>
 	</subDataset>
 	<subDataset name="WordsDataSet" uuid="a0ec4831-7bdf-407d-b137-adb218dbafa4">
 		<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
@@ -164,6 +167,8 @@
 	<parameter name="loginsDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="wordsDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="websiteDetailDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="websiteVisitedInPeriodOfTimeDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="websiteVisitedInDay" class="java.lang.String"/>
 	<parameter name="blockedVisitedWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="indexDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
@@ -230,7 +235,7 @@
 			</textField>
 			<componentElement>
 				<reportElement x="80" y="80" width="484" height="30" uuid="b36f8149-b8e7-4956-9231-cf6fac6146b5"/>
-				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd" printOrder="Vertical">
 					<datasetRun subDataset="IndexDataSet" uuid="8fbd989a-3bca-4db4-9aac-1dd29840a5bf">
 						<dataSourceExpression><![CDATA[$P{indexDataSource}]]></dataSourceExpression>
 					</datasetRun>
@@ -249,7 +254,7 @@
 		</band>
 		<band height="185" splitType="Stretch">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="30" y="0" width="524" height="60" uuid="fbddf139-4d98-477b-a71f-9e71cac1ca2b"/>
+				<reportElement x="30" y="19" width="524" height="45" uuid="fbddf139-4d98-477b-a71f-9e71cac1ca2b"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
@@ -327,10 +332,13 @@
 				</reportElement>
 				<text><![CDATA[No data found]]></text>
 			</staticText>
+			<break>
+				<reportElement x="0" y="10" width="101" height="1" uuid="90e4b2eb-3ec9-4fab-8e50-ca9f904bd1ec"/>
+			</break>
 		</band>
 		<band height="453">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="18" y="10" width="524" height="60" uuid="aed27119-18ad-4810-bad0-2de387bd1216"/>
+				<reportElement x="18" y="20" width="524" height="50" uuid="aed27119-18ad-4810-bad0-2de387bd1216"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
@@ -374,6 +382,9 @@
 					</valueAxisFormat>
 				</barPlot>
 			</barChart>
+			<break>
+				<reportElement x="0" y="10" width="120" height="1" uuid="9deb8058-5b9c-48a8-bf97-3e79f180f0b7"/>
+			</break>
 		</band>
 		<band height="463">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
@@ -519,10 +530,13 @@
 				</reportElement>
 				<text><![CDATA[No data found]]></text>
 			</staticText>
+			<break>
+				<reportElement x="0" y="6" width="101" height="1" uuid="20f426d4-2372-462f-b354-e57f182903cf"/>
+			</break>
 		</band>
-		<band height="386">
+		<band height="172">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
-				<reportElement x="18" y="10" width="524" height="60" uuid="567368a9-e4e2-418d-9e7c-ffc54af6b133"/>
+				<reportElement x="18" y="27" width="528" height="30" uuid="567368a9-e4e2-418d-9e7c-ffc54af6b133"/>
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
@@ -617,6 +631,62 @@
 				</reportElement>
 				<text><![CDATA[No data found]]></text>
 			</staticText>
+			<break>
+				<reportElement x="0" y="3" width="81" height="1" uuid="fdd95a09-230b-4136-828a-d4bb5ac565d2"/>
+			</break>
+		</band>
+		<band height="522">
+			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
+				<reportElement x="18" y="10" width="524" height="60" uuid="585d57bc-eea2-4795-8238-085da78880e3"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Serif" size="22"/>
+				</textElement>
+				<textFieldExpression><![CDATA["6 -Activity in  period of time"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["6 -Activity in  period of time"]]></anchorNameExpression>
+			</textField>
+			<ganttChart>
+				<chart evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomGanttChart">
+					<reportElement x="18" y="100" width="528" height="330" uuid="54061a03-23f3-488c-a4b4-ba0d7c864b7b"/>
+					<chartTitle/>
+					<chartSubtitle/>
+					<chartLegend/>
+				</chart>
+				<ganttDataset>
+					<dataset>
+						<datasetRun subDataset="WebsiteDataSet" uuid="eb1c19c0-58d7-46f5-a9ac-deb05f34d58b">
+							<dataSourceExpression><![CDATA[$P{websiteVisitedInPeriodOfTimeDataSource}]]></dataSourceExpression>
+						</datasetRun>
+					</dataset>
+					<ganttSeries>
+						<seriesExpression><![CDATA[$F{username}]]></seriesExpression>
+						<taskExpression><![CDATA[$F{domain}]]></taskExpression>
+						<subtaskExpression><![CDATA[$F{domain}]]></subtaskExpression>
+						<startDateExpression><![CDATA[$F{dateStart}]]></startDateExpression>
+						<endDateExpression><![CDATA[$F{dateEnd}]]></endDateExpression>
+						<percentExpression><![CDATA[$F{percentage}]]></percentExpression>
+					</ganttSeries>
+				</ganttDataset>
+				<barPlot>
+					<plot/>
+					<itemLabel/>
+					<categoryAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</categoryAxisFormat>
+					<valueAxisFormat>
+						<axisFormat labelColor="#000000" tickLabelColor="#000000" axisLineColor="#000000"/>
+					</valueAxisFormat>
+				</barPlot>
+			</ganttChart>
+			<break>
+				<reportElement x="0" y="8" width="100" height="1" uuid="b99a4d3e-2b03-4ee2-82ff-e07f064b0484"/>
+			</break>
+			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
+				<reportElement x="141" y="60" width="290" height="40" uuid="986888bc-4674-4a3d-b57c-67ac3446280c"/>
+				<textElement verticalAlignment="Bottom">
+					<font fontName="Serif" size="22"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{websiteVisitedInDay}]]></textFieldExpression>
+			</textField>
 		</band>
 	</detail>
 	<pageFooter>

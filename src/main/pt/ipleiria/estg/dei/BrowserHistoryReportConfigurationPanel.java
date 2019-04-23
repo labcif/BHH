@@ -28,10 +28,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.table.DefaultTableModel;
 import java.io.*;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The panel shown for all TableReportModules when configuring report modules.
@@ -55,6 +52,8 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         fillUsers();
         fillQueries();
         fillWebsites();
+        Date date = new GregorianCalendar(2014, Calendar.DECEMBER, 12).getTime();
+        datePickerGanttChart.setDate(date);
     }
 
     private void fillWebsites() {
@@ -138,11 +137,15 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         buttonGroup3 = new javax.swing.ButtonGroup();
+        jOptionPane1 = new javax.swing.JOptionPane();
+        jFrame1 = new javax.swing.JFrame();
+        jFrame2 = new javax.swing.JFrame();
+        jXDatePicker1 = new org.jdesktop.swingx.JXDatePicker();
         filler1 = new javax.swing.Box.Filler(new java.awt.Dimension(0, 0), new java.awt.Dimension(0, 0), new java.awt.Dimension(32767, 0));
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList<>();
+        users = new javax.swing.JList<String>();
         selectDefaultUsers = new javax.swing.JRadioButton();
         selectAllUsers = new javax.swing.JRadioButton();
         panel1 = new java.awt.Panel();
@@ -169,6 +172,8 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         defaultOptionAmountOfElementsChart = new javax.swing.JRadioButton();
         visitsChartOptionAmountOfElementsChart = new javax.swing.JSpinner();
         maxSizeOf35Label = new javax.swing.JLabel();
+        jLabel4 = new javax.swing.JLabel();
+        datePickerGanttChart = new org.jdesktop.swingx.JXDatePicker();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         websiteTable = new javax.swing.JTable();
@@ -176,6 +181,28 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         exportWebsitesBtn = new javax.swing.JButton();
         deleteRowWebsite = new javax.swing.JButton();
         jButton3 = new javax.swing.JButton();
+
+        javax.swing.GroupLayout jFrame1Layout = new javax.swing.GroupLayout(jFrame1.getContentPane());
+        jFrame1.getContentPane().setLayout(jFrame1Layout);
+        jFrame1Layout.setHorizontalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame1Layout.setVerticalGroup(
+            jFrame1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
+
+        javax.swing.GroupLayout jFrame2Layout = new javax.swing.GroupLayout(jFrame2.getContentPane());
+        jFrame2.getContentPane().setLayout(jFrame2Layout);
+        jFrame2Layout.setHorizontalGroup(
+            jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        jFrame2Layout.setVerticalGroup(
+            jFrame2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 300, Short.MAX_VALUE)
+        );
 
         setFont(getFont().deriveFont(getFont().getStyle() & ~java.awt.Font.BOLD, 11));
         setLayout(null);
@@ -440,15 +467,20 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         maxSizeOf35Label.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.maxSizeOf35Label.text")); // NOI18N
         maxSizeOf35Label.setEnabled(false);
 
+        jLabel4.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jLabel4.text")); // NOI18N
+
+        datePickerGanttChart.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                datePickerGanttChartActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel4Layout = new javax.swing.GroupLayout(jPanel4);
         jPanel4.setLayout(jPanel4Layout);
         jPanel4Layout.setHorizontalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
                 .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel4Layout.createSequentialGroup()
-                        .addGap(29, 29, 29)
-                        .addComponent(jLabel2))
                     .addGroup(jPanel4Layout.createSequentialGroup()
                         .addGap(49, 49, 49)
                         .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -461,15 +493,25 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                                 .addGap(37, 37, 37)
                                 .addComponent(visitsChartOptionAmountOfElementsChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(maxSizeOf35Label)))))
-                .addContainerGap(113, Short.MAX_VALUE))
+                                .addComponent(maxSizeOf35Label))))
+                    .addGroup(jPanel4Layout.createSequentialGroup()
+                        .addGap(34, 34, 34)
+                        .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jLabel2)
+                            .addGroup(jPanel4Layout.createSequentialGroup()
+                                .addGap(50, 50, 50)
+                                .addComponent(datePickerGanttChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                .addContainerGap(115, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGap(39, 39, 39)
+                    .addComponent(jLabel4)
+                    .addContainerGap(197, Short.MAX_VALUE)))
         );
         jPanel4Layout.setVerticalGroup(
             jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel4Layout.createSequentialGroup()
-                .addGap(21, 21, 21)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addGap(46, 46, 46)
                 .addComponent(defaultOptionAmountOfElementsChart)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(customOptionAmountOfElementsChart)
@@ -478,7 +520,16 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                     .addComponent(visitsTextOptionAmountOfElementsChart)
                     .addComponent(visitsChartOptionAmountOfElementsChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxSizeOf35Label))
-                .addContainerGap(101, Short.MAX_VALUE))
+                .addGap(18, 18, 18)
+                .addComponent(jLabel2)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(datePickerGanttChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(48, Short.MAX_VALUE))
+            .addGroup(jPanel4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                .addGroup(jPanel4Layout.createSequentialGroup()
+                    .addGap(31, 31, 31)
+                    .addComponent(jLabel4)
+                    .addContainerGap(193, Short.MAX_VALUE)))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel3.TabConstraints.tabTitle"), jPanel4); // NOI18N
@@ -497,6 +548,12 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
             public Class getColumnClass(int columnIndex) {
                 return types [columnIndex];
+            }
+        });
+        websiteTable.setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
+        websiteTable.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+            public void propertyChange(java.beans.PropertyChangeEvent evt) {
+                websiteTablePropertyChange(evt);
             }
         });
         jScrollPane4.setViewportView(websiteTable);
@@ -734,6 +791,10 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_usersSelected
 
+    private void datePickerGanttChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datePickerGanttChartActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_datePickerGanttChartActionPerformed
+
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -742,6 +803,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.ButtonGroup buttonGroup2;
     private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JRadioButton customOptionAmountOfElementsChart;
+    private org.jdesktop.swingx.JXDatePicker datePickerGanttChart;
     private javax.swing.JRadioButton defaultOptionAmountOfElementsChart;
     private javax.swing.JButton deleteAllQueries;
     private javax.swing.JButton deleteRowQueries;
@@ -754,9 +816,13 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JButton importFilterButton;
     private javax.swing.JButton importWebsitesBtn;
     private javax.swing.JButton jButton3;
+    private javax.swing.JFrame jFrame1;
+    private javax.swing.JFrame jFrame2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
+    private javax.swing.JOptionPane jOptionPane1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -765,6 +831,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JTabbedPane jTabbedPane1;
+    private org.jdesktop.swingx.JXDatePicker jXDatePicker1;
     private javax.swing.JLabel maxSizeOf35Label;
     private javax.swing.JCheckBox mostVisitedSites;
     private java.awt.Panel panel1;
@@ -787,5 +854,9 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
 
     public List<String> getWebsites() {
         return websites;
+    }
+
+    public Date getDate() {
+        return datePickerGanttChart.getDate();
     }
 }

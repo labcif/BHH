@@ -35,6 +35,7 @@ public class FileGenerator {
         Generator generator = new Generator(templateFile);
 
         List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+        String dayAnalised = Utils.parseToDay(configPanel.getDate());
         List<IndexDto> index = generateIndex();
 
         if (configPanel.isMultipleUsers()) {
@@ -46,6 +47,9 @@ public class FileGenerator {
             if (!configPanel.getWebsites().isEmpty()) {
                 reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites())));
             }
+
+            reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(configPanel.getDate())));
+            reportData.put("websiteVisitedInDay", dayAnalised);
 
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
             generate(generator, reportData, "GlobalSearch");
@@ -60,6 +64,8 @@ public class FileGenerator {
             if (!configPanel.getWebsites().isEmpty()) {
                 reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username)));
             }
+            reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(username, configPanel.getDate())));
+            reportData.put("websiteVisitedInDay", dayAnalised);
 
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
             generate(generator, reportData, username);
@@ -76,6 +82,7 @@ public class FileGenerator {
         index.add(new IndexDto(pageIndex++ + " - Blocked websites ......................................... " + pageIndex));
         index.add(new IndexDto(pageIndex++ + " - Words Search .............................................. Todo"));
         index.add(new IndexDto(pageIndex++ + " - Activity in Websites ....................................... Todo"));
+        index.add(new IndexDto(pageIndex++ + " - Activity in  period of time ................................. Todo"));
         return index;
     }
 
