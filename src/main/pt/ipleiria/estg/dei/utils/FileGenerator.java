@@ -2,6 +2,7 @@ package main.pt.ipleiria.estg.dei.utils;
 
 import main.pt.ipleiria.estg.dei.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.dtos.IndexDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
@@ -11,6 +12,7 @@ import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.*;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,7 +35,7 @@ public class FileGenerator {
         Generator generator = new Generator(templateFile);
 
         List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
-
+        List<IndexDto> index = generateIndex();
 
         if (configPanel.isMultipleUsers()) {
             Map<String, Object> reportData = new HashMap<>();
@@ -44,6 +46,8 @@ public class FileGenerator {
             if (!configPanel.getWebsites().isEmpty()) {
                 reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites())));
             }
+
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
             generate(generator, reportData, "GlobalSearch");
             templateFile.reset();
         }
@@ -57,9 +61,22 @@ public class FileGenerator {
                 reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username)));
             }
 
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
             generate(generator, reportData, username);
             templateFile.reset();
         }
+
+    }
+
+    private List<IndexDto> generateIndex(){
+        List<IndexDto> index = new ArrayList<>();
+        int pageIndex = 1;
+        index.add(new IndexDto(pageIndex++ + " - Login found .................................................. " + pageIndex ));
+        index.add(new IndexDto(pageIndex++ + " - Most visited websites ................................... " + pageIndex));
+        index.add(new IndexDto(pageIndex++ + " - Blocked websites ......................................... " + pageIndex));
+        index.add(new IndexDto(pageIndex++ + " - Words Search .............................................. Todo"));
+        index.add(new IndexDto(pageIndex++ + " - Activity in Websites ....................................... Todo"));
+        return index;
     }
 
     private void generate(Generator generator, Map<String, Object> reportData, String username) throws GenerateReportException, IOException {

@@ -152,6 +152,12 @@
 		<field name="username" class="java.lang.String"/>
 		<field name="source" class="java.lang.String"/>
 	</subDataset>
+	<subDataset name="IndexDataSet" uuid="43b0bb2c-0908-47d8-a36c-68ea5bd6ea8d">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="description" class="java.lang.String"/>
+	</subDataset>
 	<parameter name="imgAutopsyLogo" class="java.lang.String"/>
 	<parameter name="imgArrowUp" class="java.lang.String"/>
 	<parameter name="mostVisitedWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
@@ -159,6 +165,7 @@
 	<parameter name="wordsDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="websiteDetailDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<parameter name="blockedVisitedWebsites" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
+	<parameter name="indexDataSource" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
 	<queryString>
 		<![CDATA[]]>
 	</queryString>
@@ -211,7 +218,7 @@
 				<imageExpression><![CDATA[$P{imgAutopsyLogo}]]></imageExpression>
 			</image>
 		</band>
-		<band height="353">
+		<band height="380">
 			<textField hyperlinkType="LocalAnchor" bookmarkLevel="1">
 				<reportElement x="30" y="40" width="500" height="30" uuid="5343b901-e4b2-4964-89e1-2e3d48dadca1"/>
 				<textElement>
@@ -221,48 +228,24 @@
 				<anchorNameExpression><![CDATA["Table of Contents"]]></anchorNameExpression>
 				<hyperlinkAnchorExpression><![CDATA["Table of Contents"]]></hyperlinkAnchorExpression>
 			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="70" width="500" height="30" uuid="efd9b6aa-7042-4b4d-b4b0-3e79ff7b057d"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	1. Introduction ........................................................ 3"]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA["1 - Introduction"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="31" y="132" width="500" height="30" uuid="d39902f3-f946-4af7-ba44-64de4a5858b0"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["		2.1 - Login Found ............................. 3"]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA["3.1 - Visited Websites - Total Visit Count"]]></hyperlinkReferenceExpression>
-				<hyperlinkAnchorExpression><![CDATA["3.1 - Visited Websites - Total Visit Count"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="31" y="100" width="500" height="30" uuid="e22989b0-af8f-493e-8103-dfcaf8f681c7"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	2. Global Search  .................................................... 3"]]></textFieldExpression>
-				<hyperlinkReferenceExpression><![CDATA["2 - Logins Found"]]></hyperlinkReferenceExpression>
-				<hyperlinkAnchorExpression><![CDATA["2 - Logins Found"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="194" width="500" height="30" uuid="ebc9ed0d-7f2e-4b84-9891-6d26ae320d14"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["	3. Search By User ............................................... 4"]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA["5 - User details"]]></hyperlinkAnchorExpression>
-			</textField>
-			<textField hyperlinkType="LocalAnchor">
-				<reportElement x="30" y="164" width="500" height="30" uuid="13020e5c-d350-4739-9b4a-38bfd5a2d3e1"/>
-				<textElement>
-					<font size="20" isBold="false"/>
-				</textElement>
-				<textFieldExpression><![CDATA["		2.2 - Most Visited websites -  ... 4"]]></textFieldExpression>
-				<hyperlinkAnchorExpression><![CDATA[" 4.1 - Blocked Websites - Total Visit Count"]]></hyperlinkAnchorExpression>
-			</textField>
+			<componentElement>
+				<reportElement x="80" y="80" width="484" height="30" uuid="b36f8149-b8e7-4956-9231-cf6fac6146b5"/>
+				<jr:list xmlns:jr="http://jasperreports.sourceforge.net/jasperreports/components" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports/components http://jasperreports.sourceforge.net/xsd/components.xsd">
+					<datasetRun subDataset="IndexDataSet" uuid="8fbd989a-3bca-4db4-9aac-1dd29840a5bf">
+						<dataSourceExpression><![CDATA[$P{indexDataSource}]]></dataSourceExpression>
+					</datasetRun>
+					<jr:listContents height="30" width="484">
+						<textField hyperlinkType="LocalAnchor">
+							<reportElement x="0" y="0" width="484" height="30" uuid="2959ef51-06ba-43fa-ac79-782d3c1379e5"/>
+							<textElement>
+								<font size="20"/>
+							</textElement>
+							<textFieldExpression><![CDATA[$F{description}]]></textFieldExpression>
+							<hyperlinkAnchorExpression><![CDATA[$F{description}.trim().substring(0,$F{description}.trim().indexOf(".")  ).trim()]]></hyperlinkAnchorExpression>
+						</textField>
+					</jr:listContents>
+				</jr:list>
+			</componentElement>
 		</band>
 		<band height="185" splitType="Stretch">
 			<textField hyperlinkTarget="Blank" bookmarkLevel="1">
@@ -271,7 +254,7 @@
 					<font fontName="Serif" size="22"/>
 				</textElement>
 				<textFieldExpression><![CDATA["1 - Login found"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
+				<anchorNameExpression><![CDATA["1 - Login found"]]></anchorNameExpression>
 			</textField>
 			<componentElement>
 				<reportElement positionType="Float" mode="Opaque" x="23" y="70" width="523" height="60" uuid="7140d9c9-7717-4745-8ad0-19c766239c04">
@@ -352,7 +335,7 @@
 					<font fontName="Serif" size="22"/>
 				</textElement>
 				<textFieldExpression><![CDATA["2 - Most visited websites"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
+				<anchorNameExpression><![CDATA["2 - Most visited websites"]]></anchorNameExpression>
 			</textField>
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomBarChart" theme="default">
@@ -398,8 +381,8 @@
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
-				<textFieldExpression><![CDATA["3 -Blocked websites"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["3 - Blocked websites"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["3 - Blocked websites"]]></anchorNameExpression>
 			</textField>
 			<barChart>
 				<chart isShowLegend="false" evaluationTime="Report" customizerClass="pt.ipleiria.estg.dei.CustomBarChart" theme="default">
@@ -445,8 +428,8 @@
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
-				<textFieldExpression><![CDATA["4 -Words Search"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["4 - Words Search"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["4 - Words Search"]]></anchorNameExpression>
 			</textField>
 			<componentElement>
 				<reportElement x="22" y="79" width="524" height="71" uuid="007db8b3-a71a-42e9-9b8e-68c65ec2fea2">
@@ -543,8 +526,8 @@
 				<textElement verticalAlignment="Bottom">
 					<font fontName="Serif" size="22"/>
 				</textElement>
-				<textFieldExpression><![CDATA["5 -Activity in  Websites"]]></textFieldExpression>
-				<anchorNameExpression><![CDATA["5 - User details"]]></anchorNameExpression>
+				<textFieldExpression><![CDATA["5 - Activity in Websites"]]></textFieldExpression>
+				<anchorNameExpression><![CDATA["5 - Activity in Websites"]]></anchorNameExpression>
 			</textField>
 			<componentElement>
 				<reportElement x="22" y="82" width="524" height="84" uuid="a4b52cb6-feaf-44dd-986b-995c7678b945">
