@@ -5,6 +5,9 @@ import main.pt.ipleiria.estg.dei.db.DatasetRepository;
 import main.pt.ipleiria.estg.dei.dtos.IndexDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
+import main.pt.ipleiria.estg.dei.model.Login;
+import main.pt.ipleiria.estg.dei.model.Website;
+import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.JRException;
@@ -36,54 +39,78 @@ public class FileGenerator {
 
         List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
         String dayAnalised = Utils.parseToDay(configPanel.getDate());
-        List<IndexDto> index = generateIndex();
+
+        List<Login> login;
+        List<Word> wordsUsed;
+        List<Website> activityInWebsite = null;
 
         if (configPanel.isMultipleUsers()) {
             Map<String, Object> reportData = new HashMap<>();
-            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed()));
+            login = DatasetRepository.getInstance().getLoginsUsed();
+            wordsUsed = DatasetRepository.getInstance().getWordsUsed();
+
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(login));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart())));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
-            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed()));
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(wordsUsed));
+
             if (!configPanel.getWebsites().isEmpty()) {
-                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites())));
+                activityInWebsite =  DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites());
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(activityInWebsite));
             }
 
             reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(configPanel.getDate())));
             reportData.put("websiteVisitedInDay", dayAnalised);
-
-            reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, "GlobalSearch");
             templateFile.reset();
         }
         for (String username: usernames ) {
             Map<String, Object> reportData = new HashMap<>();
-            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getLoginsUsed(username)));
+            login = DatasetRepository.getInstance().getLoginsUsed(username);
+            wordsUsed = DatasetRepository.getInstance().getWordsUsed(username);
+
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(login));
             reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart(), username)));
             reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
-            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getWordsUsed(username)));
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(wordsUsed));
             if (!configPanel.getWebsites().isEmpty()) {
-                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username)));
+                activityInWebsite = DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username);
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(activityInWebsite));
             }
             reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(username, configPanel.getDate())));
             reportData.put("websiteVisitedInDay", dayAnalised);
-
-            reportData.put("indexDataSource", new JRBeanCollectionDataSource(index));
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, username);
             templateFile.reset();
         }
-
     }
 
-    private List<IndexDto> generateIndex(){
+    private List<IndexDto> generateIndex(double loginSize, double wordsSearch, double activityWebsites ){
         List<IndexDto> index = new ArrayList<>();
-        int pageIndex = 1;
-        index.add(new IndexDto(pageIndex++ + " - Login found .................................................. " + pageIndex ));
-        index.add(new IndexDto(pageIndex++ + " - Most visited websites ................................... " + pageIndex));
-        index.add(new IndexDto(pageIndex++ + " - Blocked websites ......................................... " + pageIndex));
-        index.add(new IndexDto(pageIndex++ + " - Words Search .............................................. Todo"));
-        index.add(new IndexDto(pageIndex++ + " - Activity in Websites ....................................... Todo"));
-        index.add(new IndexDto(pageIndex++ + " - Activity in  period of time ................................. Todo"));
+        int pageIndex = 0;
+        int pageNumber = 3;
+
+        index.add(new IndexDto(++pageIndex + " - Login found ................................................ " + pageNumber )); // Page 3 Start
+
+        //Number of Logins (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, loginSize);
+        index.add(new IndexDto(++pageIndex + " - Most visited websites ................................. " + pageNumber )); // Page After Logins
+        index.add(new IndexDto(++pageIndex + " - Blocked websites ....................................... " + pageNumber )); // Page After Logins
+        index.add(new IndexDto(++pageIndex + " - Words Search ............................................ " + ++pageNumber )); // Page After Logins + 1
+
+        //Number of Words (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, wordsSearch);
+        index.add(new IndexDto(++pageIndex + " - Activity in Websites .................................... " + pageNumber )); // Page After Words Search
+
+        //Number of Website Visits (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, activityWebsites);
+        index.add(new IndexDto(++pageIndex + " - Activity in  period of time ............................ " + pageNumber )); // Page After Activity in Websites
         return index;
+    }
+
+    public int getListPageNumber(int pageNumber, double size){
+        return (int) Math.ceil(size/29) + pageNumber != pageNumber ? (int) Math.ceil(size/29) + pageNumber : ++pageNumber;
     }
 
     private void generate(Generator generator, Map<String, Object> reportData, String username) throws GenerateReportException, IOException {
