@@ -2,6 +2,7 @@ package main.pt.ipleiria.estg.dei.utils;
 
 import main.pt.ipleiria.estg.dei.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.dtos.IndexDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
@@ -9,16 +10,18 @@ import main.pt.ipleiria.estg.dei.model.Login;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
+import main.pt.ipleiria.estg.dei.utils.report.ReportBuilder;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class FileGenerator {
     private Logger<FileGenerator> logger;
@@ -144,5 +147,20 @@ public class FileGenerator {
                 }
             });
         }
+    }
+
+    public void generateServer() throws IOException {
+
+        InputStream from = this.from.getResourceAsStream("/resources/server/browser-history-app-1.0.0.jar");
+        File fileDest = new File(reportDir + "server.jar");
+        copyFile(from, fileDest);
+
+        List<String> databaseDirectory = Collections.singletonList(DataWarehouseConnection.FULL_PATH_CONNECTION);
+        Path file = Paths.get(reportDir + "\\bd_location.txt");
+        Files.write(file, databaseDirectory, Charset.forName("UTF-8"));
+    }
+
+    private void copyFile(InputStream source, File dest) throws IOException {
+        Files.copy(source, dest.toPath());
     }
 }

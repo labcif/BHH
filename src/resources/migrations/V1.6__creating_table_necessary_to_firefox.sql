@@ -28,17 +28,17 @@ CREATE TABLE if not exists t_ext_mozila_bookmarks
   position                INTEGER,
   title                   LONGVARCHAR,
   keyword_id              INTEGER,
-  folder_type             TEXT,
+  folder_type             LONGVARCHAR,
   dateAdded               INTEGER,
   lastModified            INTEGER,
-  guid                    TEXT,
+  guid                    LONGVARCHAR,
   syncStatus              INTEGER DEFAULT 0 NOT NULL,
   syncChangeCounter       INTEGER DEFAULT 1 NOT NULL
 );
 
 CREATE TABLE if not exists t_ext_mozila_bookmarks_deleted
 (
-  guid                    TEXT PRIMARY KEY,
+  guid                    LONGVARCHAR PRIMARY KEY,
   dateRemoved             INTEGER NOT NULL DEFAULT 0
 );
 
@@ -55,10 +55,10 @@ CREATE TABLE if not exists t_ext_mozila_historyvisits
 CREATE TABLE if not exists t_ext_mozila_hosts
 (
   id                      INTEGER PRIMARY KEY,
-  host                    TEXT NOT NULL UNIQUE,
+  host                    LONGVARCHAR NOT NULL UNIQUE,
   frecency                INTEGER,
   typed                   INTEGER NOT NULL DEFAULT 0,
-  prefix                  TEXT
+  prefix                  LONGVARCHAR
 );
 
 CREATE TABLE if not exists t_ext_mozila_inputhistory
@@ -86,22 +86,22 @@ CREATE TABLE if not exists t_ext_mozila_items_annos
 CREATE TABLE if not exists t_ext_mozila_keywords
 (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  keyword                TEXT UNIQUE,
+  keyword                LONGVARCHAR UNIQUE,
   place_id               INTEGER,
-  post_data              TEXT
+  post_data              LONGVARCHAR
 );
 
 CREATE TABLE if not exists t_ext_mozila_meta
 (
-  key                    TEXT PRIMARY KEY,
-  value                  NOT NULL
+  key                    LONGVARCHAR PRIMARY KEY,
+  value                  LONGVARCHAR NOT NULL
 ) WITHOUT ROWID ;
 
 CREATE TABLE if not exists t_ext_mozila_origins
 (
   id                     INTEGER PRIMARY KEY,
-  prefix                 TEXT NOT NULL,
-  host                   TEXT NOT NULL,
+  prefix                 LONGVARCHAR NOT NULL,
+  host                   LONGVARCHAR NOT NULL,
   frecency               INTEGER NOT NULL,
   UNIQUE (prefix, host)
 );
@@ -118,24 +118,14 @@ CREATE TABLE if not exists t_ext_mozila_places
   favicon_id             INTEGER,
   frecency               INTEGER DEFAULT -1 NOT NULL,
   last_visit_date        INTEGER ,
-  guid                   TEXT,
+  guid                   LONGVARCHAR,
   foreign_count          INTEGER DEFAULT 0 NOT NULL,
   url_hash               INTEGER DEFAULT 0 NOT NULL ,
-  description            TEXT,
-  preview_image_url      TEXT,
+  description            LONGVARCHAR,
+  preview_image_url      LONGVARCHAR,
   origin_id              INTEGER
 );
 
-CREATE TABLE if not exists t_ext_mozila_sqlite_sequence
-(
-  name,seq
-);
-
-CREATE TABLE if not exists t_ext_mozila_sqlite_stat1
-(
-  tbl,
-  idx,stat
-);
 
 CREATE UNIQUE INDEX if not exists moz_annos_placeattributeindex
   ON t_ext_mozila_annos (place_id, anno_attribute_id);

@@ -1,4 +1,4 @@
 alter table t_clean_words
-	add url_domain varchar2(255);
+	add url_domain VARCHAR(255);
 alter table t_clean_url
-	add url_visit_duration int;
+	add url_visit_duration INTEGER;
