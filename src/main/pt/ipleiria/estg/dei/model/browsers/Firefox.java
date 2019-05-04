@@ -40,8 +40,6 @@ public class Firefox extends Browser {
         extractTable("t_ext_mozila_meta", "moz_meta", EXTERNAL_URL);
         extractTable("t_ext_mozila_origins", "moz_origins", EXTERNAL_URL);
         extractTable("t_ext_mozila_places", "moz_places", EXTERNAL_URL);
-        extractTable("t_ext_mozila_sqlite_sequence", "moz_sqlite_sequence", EXTERNAL_URL);
-        extractTable("t_ext_mozila_sqlite_stat1", "moz_sqlite_stat1", EXTERNAL_URL);
     }
 
     @Override
@@ -67,8 +65,6 @@ public class Firefox extends Browser {
             stmt.execute("DELETE FROM t_ext_mozila_meta;");
             stmt.execute("DELETE FROM t_ext_mozila_origins;");
             stmt.execute("DELETE FROM t_ext_mozila_places;");
-            stmt.execute("DELETE FROM t_ext_mozila_sqlite_sequence;");
-            stmt.execute("DELETE FROM t_ext_mozila_sqlite_stat1;");
         } catch (SQLException | ClassNotFoundException e) {
             throw new ExtractionException(getModuleName(), "t_ext_","Error cleaning extracted tables - " + e.getMessage());
         }

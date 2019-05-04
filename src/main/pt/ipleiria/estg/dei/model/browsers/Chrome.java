@@ -34,10 +34,8 @@ public class Chrome extends Browser {
         extractTable("t_ext_chrome_downloads_slices", "downloads_slices", EXTERNAL_URL);
         extractTable("t_ext_chrome_downloads_url_chains", "downloads_url_chains", EXTERNAL_URL);
         extractTable("t_ext_chrome_keyword_search_terms", "keyword_search_terms", EXTERNAL_URL);
-        extractTable("t_ext_chrome_meta", "meta", EXTERNAL_URL);
         extractTable("t_ext_chrome_segment_usage", "segment_usage", EXTERNAL_URL);
         extractTable("t_ext_chrome_segments", "segments", EXTERNAL_URL);
-        extractTable("t_ext_chrome_sqlite_sequence", "sqlite_sequence", EXTERNAL_URL);
         extractTable("t_ext_chrome_typed_url_sync_metadata", "typed_url_sync_metadata", EXTERNAL_URL);
         extractTable("t_ext_chrome_login_data", "logins", EXTERNAL_URL);
     }
@@ -66,10 +64,8 @@ public class Chrome extends Browser {
             stmt.execute("DELETE FROM t_ext_chrome_downloads_slices;");
             stmt.execute("DELETE FROM t_ext_chrome_downloads_url_chains;");
             stmt.execute("DELETE FROM t_ext_chrome_keyword_search_terms;");
-            stmt.execute("DELETE FROM t_ext_chrome_meta;");
             stmt.execute("DELETE FROM t_ext_chrome_segment_usage;");
             stmt.execute("DELETE FROM t_ext_chrome_segments;");
-            stmt.execute("DELETE FROM t_ext_chrome_sqlite_sequence;");
             stmt.execute("DELETE FROM t_ext_chrome_typed_url_sync_metadata;");
         } catch (SQLException | ClassNotFoundException e) {
             throw new ExtractionException(getModuleName(), "t_ext_", "Error cleaning extracted tables - " + e.getMessage());
