@@ -7,9 +7,13 @@ import main.pt.ipleiria.estg.dei.exceptions.TransformationException;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
 
+import java.net.URLDecoder;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Firefox extends Browser {
     private Logger<Firefox> logger = new Logger<>(Firefox.class);
@@ -43,6 +47,8 @@ public class Firefox extends Browser {
     @Override
     public void transformAllTables(String user) throws ConnectionException {
         transformUrlTable(user);
+        transformWordsTable(user);
+        transformEmailsTable(user);
     }
 
     @Override
@@ -69,16 +75,15 @@ public class Firefox extends Browser {
     }
 
     private void transformUrlTable(String user) throws ConnectionException {
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
-                                                    "url_visit_time, url_user_origin, url_browser_origin ) " +
+                                                    "url_visit_time, url_user_origin, url_browser_origin, url_visit_duration ) " +
                             "SELECT  mp.url as url_full, " +
                                     "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
                                     "'TODO: path', title as url_title, typed as url_typed_count, " +
-                                    "strftime('%d-%m-%Y %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
-                                    "'" + user + "', '" + getModuleName() + "' " +
+                                    "strftime('%Y-%m-%d %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
+                                    "'" + user + "', '" + getModuleName() + "', 0 " +
                             "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                             "WHERE mp.id = mh.place_id " +
                             "and url_domain <> ''; ");
@@ -88,6 +93,72 @@ public class Firefox extends Browser {
         }
     }
 
+    private void transformWordsTable(String user){
+        try {
+            Statement statement = DataWarehouseConnection.getConnection().createStatement();
+            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                                                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                    "FROM t_ext_mozila_places " +
+                    "where url like '%google.%' and url like '%?q=%'");
+
+
+            insertWordInTable(rs, user);
+
+        }catch (SQLException | ClassNotFoundException | ConnectionException e) {
+            throw new ExtractionException(getModuleName(), "t_clean_words", "Error cleaning extracted - " + e.getMessage());
+        }
+    }
+
+    private void transformEmailsTable(String user) {
+        try {
+            Statement statement = DataWarehouseConnection.getConnection().createStatement();
+            ResultSet rs = statement.executeQuery(
+                    "SELECT  mp.url as url_full, " +
+                                    "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                                    "'TODO: path', title as url_title, typed as url_typed_count, " +
+                                    "strftime('%Y-%m-%d %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time, " +
+                                    "'" + user + "', '" + getModuleName() + "' " +
+                            "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
+                            "WHERE mp.id = mh.place_id " +
+                            "and url_domain <> ''; ");
+
+            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
+                    " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin) " +
+                            " VALUES (?,?,?,?,?,?,?,?)");
+
+            Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
+
+            Matcher email;
+            String encoded, substring, decode;
+
+            while(rs.next()){
+                encoded = rs.getString("url_full");
+                substring = encoded.substring(0, encoded.contains("&") ? encoded.indexOf("&") : encoded.length() -1);
+                //In case the string has been decoded already
+                try {
+                    decode = URLDecoder.decode(substring, "UTF-8"); }
+                catch(Exception ex) {
+                    decode = substring;
+                }
+                email = emailVerification.matcher(decode);
+                while (email.find()) {
+                    preparedStatement.setString(1, email.group());
+                    preparedStatement.setString(2, rs.getString("url_domain"));
+                    preparedStatement.setString(3, null);//original_url
+                    preparedStatement.setString(4, null);//username_value
+                    preparedStatement.setString(5, null);//available_password
+                    preparedStatement.setString(6, null);//date
+                    preparedStatement.setString(7, user);
+                    preparedStatement.setString(8, getModuleName());
+                    preparedStatement.addBatch();
+                }
+            }
+            preparedStatement.executeBatch();
+
+        } catch (SQLException | ClassNotFoundException | ConnectionException e) {
+            throw new ExtractionException(getModuleName(), "t_clean_emails", "Error cleaning extracted - " + e.getMessage());
+        }
+    }
 
     @Override
     public String getModuleName() {

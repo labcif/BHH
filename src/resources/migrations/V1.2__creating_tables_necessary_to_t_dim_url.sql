@@ -12,7 +12,7 @@ create index IF NOT EXISTS urls_url_index
   on t_ext_chrome_urls (url);
 create table if not exists t_ext_chrome_visits
 (
-  id                              INTEGERprimary key,
+  id                              INTEGER primary key,
   url                             INTEGER not null,
   visit_time                      INTEGER not null,
   from_visit                      INTEGER,
@@ -31,18 +31,18 @@ create index if not exists  visits_url_index
 create table if not exists t_clean_url
 (
   url_natural_key INTEGER constraint t_clean_url_pk primary key autoincrement,
-  url_full VARCHAR2(255),
-  url_domain VARCHAR2(255),
-  url_path VARCHAR2(255),
-  url_title varchar(255),
-  url_typed_count INTEGER(30),
+  url_full VARCHAR(255),
+  url_domain VARCHAR(255),
+  url_path VARCHAR(255),
+  url_title VARCHAR(255),
+  url_typed_count INTEGER,
   url_last_visit_time DATE,
-  url_hidden INTEGER(5),
+  url_hidden INTEGER,
   url_visit_full_date DATE,
   url_visit_date DATE,
   url_visit_time DATE,
-  url_from_visit NUMBER(5),
-  url_user_origin varchar(255) NOT NULL,
-  url_browser_origin varchar(255) NOT NULL
+  url_from_visit INTEGER,
+  url_user_origin VARCHAR(255) NOT NULL,
+  url_browser_origin VARCHAR(255) NOT NULL
 );
 

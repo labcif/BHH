@@ -2,14 +2,22 @@ package main.pt.ipleiria.estg.dei.db;
 
 import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
-import main.pt.ipleiria.estg.dei.model.Email;
+import main.pt.ipleiria.estg.dei.model.Login;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.Logger;
 
 import java.sql.*;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+
+import static main.pt.ipleiria.estg.dei.utils.Utils.atEndOfDay;
+import static main.pt.ipleiria.estg.dei.utils.Utils.parse;
 
 public class DatasetRepository {
     private static DatasetRepository datasetRepository;
@@ -36,7 +44,7 @@ public class DatasetRepository {
         return datasetRepository;
     }
 
-    public List<Website> getTopVisitedWebsite(int limit) throws SQLException {
+    public List<Website> getMostVisitedWebsite(int limit) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
@@ -47,80 +55,98 @@ public class DatasetRepository {
                         "limit " + limit);
 
         while (rs.next()) {
-            String domain = rs.getString("url_domain");
-            int visitNumber = Integer.parseInt(rs.getString("total"));
-            website.add(new Website(domain, visitNumber));
+            website.add(getWebsites(rs));
         }
         return website;
     }
-
-    public List<Website> getTopVisitedWebsiteByUser(int limit, String userName) throws SQLException {
+    public List<Website> getMostVisitedWebsite(int limit, String username) throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
                 "SELECT url_domain, count (*) as total " +
                         "FROM t_clean_url " +
-                        "where url_user_origin  = '" + userName + "'"   +
+                        "WHERE url_user_origin = '" + username+"' " +
                         "group by url_domain " +
                         "order by count (*) desc " +
                         "limit " + limit);
 
         while (rs.next()) {
-            String domain = rs.getString("url_domain");
-            int visitNumber = Integer.parseInt(rs.getString("total"));
-            website.add(new Website(domain, visitNumber));
+            website.add(getWebsites(rs));
         }
         return website;
     }
 
-    public List<Website> getBlockedWebsiteVisited() throws SQLException {
+
+
+    private Website getWebsites(ResultSet rs) throws SQLException {
+        String domain = rs.getString("url_domain");
+        int visitNumber = Integer.parseInt(rs.getString("total"));
+        return new Website(domain, visitNumber);
+    }
+
+    public List<Website> getBlockedVisitedWebsite() throws SQLException {
         List<Website> website = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                " SELECT url_domain, count(*) as total " +
-                        " FROM t_clean_url " +
-                        " WHERE url_domain IN (SELECT DOMAIN " +
-                        "                       FROM t_clean_blocked_websites) " +
-                        " group by url_domain " +
-                        " order by total desc ");
+                "SELECT url_domain, count (*) as total " +
+                        "FROM t_clean_url tcl " +
+                        "INNER JOIN  t_clean_blocked_websites tcbw ON tcl.url_domain = tcbw.domain " +
+                        "group by url_domain " +
+                        "order by total desc ");
 
         while (rs.next()) {
-            website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
+            website.add(getWebsites(rs));
+        }
+        return website;
+    }
+    public List<Website> getBlockedVisitedWebsite(String username) throws SQLException {
+        List<Website> website = new ArrayList<>();
+
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, count(*) as total " +
+                        "FROM t_clean_url tcl " +
+                        "INNER JOIN  t_clean_blocked_websites tcbw ON tcl.url_domain = tcbw.domain " +
+                        "WHERE url_user_origin = '" + username +"' " +
+                        "GROUP BY url_domain " +
+                        "order by total desc " );
+
+        while (rs.next()) {
+            website.add(getWebsites(rs));
         }
         return website;
     }
     
-    public List<Website> getBlockedWebsiteVisited(int limit, String userName) throws SQLException {
-        List<Website> website = new ArrayList<>();
+
+
+    public List<Login> getLoginsUsed() throws SQLException {
+        List<Login> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                " SELECT url_domain, count(*) as total " +
-                        " FROM t_clean_url " +
-                        " WHERE url_domain IN (SELECT DOMAIN " +
-                        "                       FROM t_clean_blocked_websites) " +
-                        " and url_user_origin  = '" + userName + "'"   +
-                        " group by url_domain " +
-                        " order by total desc " +
-                        " limit " + limit);
-
-        while (rs.next()) {
-            website.add(new Website(rs.getString("url_domain"), Integer.parseInt(rs.getString("total"))));
-        }
-        return website;
-    }
-
-    public List<Email> getEmailsUsed() throws SQLException {
-        List<Email> emails = new ArrayList<>();
-
-        ResultSet rs = statement.executeQuery(
-                "SELECT  email, source_full, count(*) as total, available_password " +
+                "SELECT  email, source_full, count(*) as total " +
                         "FROM t_clean_emails " +
                         "group by email " +
                         "order by total desc ");
 
         while (rs.next()) {
-            emails.add(new Email(rs.getString("email"),rs.getString("source_full"),
-                    rs.getInt("total"), rs.getString("available_password")));
+            emails.add(new Login(rs.getString("email"),rs.getString("source_full"),
+                    rs.getInt("total")));
+        }
+        return emails;
+    }
+
+    public List<Login> getLoginsUsed(String username) throws SQLException {
+        List<Login> emails = new ArrayList<>();
+
+        ResultSet rs = statement.executeQuery(
+                "SELECT  email, source_full, count(*) as total " +
+                        "FROM t_clean_emails " +
+                        "WHERE url_user_origin = '" + username + "' " +
+                        "group by email " +
+                        "order by total desc ");
+
+        while (rs.next()) {
+            emails.add(new Login(rs.getString("email"),rs.getString("source_full"),
+                    rs.getInt("total")));
         }
         return emails;
     }
@@ -128,17 +154,37 @@ public class DatasetRepository {
     public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
         ResultSet rs = statement.executeQuery(
-                "SELECT  word, count(word) as times_used " +
+                "SELECT  word, count(word) as times_used, url_user_origin, url_domain " +
                         " FROM t_clean_words " +
                         " group by word " +
-                        " order by times_used desc " +
-                        " limit 10 ");
+                        " order by times_used desc ");
 
         while (rs.next()) {
-            words.add(new Word(rs.getString("word"), Integer.parseInt(rs.getString("times_used"))));
+            words.add(getWord(rs));
         }
-
         return words;
+    }
+
+    public List<Word> getWordsUsed(String username) throws SQLException {
+        List<Word> words = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "SELECT  word, count(word) as times_used, url_user_origin, url_domain " +
+                        " FROM t_clean_words " +
+                        "WHERE url_user_origin='" + username + "' " +
+                        " group by word " +
+                        " order by times_used desc ");
+
+        while (rs.next()) {
+            words.add(getWord(rs));
+        }
+        return words;
+    }
+
+    private Word getWord(ResultSet rs) throws SQLException {
+        return new Word(rs.getString("word"),
+                Integer.parseInt(rs.getString("times_used")),
+                rs.getString("url_user_origin"),
+                rs.getString("url_domain"));
     }
 
     public List<String> getUsers() throws SQLException {
@@ -165,7 +211,7 @@ public class DatasetRepository {
         ResultSet rs = statement.executeQuery("SELECT name FROM sqlite_master WHERE type='table'");
         Statement stmn = DataWarehouseConnection.getConnection().createStatement();
         while (rs.next()) {
-            stmn.execute("DELETE FROM '"+ rs.getString("name") + "'");
+            stmn.execute("DROP TABLE '"+ rs.getString("name") + "'");
             tableDeleted++;
         }
         logger.info("All previous data deleted.");
@@ -191,5 +237,86 @@ public class DatasetRepository {
             results.add(temp);
         }
         return results;
+    }
+
+    public List<Website> getActivityInWebsite(List<String> domains, String username) throws SQLException {
+        List<Website> websites = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, url_user_origin, url_visit_time, url_full " +
+                        "from t_clean_url " +
+                        "where url_domain in ('"+ String.join("', '", domains)+"') " +
+                        "and url_user_origin ='"+ username +"' " +
+                        "ORDER BY url_domain asc, url_user_origin, url_visit_time desc");
+
+        while (rs.next()) {
+            websites.add(new Website(rs.getString("url_domain"), rs.getString("url_visit_time"),
+                        rs.getString("url_full"), username));
+        }
+        return websites;
+    }
+    public List<Website> getActivityInWebsite(List<String> domains) throws SQLException {
+        List<Website> websites = new ArrayList<>();
+        ResultSet rs = statement.executeQuery(
+                "select url_domain, url_user_origin, url_visit_time, url_full " +
+                        "from t_clean_url " +
+                        "where url_domain in ('"+ String.join("', '", domains)+"') " +
+                        "ORDER BY url_domain asc, url_user_origin, url_visit_time desc");
+
+        while (rs.next()) {
+            websites.add(new Website(rs.getString("url_domain"), rs.getString("url_visit_time"),
+                        rs.getString("url_full"), rs.getString("url_user_origin")));
+        }
+        return websites;
+    }
+
+    public List<Website> getVisitedWebsiteInDay(String username, Date date) throws SQLException {
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_domain, url_user_origin,url_visit_time, sum(url_visit_duration)/(1000000) as totalTime " +
+                "FROM t_clean_url " +
+                "WHERE url_user_origin='"+ username+ "' " +
+                "  and url_visit_time > '" + parse(date) +"' " +
+                        "      AND url_visit_time < '" + atEndOfDay(date) +"'" +
+                "GROUP BY url_domain, url_visit_time");
+
+        return getWebsitesInADay(rs);
+    }
+
+    public List<Website> getVisitedWebsiteInDay(Date date) throws SQLException {
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_domain, url_user_origin, url_visit_time, sum(url_visit_duration)/(60000000) as totalTime " +
+                "FROM t_clean_url " +
+                "WHERE url_visit_time > '" + parse(date) +" '" +
+                "      AND url_visit_time < '" + atEndOfDay(date) +"'" +
+                "GROUP BY url_domain, url_visit_time, url_user_origin ");
+        return getWebsitesInADay(rs);
+    }
+
+    private List<Website> getWebsitesInADay(ResultSet rs) throws SQLException {
+        try {
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy  HH:mm:ss");
+            List<Website> websites = new ArrayList<>();
+            Calendar calendar = Calendar.getInstance();
+            long timeStart, timeEnd;
+            Date start;
+            String domain, user;
+            int totalTime;
+            while (rs.next()) {
+                start = dateFormat.parse(rs.getString("url_visit_time"));
+                timeStart = start.getTime();
+                calendar.setTime(start);
+
+                //For the sake of representation, unit min is 15 minutes.
+                totalTime = rs.getInt("totalTime") < 15? 15: rs.getInt("totalTime");
+                calendar.add(Calendar.MINUTE, totalTime);
+                timeEnd = calendar.getTime().getTime();
+                domain = rs.getString("url_domain");
+                user = rs.getString("url_user_origin");
+                websites.add(new Website(domain, user, new Timestamp(timeStart), new Timestamp(timeEnd)));
+            }
+            return websites;
+        } catch (ParseException e) {
+            logger.warn("There was an issue when parsing a date: " + e.getMessage());
+            return null;
+        }
     }
 }

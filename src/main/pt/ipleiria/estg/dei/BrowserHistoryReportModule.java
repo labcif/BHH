@@ -27,12 +27,13 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
 
         try {
             FileGenerator fileGenerator = new FileGenerator(configPanel, getClass(), reportDir);
+            fileGenerator.generateServer();
             fileGenerator.generateCSV();
-            fileGenerator.generatePDF();
-        } catch (SQLException | ConnectionException | ClassNotFoundException e) {
-            logger.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
-        } catch (JRException | GenerateReportException e) {
-            logger.error("Error generating report. Reason: " + e.getMessage());
+//            fileGenerator.generatePDF(); TODO: Now we are focusing on server, so we let it commented to speed up the process
+//        } catch (SQLException | ConnectionException | ClassNotFoundException e) {
+//            logger.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
+//        } catch (JRException | GenerateReportException e) {
+//            logger.error("Error generating report. Reason: " + e.getMessage());
         } catch (IOException e) {
             logger.error("Error writing on disk. Reason: " + e.getMessage());
         }

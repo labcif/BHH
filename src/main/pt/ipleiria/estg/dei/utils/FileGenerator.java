@@ -2,24 +2,25 @@ package main.pt.ipleiria.estg.dei.utils;
 
 import main.pt.ipleiria.estg.dei.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.db.DatasetRepository;
+import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
+import main.pt.ipleiria.estg.dei.dtos.IndexDto;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.GenerateReportException;
-import main.pt.ipleiria.estg.dei.model.Email;
-import main.pt.ipleiria.estg.dei.model.User;
+import main.pt.ipleiria.estg.dei.model.Login;
 import main.pt.ipleiria.estg.dei.model.Website;
 import main.pt.ipleiria.estg.dei.model.Word;
 import main.pt.ipleiria.estg.dei.utils.report.Generator;
+import main.pt.ipleiria.estg.dei.utils.report.ReportBuilder;
 import main.pt.ipleiria.estg.dei.utils.report.ReportParameterMap;
-import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperCompileManager;
-import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class FileGenerator {
@@ -37,89 +38,101 @@ public class FileGenerator {
 
     public void generatePDF() throws ConnectionException, SQLException, ClassNotFoundException, JRException, GenerateReportException, IOException {
         InputStream templateFile = from.getResourceAsStream("/resources/template/autopsy.jrxml");
-
         Generator generator = new Generator(templateFile);
 
-        Map<String, Object> reportData = new HashMap<>();
+        List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+        String dayAnalised = Utils.parseToDay(configPanel.getDate());
 
-        reportData.put("isMostVisitedSitesEnabled", configPanel.isMostVisitedSitesEnabled());
-        if(configPanel.isMostVisitedSitesEnabled()) {
-            List<Website> topMostVisited = DatasetRepository.getInstance().getTopVisitedWebsite(10);
-            reportData.put("Title", "Most visited websites");
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(topMostVisited);
-            reportData.put("Visits", jrBeanCollectionDataSource);
+        List<Login> login;
+        List<Word> wordsUsed;
+        List<Website> activityInWebsite = null;
+
+        if (configPanel.isMultipleUsers()) {
+            Map<String, Object> reportData = new HashMap<>();
+            login = DatasetRepository.getInstance().getLoginsUsed();
+            wordsUsed = DatasetRepository.getInstance().getWordsUsed();
+
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(login));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart())));
+            reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite()));
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(wordsUsed));
+
+            if (!configPanel.getWebsites().isEmpty()) {
+                activityInWebsite =  DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites());
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(activityInWebsite));
+            }
+
+            reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(configPanel.getDate())));
+            reportData.put("websiteVisitedInDay", dayAnalised);
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
+            generate(generator, reportData, "GlobalSearch");
+            templateFile.reset();
         }
+        for (String username: usernames ) {
+            Map<String, Object> reportData = new HashMap<>();
+            login = DatasetRepository.getInstance().getLoginsUsed(username);
+            wordsUsed = DatasetRepository.getInstance().getWordsUsed(username);
 
-        reportData.put("isBlokedSitesEnabled", configPanel.isBlokedSitesEnabled());
-        if(configPanel.isBlokedSitesEnabled()) {
-            List<Website> blockedWebsitesVisited = DatasetRepository.getInstance().getBlockedWebsiteVisited();
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(blockedWebsitesVisited);
-            reportData.put("Blocked", jrBeanCollectionDataSource);
+            reportData.put("loginsDataSource", new JRBeanCollectionDataSource(login));
+            reportData.put("mostVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getMostVisitedWebsite(configPanel.getVisitsAmountOfElementsChart(), username)));
+            reportData.put("blockedVisitedWebsites", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getBlockedVisitedWebsite(username)));
+            reportData.put("wordsDataSource", new JRBeanCollectionDataSource(wordsUsed));
+            if (!configPanel.getWebsites().isEmpty()) {
+                activityInWebsite = DatasetRepository.getInstance().getActivityInWebsite(configPanel.getWebsites(), username);
+                reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(activityInWebsite));
+            }
+            reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(DatasetRepository.getInstance().getVisitedWebsiteInDay(username, configPanel.getDate())));
+            reportData.put("websiteVisitedInDay", dayAnalised);
+            reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
+            generate(generator, reportData, username);
+            templateFile.reset();
         }
+    }
 
-        reportData.put("isWordsSearchEnabled", configPanel.isWordsSearchEnabled());
-        if(configPanel.isWordsSearchEnabled()) {
-            List<Word> wordUsed = DatasetRepository.getInstance().getWordsUsed();
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(wordUsed);
-            reportData.put("Words", jrBeanCollectionDataSource);
-        }
+    private List<IndexDto> generateIndex(double loginSize, double wordsSearch, double activityWebsites ){
+        List<IndexDto> index = new ArrayList<>();
+        int pageIndex = 0;
+        int pageNumber = 3;
 
-        if(configPanel.isWordsSearchEnabled()) {
-            List<Email> emailsUsed = DatasetRepository.getInstance().getEmailsUsed();
-            JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(emailsUsed);
-            reportData.put("Emails", jrBeanCollectionDataSource);
-        }
+        index.add(new IndexDto(++pageIndex + " - Login found ................................................ " + pageNumber )); // Page 3 Start
 
-        List<User> usersInfo = new ArrayList<>();
-        List<Website> topVisitedWebsiteByUser;
-        List<Website> blockedWebsiteVisited;
+        //Number of Logins (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, loginSize);
+        index.add(new IndexDto(++pageIndex + " - Most visited websites ................................. " + pageNumber )); // Page After Logins
+        index.add(new IndexDto(++pageIndex + " - Blocked websites ....................................... " + pageNumber )); // Page After Logins
+        index.add(new IndexDto(++pageIndex + " - Words Search ............................................ " + ++pageNumber )); // Page After Logins + 1
 
-        List<String> userNames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+        //Number of Words (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, wordsSearch);
+        index.add(new IndexDto(++pageIndex + " - Activity in Websites .................................... " + pageNumber )); // Page After Words Search
 
-        for (String nome: userNames ) {
-            topVisitedWebsiteByUser = DatasetRepository.getInstance().getTopVisitedWebsiteByUser(7, nome);
-            blockedWebsiteVisited = DatasetRepository.getInstance().getBlockedWebsiteVisited(7, nome);
+        //Number of Website Visits (divided by (max) row count)
+        pageNumber = getListPageNumber(pageNumber, activityWebsites);
+        index.add(new IndexDto(++pageIndex + " - Activity in  period of time ............................ " + pageNumber )); // Page After Activity in Websites
+        return index;
+    }
 
-            usersInfo.add(new User(nome, topVisitedWebsiteByUser, blockedWebsiteVisited));
-        }
+    public int getListPageNumber(int pageNumber, double size){
+        return (int) Math.ceil(size/29) + pageNumber != pageNumber ? (int) Math.ceil(size/29) + pageNumber : ++pageNumber;
+    }
 
-
-        JRDataSource userInfo = new JRBeanCollectionDataSource(usersInfo);
-
-        //Visited Subreport List (by user)
-        reportData.put("UserInfo", userInfo);
-
-
-        //Adding SubReport (Chart Type)
-        InputStream chartTipe;
-        if(configPanel.isChartBarTipe()){
-            chartTipe = from.getResourceAsStream("/resources/template/user_graf.jrxml");
-        }else{
-            chartTipe = from.getResourceAsStream("/resources/template/user_graf_pie.jrxml");
-        }
-
-
-        JasperReport subReportChart = JasperCompileManager.compileReport(chartTipe);
-        reportData.put("subReport", subReportChart);
-
-
-        generator.setReportData(reportData);
-
+    private void generate(Generator generator, Map<String, Object> reportData, String username) throws GenerateReportException, IOException {
+        // Images of the report
+        reportData.put("imgAutopsyLogo", from.getResource("/resources/images/img_1_autopsy_logo.png").toString());
+        reportData.put("imgArrowUp",from.getResource("/resources/images/img_2_arrow_up_icon.png").toString());
         ReportParameterMap reportParameters = new ReportParameterMap();
+        generator.setReportData(reportData);
         // Generate the document into a byte array.
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         reportParameters.setOutputStream(byteArrayOutputStream);
         generator.setReportParameters(reportParameters);
 
         generator.generateReport();
-
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy_HH-mm-ss-SS");
-        Date date = new Date();
-        String dateNoTime = dateFormat.format(date);
-
-        try(OutputStream outputStream = new FileOutputStream(reportDir + "\\generatedReport"+ dateNoTime +".pdf")) {
+        try(OutputStream outputStream = new FileOutputStream(reportDir + "\\"+ username+".pdf")) {
             byteArrayOutputStream.writeTo(outputStream);
         }
+        byteArrayOutputStream.close();
+
     }
 
 
@@ -134,5 +147,20 @@ public class FileGenerator {
                 }
             });
         }
+    }
+
+    public void generateServer() throws IOException {
+
+        InputStream from = this.from.getResourceAsStream("/resources/server/browser-history-app-1.0.0.jar");
+        File fileDest = new File(reportDir + "server.jar");
+        copyFile(from, fileDest);
+
+        List<String> databaseDirectory = Collections.singletonList(DataWarehouseConnection.FULL_PATH_CONNECTION);
+        Path file = Paths.get(reportDir + "\\bd_location.txt");
+        Files.write(file, databaseDirectory, Charset.forName("UTF-8"));
+    }
+
+    private void copyFile(InputStream source, File dest) throws IOException {
+        Files.copy(source, dest.toPath());
     }
 }

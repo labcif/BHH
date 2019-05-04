@@ -77,16 +77,15 @@ public class Chrome extends Browser {
     }
 
     private void transformUrlTable(String user) {
-        PreparedStatement preparedStatement = null;
         try {
-            preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
+            PreparedStatement preparedStatement = DataWarehouseConnection.getConnection().prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed_count, " +
-                            "url_visit_time, url_user_origin, url_browser_origin ) " +
+                            "url_visit_time, url_user_origin, url_browser_origin, url_visit_duration ) " +
                             "SELECT teu.url as url_full, " +
                             "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
                             "'TODO: path', title as url_title, typed_count as url_typed_count, " +
-                            "strftime('%d-%m-%Y  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, " +
-                            "'" + user + "',  '" + getModuleName() + "' " +
+                            "strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time, " +
+                            "'" + user + "',  '" + getModuleName() + "', visit_duration " +
                             "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                             "WHERE teu.id = tev.url " +
                             "and url_domain <> ''; ");
@@ -206,43 +205,14 @@ public class Chrome extends Browser {
     }
 
 
-    public void transformWordsTable(String user){
+    private void transformWordsTable(String user){
         try {
             Statement statement = DataWarehouseConnection.getConnection().createStatement();
-            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full  " +
+            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                                            "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
                     "FROM t_ext_chrome_urls " +
                     "where url like '%google.%' and url like '%?q=%'");
-
-            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
-                    " INSERT INTO t_clean_words (word, source_full, url_user_origin, url_browser_origin) " +
-                            " VALUES (?,?,?,?)");
-
-            String encoded;
-            String substring;
-            String decode;
-            String[] words;
-
-            while (rs.next()) {
-                encoded = rs.getString("word");
-                substring = encoded.substring(0, encoded.indexOf("&") != -1 ? encoded.indexOf("&") : encoded.length() -1);
-
-                //In case the string has been decoded already
-                try {
-                    decode = URLDecoder.decode(substring, "UTF-8"); }
-                catch(Exception ex) {
-                    decode = substring;
-                }
-                words = decode.split("\\s+");
-                for (String s: words) {
-                    preparedStatement.setString(1, s);
-                    preparedStatement.setString(2, rs.getString("url_full"));
-                    preparedStatement.setString(3, user);
-                    preparedStatement.setString(4, getModuleName());
-                    preparedStatement.addBatch();
-                }
-            }
-
-            preparedStatement.executeBatch();
+            insertWordInTable(rs, user);
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_words", "Error cleaning extracted - " + e.getMessage());
         }

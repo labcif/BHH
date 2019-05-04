@@ -54,11 +54,7 @@ CREATE TABLE if not exists t_ext_chrome_keyword_search_terms
   term                 LONGVARCHAR
 );
 
-CREATE TABLE if not exists t_ext_chrome_meta
-(
-  key LONGVARCHAR       UNIQUE PRIMARY KEY,
-  value LONGVARCHAR
-);
+
 
 CREATE TABLE if not exists t_ext_chrome_segment_usage
 (
@@ -72,14 +68,9 @@ CREATE TABLE if not exists t_ext_chrome_segments
 (
   id                   INTEGER PRIMARY KEY,
   name                 VARCHAR,
-  url_id               INTEGER NON NULL
+  url_id               INTEGER NOT NULL
 );
 
-CREATE TABLE if not exists t_ext_chrome_sqlite_sequence
-(
-  name,
-  seq
-);
 
 CREATE TABLE if not exists t_ext_chrome_typed_url_sync_metadata
 (
@@ -98,19 +89,19 @@ CREATE TABLE if not exists t_clean_downloads
   id                   INTEGER
     constraint t_clean_downloads_pk
       primary key autoincrement,
-  url_domain            VARCHAR2(255),
-  url_full              VARCHAR2(255),
+  url_domain            VARCHAR(255),
+  url_full              VARCHAR(255),
   type                  INTEGER,
   danger_type           INTEGER,
-  tab_url               VARCHAR2(255),
-  download_target_path  VARCHAR2(255),
+  tab_url               VARCHAR(255),
+  download_target_path  VARCHAR(255),
   beginning_date        INTEGER,
   ending_date           INTEGER,
   received_bytes        INTEGER,
   total_bytes           INTEGER,
   interrupt_reason      INTEGER,
-  url_user_origin varchar(255) NOT NULL,
-  url_browser_origin varchar(255) NOT NULL
+  url_user_origin VARCHAR(255) NOT NULL,
+  url_browser_origin VARCHAR(255) NOT NULL
 );
 
 create table if not exists t_clean_emails
@@ -118,14 +109,14 @@ create table if not exists t_clean_emails
   id                    INTEGER
     constraint t_clean_emails_pk
       primary key autoincrement,
-  email                 VARCHAR2(255),
-  source_full           VARCHAR2(255),
-  original_url          VARCHAR2(255),
-  username_value        VARCHAR2(255),
+  email                 VARCHAR(255),
+  source_full           VARCHAR(255),
+  original_url          VARCHAR(255),
+  username_value        VARCHAR(255),
   available_password    INTEGER,
   date                  INTEGER,
-  url_user_origin varchar(255) NOT NULL,
-  url_browser_origin varchar(255) NOT NULL
+  url_user_origin VARCHAR(255) NOT NULL,
+  url_browser_origin VARCHAR(255) NOT NULL
 );
 
 create table if not exists t_clean_words
@@ -133,10 +124,10 @@ create table if not exists t_clean_words
   id                    INTEGER
     constraint t_clean_words_pk
       primary key autoincrement,
-  word                  VARCHAR2(255),
-  source_full           VARCHAR2(255),
-  url_user_origin varchar(255) NOT NULL,
-  url_browser_origin varchar(255) NOT NULL
+  word                  VARCHAR(255),
+  source_full           VARCHAR(255),
+  url_user_origin VARCHAR(255) NOT NULL,
+  url_browser_origin VARCHAR(255) NOT NULL
 );
 
 CREATE INDEX if not exists keyword_search_terms_index1

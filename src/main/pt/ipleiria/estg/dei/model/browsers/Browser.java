@@ -1,5 +1,6 @@
 package main.pt.ipleiria.estg.dei.model.browsers;
 
+import main.pt.ipleiria.estg.dei.db.etl.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.exceptions.BrowserHistoryIngestModuleExpection;
 import main.pt.ipleiria.estg.dei.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.exceptions.NoCriticalException;
@@ -15,6 +16,10 @@ import org.sleuthkit.datamodel.TskCoreException;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 
@@ -67,6 +72,37 @@ public abstract class Browser extends Module {
                 logger.warn(e.getMessage());//We don't want to stop the process when it is a non critical exception
             }
         }
+    }
+
+    protected void insertWordInTable(ResultSet rs, String user) throws ConnectionException, SQLException, ClassNotFoundException {
+        PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
+                " INSERT INTO t_clean_words (word, source_full, url_user_origin, url_browser_origin, url_domain) " +
+                        " VALUES (?,?,?,?,?)");
+
+        String encoded;
+        String substring;
+        String words;
+
+        while (rs.next()) {
+            encoded = rs.getString("word");
+            substring = encoded.substring(0, encoded.contains("&") ? encoded.indexOf("&") : encoded.length() -1);
+
+            //In case the string has been decoded already
+            try {
+                words = URLDecoder.decode(substring, "UTF-8"); }
+            catch(Exception ex) {
+                words = substring;
+            }
+            preparedStatement.setString(1, words);
+            preparedStatement.setString(2, rs.getString("url_full"));
+            preparedStatement.setString(3, user);
+            preparedStatement.setString(4, getModuleName());
+            preparedStatement.setString(5, rs.getString("url_domain"));
+            preparedStatement.addBatch();
+
+        }
+
+        preparedStatement.executeBatch();
     }
 
     public abstract String getPathToBrowserHistory();

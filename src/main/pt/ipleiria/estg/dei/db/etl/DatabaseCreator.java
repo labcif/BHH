@@ -137,7 +137,7 @@ public class DatabaseCreator {
                         "    constraint schema_version_pk " +
                         "      primary key autoincrement, " +
                         "  version FLOAT, " +
-                        "  name VARCHAR2(255) not null " +
+                        "  name VARCHAR(255) not null " +
                         "); ");
                 stmt.execute("create unique index if not exists schema_version_NAME_uindex " +
                         "  on schema_version (name); ");
