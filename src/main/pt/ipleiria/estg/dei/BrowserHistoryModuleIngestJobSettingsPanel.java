@@ -37,6 +37,9 @@ import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 /**
  * UI component used to make per ingest job settings for sample ingest modules.
@@ -68,10 +71,19 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
                 pathText.setEnabled(true);
             }
         });
+
+        
     }
 
     private void customizeComponents(BrowserHistoryModuleIngestJobSettings settings) {
+        labelExplanation.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.labelExplanation.text"));
+        labelExplanation.setLineWrap(true);
+        labelExplanation.setWrapStyleWord(true);
+        labelExplanation.setOpaque(false);
+        labelExplanation.setEditable(false);
+        labelExplanation.setAutoscrolls(false);
     }
+
 
     /**
      * Gets the ingest job settings for an ingest module.
@@ -80,7 +92,7 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
      */
     @Override
     public IngestModuleIngestJobSettings getSettings() {
-        return fileChooserButton.isEnabled() ? new BrowserHistoryModuleIngestJobSettings(fileChoosed) : new BrowserHistoryModuleIngestJobSettings() ;
+        return fileChooserButton.isEnabled() ? new BrowserHistoryModuleIngestJobSettings(fileChoosed) : new BrowserHistoryModuleIngestJobSettings(noneRadioButton.isSelected()) ;
     }
 
     /**
@@ -96,15 +108,18 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
         buttonGroup1 = new javax.swing.ButtonGroup();
         buttonGroup2 = new javax.swing.ButtonGroup();
         buttonGroup3 = new javax.swing.ButtonGroup();
-        labelBrowserHistorySettigs = new javax.swing.JLabel();
         panel1 = new java.awt.Panel();
         fileChooserButton = new javax.swing.JButton();
         pathText = new javax.swing.JTextField();
         labelLocationOfFile = new javax.swing.JLabel();
         defaultOptionRadioButton = new javax.swing.JRadioButton();
         customFileRadioButton = new javax.swing.JRadioButton();
+        noneRadioButton = new javax.swing.JRadioButton();
+        downloadTemplateBtn = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        labelExplanation = new javax.swing.JTextArea();
 
-        labelBrowserHistorySettigs.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.labelBrowserHistorySettigs.text")); // NOI18N
+        setPreferredSize(new java.awt.Dimension(300, 325));
 
         fileChooserButton.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.fileChooserButton.text")); // NOI18N
         fileChooserButton.setEnabled(false);
@@ -123,7 +138,7 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
         panel1Layout.setHorizontalGroup(
             panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panel1Layout.createSequentialGroup()
-                .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 228, Short.MAX_VALUE)
+                .addComponent(pathText, javax.swing.GroupLayout.DEFAULT_SIZE, 174, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(fileChooserButton, javax.swing.GroupLayout.PREFERRED_SIZE, 95, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -147,45 +162,64 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
         buttonGroup1.add(customFileRadioButton);
         customFileRadioButton.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.customFileRadioButton.text")); // NOI18N
 
+        buttonGroup1.add(noneRadioButton);
+        noneRadioButton.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.noneRadioButton.text")); // NOI18N
+
+        downloadTemplateBtn.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryModuleIngestJobSettingsPanel.class, "BrowserHistoryModuleIngestJobSettingsPanel.downloadTemplateBtn.text")); // NOI18N
+        downloadTemplateBtn.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                downloadTemplateBtnActionPerformed(evt);
+            }
+        });
+
+        labelExplanation.setColumns(20);
+        labelExplanation.setRows(5);
+        jScrollPane1.setViewportView(labelExplanation);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(34, 34, 34)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(labelBrowserHistorySettigs)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(layout.createSequentialGroup()
-                                .addGap(6, 6, 6)
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(customFileRadioButton)
-                                    .addComponent(defaultOptionRadioButton)))
-                            .addComponent(labelLocationOfFile))
-                        .addGap(0, 0, Short.MAX_VALUE))))
-            .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane1)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                .addComponent(labelLocationOfFile, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                                .addGroup(layout.createSequentialGroup()
+                                    .addGap(10, 10, 10)
+                                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                        .addComponent(noneRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                            .addComponent(customFileRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 266, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                            .addComponent(defaultOptionRadioButton, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)))))
+                            .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGap(0, 0, Short.MAX_VALUE)))
+                .addContainerGap())
+            .addGroup(layout.createSequentialGroup()
+                .addGap(78, 78, 78)
+                .addComponent(downloadTemplateBtn)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(32, 32, 32)
-                .addComponent(labelBrowserHistorySettigs)
-                .addGap(18, 18, 18)
+                .addContainerGap()
                 .addComponent(labelLocationOfFile)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(defaultOptionRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(customFileRadioButton)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(noneRadioButton)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(panel1, javax.swing.GroupLayout.PREFERRED_SIZE, 49, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(41, Short.MAX_VALUE))
+                .addGap(0, 0, 0)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 121, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(downloadTemplateBtn))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -200,8 +234,22 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
             fileChoosed = chooser.getSelectedFile().getAbsolutePath();
         }
         pathText.setText(fileChoosed);
-
     }//GEN-LAST:event_fileChooserButtonActionPerformed
+
+    private void downloadTemplateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadTemplateBtnActionPerformed
+        JFileChooser chooser = new JFileChooser();
+        int returnValue = chooser.showSaveDialog(BrowserHistoryModuleIngestJobSettingsPanel.this);
+        if (returnValue ==  JFileChooser.APPROVE_OPTION) {
+            File file = chooser.getSelectedFile();
+            String example = "google.com\nfacebook.com";
+            try (PrintWriter writer = new PrintWriter(file)) {
+                writer.write(example);
+                JOptionPane.showMessageDialog(this, "Download with success");
+            } catch (IOException e) {
+                JOptionPane.showMessageDialog(this, "Error downloading: " + e.getMessage());
+            }
+        }
+    }//GEN-LAST:event_downloadTemplateBtnActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.ButtonGroup buttonGroup1;
@@ -209,10 +257,13 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
     private javax.swing.ButtonGroup buttonGroup3;
     private javax.swing.JRadioButton customFileRadioButton;
     private javax.swing.JRadioButton defaultOptionRadioButton;
+    private javax.swing.JButton downloadTemplateBtn;
     private javax.swing.JButton fileChooserButton;
     private javax.swing.JFileChooser jFileChooser1;
-    private javax.swing.JLabel labelBrowserHistorySettigs;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTextArea labelExplanation;
     private javax.swing.JLabel labelLocationOfFile;
+    private javax.swing.JRadioButton noneRadioButton;
     private java.awt.Panel panel1;
     private javax.swing.JTextField pathText;
     // End of variables declaration//GEN-END:variables

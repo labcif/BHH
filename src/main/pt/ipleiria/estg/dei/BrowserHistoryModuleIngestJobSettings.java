@@ -39,8 +39,14 @@ public class BrowserHistoryModuleIngestJobSettings implements IngestModuleIngest
     private static final long serialVersionUID = 1L;
 
     private String fileChoosed;
-    
-    BrowserHistoryModuleIngestJobSettings() {
+
+    private boolean isNoneChoosed;
+
+    public BrowserHistoryModuleIngestJobSettings() {
+    }
+
+    BrowserHistoryModuleIngestJobSettings(boolean isNoneChoosed) {
+        this.isNoneChoosed = isNoneChoosed;
     }
 
     BrowserHistoryModuleIngestJobSettings(String fileChoosed) {
@@ -49,6 +55,10 @@ public class BrowserHistoryModuleIngestJobSettings implements IngestModuleIngest
 
     public String getFileChoosed() {
         return fileChoosed;
+    }
+
+    public boolean isNoneChoosed() {
+        return isNoneChoosed;
     }
 
     @Override
