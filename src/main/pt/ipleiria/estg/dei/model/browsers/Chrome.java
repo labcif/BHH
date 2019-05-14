@@ -14,6 +14,9 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static main.pt.ipleiria.estg.dei.model.browsers.LoginOriginEnum.LOGIN_ORIGIN;
+import static main.pt.ipleiria.estg.dei.model.browsers.LoginOriginEnum.URL_ORIGIN;
+
 public class Chrome extends Browser {
     private Logger<Chrome> logger = new Logger<>(Chrome.class);
 
@@ -133,15 +136,19 @@ public class Chrome extends Browser {
     private void transformEmailsTable(String user) {
         try {
             Statement statement = DataWarehouseConnection.getConnection().createStatement();
+
+            //Logins found on urls
+            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
+                    " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin, table_origin) " +
+                            " VALUES (?,?,?,?,?,?,?,?,?)");
+
             ResultSet rs = statement.executeQuery(
                     "SELECT  teu.url || ' ' ||  title as url, replace( SUBSTR( substr(teu.url,instr(teu.url, '://')+3), 0,instr(substr(teu.url,instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain" +
                     " FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                     " WHERE teu.id = tev.url " +
                     " and url_domain <> '' ");
 
-            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
-                    " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin) " +
-                            " VALUES (?,?,?,?,?,?,?,?)");
+
 
             Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
 
@@ -167,11 +174,13 @@ public class Chrome extends Browser {
                     preparedStatement.setString(6, null);//date
                     preparedStatement.setString(7, user);
                     preparedStatement.setString(8, getModuleName());
+                    preparedStatement.setString(9, URL_ORIGIN.name());
                     preparedStatement.addBatch();
                 }
             }
             preparedStatement.executeBatch();
 
+            //Logins found on table logins
             rs = statement.executeQuery(" SELECT  origin_url, username_value , " +
                                         " ifnull(password_value, false) as available_password, " +
                                         "date_created as date " +
@@ -191,10 +200,12 @@ public class Chrome extends Browser {
                     preparedStatement.setString(6, rs.getString("date"));
                     preparedStatement.setString(7, user);
                     preparedStatement.setString(8, getModuleName());
+                    preparedStatement.setString(9, LOGIN_ORIGIN.name());
                     preparedStatement.addBatch();
                 }
             }
             preparedStatement.executeBatch();
+
         } catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_emails", "Error cleaning extracted - " + e.getMessage());
         }

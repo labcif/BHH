@@ -15,6 +15,8 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static main.pt.ipleiria.estg.dei.model.browsers.LoginOriginEnum.URL_ORIGIN;
+
 public class Firefox extends Browser {
     private Logger<Firefox> logger = new Logger<>(Firefox.class);
 
@@ -108,6 +110,11 @@ public class Firefox extends Browser {
     private void transformEmailsTable(String user) {
         try {
             Statement statement = DataWarehouseConnection.getConnection().createStatement();
+
+            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
+                    " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin, table_origin) " +
+                            " VALUES (?,?,?,?,?,?,?,?,?)");
+
             ResultSet rs = statement.executeQuery(
                     "SELECT  mp.url as url_full, " +
                                     "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
@@ -117,10 +124,6 @@ public class Firefox extends Browser {
                             "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                             "WHERE mp.id = mh.place_id " +
                             "and url_domain <> ''; ");
-
-            PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection().prepareStatement(
-                    " INSERT INTO t_clean_emails (email, source_full, original_url, username_value, available_password, date, url_user_origin, url_browser_origin) " +
-                            " VALUES (?,?,?,?,?,?,?,?)");
 
             Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
 
@@ -146,6 +149,7 @@ public class Firefox extends Browser {
                     preparedStatement.setString(6, null);//date
                     preparedStatement.setString(7, user);
                     preparedStatement.setString(8, getModuleName());
+                    preparedStatement.setString(9, URL_ORIGIN.name());
                     preparedStatement.addBatch();
                 }
             }
