@@ -157,8 +157,10 @@ public class Chrome extends Browser {
             
             while(rs.next()){
                 encoded = rs.getString("url");
-                substring = encoded.substring(0, encoded.contains("&") ? encoded.indexOf("&") : encoded.length() -1);
+
                 //In case the string has been decoded already
+                substring = encoded.contains("&") ?  encoded.substring(0, encoded.indexOf("&")) : encoded;
+                
                 try {
                     decode = URLDecoder.decode(substring, "UTF-8"); }
                 catch(Exception ex) {
