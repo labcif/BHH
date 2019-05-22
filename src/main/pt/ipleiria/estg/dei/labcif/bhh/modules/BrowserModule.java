@@ -106,6 +106,12 @@ public abstract class BrowserModule extends Module {
         preparedStatement.executeBatch();
     }
 
+    public String extractDomainFromFullUrlInSqliteQuery(String fullUrl, String newColumnName) {
+        return "replace( SUBSTR( substr(" + fullUrl + ", instr(" + fullUrl+ ", '://')+3), 0, " +
+                "instr(substr(" + fullUrl +", instr(" + fullUrl + ", '://')+3),'/')), 'www.', '') as " + newColumnName;
+    }
+
+    protected abstract String extractDateFromColumn(String oldColumn, String newColumn, String format);
     public abstract String getPathToBrowserHistory();
     public abstract String getHistoryFilename();
     public abstract String getLoginDataFilename();

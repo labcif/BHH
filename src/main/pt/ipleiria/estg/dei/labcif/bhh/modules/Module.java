@@ -13,6 +13,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Module implements ETLProcess {
+    protected final static String FULL_DATE_FORMAT = "%Y-%m-%d  %H:%M:%S";
+    protected final static String DATE_FORMAT = "%Y-%m-%d";
+    protected final static String TIME_FORMAT = "%H:%M:%S";
     private Connection connection;
     protected final static String EXTERNAL_URL = "externalUrls";
     protected String databaseDirectory;

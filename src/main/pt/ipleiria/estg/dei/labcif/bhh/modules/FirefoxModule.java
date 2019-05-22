@@ -48,6 +48,7 @@ public class FirefoxModule extends BrowserModule {
         transformUrlTable(user);
         transformWordsTable(user);
         transformEmailsTable(user);
+        //TODO: missing transformDOwnload Tables.
     }
 
     @Override
@@ -79,20 +80,20 @@ public class FirefoxModule extends BrowserModule {
                                                     "url_user_origin, url_browser_origin, url_visit_duration, url_natural_key, " +
                                                     "url_visit_full_date_end, url_visit_date_end, url_visit_time_end,url_hidden ) " +
                             "SELECT  mp.url as url_full, " +
-                                    "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                                    extractDomainFromFullUrlInSqliteQuery("mp.url", "url_domain") + ", " +
                                     "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_path, " +
                                     "title as url_title, " +
                                     "typed as url_typed, " +
-                                    "strftime('%Y-%m-%d  %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_full_date_start, " +
-                                    "strftime('%Y-%m-%d', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_date_start, " +
-                                    "strftime('%H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time_start, " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_full_date_start", FULL_DATE_FORMAT) + ", " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_date_start", DATE_FORMAT) + ", " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_time_start", TIME_FORMAT) + ", " +
                                     "'" + user + "', " +
                                     "'" + getModuleName() + "', " +
                                     "0, " + //Firefox does not store this information
                                     "mp.id," +
-                                    "strftime('%Y-%m-%d  %H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_full_date_end, " +
-                                    "strftime('%Y-%m-%d', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_date_end, " +
-                                    "strftime('%H:%M:%S', datetime(mh.visit_date/1000000, 'unixepoch', 'localtime')) as url_visit_time_end, " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_full_date_end", FULL_DATE_FORMAT) + ", " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_date_end", DATE_FORMAT) + ", " +
+                                    extractDateFromColumn("mh.visit_date", "url_visit_time_end", TIME_FORMAT) + ", " +
                                     "hidden as url_hidden " +
                             "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                             "WHERE mp.id = mh.place_id " +
@@ -173,6 +174,10 @@ public class FirefoxModule extends BrowserModule {
         } catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_logins", "Error cleaning extracted - " + e.getMessage());
         }
+    }
+
+    protected String extractDateFromColumn(String oldColumn, String newColumn, String format) {
+        return "strftime('" + format + "', datetime(" + oldColumn + "/1000000, 'unixepoch', 'localtime')) as " + newColumn;
     }
 
     @Override

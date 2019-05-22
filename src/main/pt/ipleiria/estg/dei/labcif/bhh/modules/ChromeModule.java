@@ -81,20 +81,20 @@ public class ChromeModule extends BrowserModule {
                                                 "url_visit_time_start, url_user_origin, url_browser_origin, url_visit_duration, url_natural_key, url_visit_full_date_end, " +
                                                 "url_visit_date_end, url_visit_time_end, url_hidden ) " +
                             "SELECT teu.url as url_full, " +
-                            "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                            extractDomainFromFullUrlInSqliteQuery("teu.url", "url_domain") + ", " +
                             "substr( replace(teu.url, SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), ''), instr(teu.url, '://')+3) as url_path, " +
                             "title as url_title, " +
                             "case when typed_count > 0 then 1 else 0 end as url_typed, " +
-                            "strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_full_date_start, " +
-                            "strftime('%Y-%m-%d', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_date_start, " +
-                            "strftime('%H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')) as url_visit_time_start, " +
+                            extractDateFromColumn("visit_time", "url_visit_full_date_start", FULL_DATE_FORMAT) + ", " +
+                            extractDateFromColumn("visit_time", "url_visit_date_start", DATE_FORMAT) + ", " +
+                            extractDateFromColumn("visit_time", "url_visit_time_start", TIME_FORMAT) + ", " +
                             "'" + user + "', " +
                             "'" + getModuleName() + "', " +
-                            "strftime('%H:%M:%S', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')) as url_visit_duration, " +
-                            "teu.id, " +
-                            "strftime('%Y-%m-%d  %H:%M:%S' ,datetime(strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('%H:%M:%S', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
-                            "strftime('%Y-%m-%d' ,datetime(strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('%H:%M:%S', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
-                            "strftime('%H:%M:%S' ,datetime(strftime('%Y-%m-%d  %H:%M:%S', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('%H:%M:%S', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end," +
+                            extractDateFromColumn("visit_duration", "url_visit_duration", TIME_FORMAT) + ", " +
+                            "teu.id as url_natural_key, " +
+                            "strftime('" + FULL_DATE_FORMAT + "' , datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
+                            "strftime('" + DATE_FORMAT + "' ,datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
+                            "strftime('" + TIME_FORMAT + "' ,datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end," +
                             "hidden as ur_hidden " +
                             "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                             "WHERE teu.id = tev.url " +
@@ -110,33 +110,37 @@ public class ChromeModule extends BrowserModule {
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
-                    " INSERT INTO t_clean_downloads (downloads_url_domain, " +
-                                                        "downloads_url_full, " +
-                                                        "downloads_type,  " +
-                                                        "downloads_danger_type, " +
-                                                        "downloads_tab_url,  " +
-                                                        "downloads_download_target_path, " +
+                    " INSERT INTO t_clean_downloads (downloads_natural_key, " +
+                                                        "downloads_domain, " +
+                                                        "downloads_full_url, " +
+                                                        "downloads_mime_type,  " +
+                                                        "downloads_target_path, " +
+                                                        "downloads_beginning_full_date,  " +
                                                         "downloads_beginning_date,  " +
+                                                        "downloads_beginning_time,  " +
+                                                        "downloads_ending_full_date,  " +
                                                         "downloads_ending_date,  " +
+                                                        "downloads_ending_time,  " +
                                                         "downloads_received_bytes, " +
                                                         "downloads_total_bytes,  " +
-                                                        "downloads_interrupt_reason,  " +
                                                         "downloads_user_origin, " +
                                                         "downloads_browser_origin) " +
-                            " SELECT  replace( SUBSTR( substr(site_url,instr(site_url, '://')+3), 0, instr(substr(site_url,instr(site_url, '://')+3),'/')), 'www.', '') as url_domain, " +
-                                        "referrer as url_full, " +
-                                        "mime_type as type,  " +
-                                        "danger_type,  " +
-                                        "tab_url , " +
-                                        "target_path as download_traget_path, " +
-                                        "start_time as begining_date, " +
-                                        "end_time as end_date ,  " +
-                                        "received_bytes ,  " +
-                                        "total_bytes,  " +
-                                        "interrupt_reason," +
+                                " SELECT id as downloads_natural_key, " +
+                                        extractDomainFromFullUrlInSqliteQuery("referrer", "downloads_domain") + ", " +
+                                        "referrer as downloads_full_url, " +
+                                        "mime_type as downloads_mime_type,  " +
+                                        "target_path as downloads_target_path, " +
+                                        extractDateFromColumn("start_time", "downloads_beginning_full_date", FULL_DATE_FORMAT) + ", " +
+                                        extractDateFromColumn("start_time", "downloads_beginning_date", DATE_FORMAT) + ", " +
+                                        extractDateFromColumn("start_time", "downloads_beginning_time", TIME_FORMAT) + ", " +
+                                        extractDateFromColumn("end_time", "downloads_ending_full_date", FULL_DATE_FORMAT) + ", " +
+                                        extractDateFromColumn("end_time", "downloads_ending_date", DATE_FORMAT) + ", " +
+                                        extractDateFromColumn("end_time", "downloads_ending_time", TIME_FORMAT) + ", " +
+                                        "received_bytes as downloads_received_bytes,  " +
+                                        "total_bytes as downloads_total_bytes,  " +
                                         "'" + user + "',  " +
                                         "'" + getModuleName() + "'" +
-                            " FROM t_ext_chrome_downloads ");
+                                " FROM t_ext_chrome_downloads ");
             preparedStatement.executeUpdate();
         } catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_downloads", "Error cleaning extracted - " + e.getMessage());
@@ -231,6 +235,10 @@ public class ChromeModule extends BrowserModule {
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_search_in_engines", "Error cleaning extracted - " + e.getMessage());
         }
+    }
+
+    protected String extractDateFromColumn(String oldColumn, String newColumn, String format) {
+        return "strftime('" + format + "', datetime(((" + oldColumn +"/1000000)-11644473600), 'unixepoch')) as " + newColumn;
     }
 
     public String getModuleName() {

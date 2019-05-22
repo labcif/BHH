@@ -8,17 +8,19 @@ create table if not exists t_clean_special_websites
 CREATE TABLE if not exists t_clean_downloads
 (
   downloads_id                    INTEGER constraint t_clean_downloads_pk primary key autoincrement,
-  downloads_url_domain            VARCHAR(255),
-  downloads_url_full              VARCHAR(255),
-  downloads_type                  INTEGER,
-  downloads_danger_type           INTEGER,
-  downloads_tab_url               VARCHAR(255),
-  downloads_download_target_path  VARCHAR(255),
-  downloads_beginning_date        INTEGER,
-  downloads_ending_date           INTEGER,
+  downloads_natural_key           INTEGER,
+  downloads_full_url              VARCHAR(255),
+  downloads_domain                VARCHAR(255),
+  downloads_mime_type             VARCHAR(255),
+  downloads_target_path           VARCHAR(255),
+  downloads_beginning_full_date   DATE,
+  downloads_beginning_date        DATE,
+  downloads_beginning_time        DATE,
+  downloads_ending_full_date      DATE,
+  downloads_ending_date           DATE,
+  downloads_ending_time           DATE,
   downloads_received_bytes        INTEGER,
   downloads_total_bytes           INTEGER,
-  downloads_interrupt_reason      INTEGER,
   downloads_user_origin           VARCHAR(255) NOT NULL,
   downloads_browser_origin        VARCHAR(255) NOT NULL
 );
