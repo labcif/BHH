@@ -182,7 +182,7 @@ public class FirefoxModule extends BrowserModule {
 
     @Override
     public String getModuleName() {
-        return "Firefox";
+        return "FIREFOX";
     }
 
     @Override

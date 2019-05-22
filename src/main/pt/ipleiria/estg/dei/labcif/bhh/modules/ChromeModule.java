@@ -242,7 +242,7 @@ public class ChromeModule extends BrowserModule {
     }
 
     public String getModuleName() {
-        return "Google_Chrome";
+        return "GOOGLE_CHROME";
     }
 
     @Override
