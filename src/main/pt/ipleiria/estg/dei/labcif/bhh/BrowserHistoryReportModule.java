@@ -1,6 +1,7 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh;
 
 
+import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.reportModulePanel.BrowserHistoryReportConfigurationPanel;
@@ -27,7 +28,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
         reportProgressPanel.setIndeterminate(false);
         reportProgressPanel.start();
         reportProgressPanel.updateStatusLabel("Adding files...");
-
+        ReportProgressPanel.ReportStatus result = ReportProgressPanel.ReportStatus.COMPLETE;
         try {
             FileGenerator fileGenerator = new FileGenerator(configPanel, getClass(), reportDir, Case.getCurrentCase().getCaseDirectory());
             fileGenerator.generateServer();
@@ -35,12 +36,17 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             fileGenerator.generatePDF();
         } catch (SQLException | ConnectionException | ClassNotFoundException e) {
             loggerBHH.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
+            result = ReportProgressPanel.ReportStatus.ERROR;
         } catch (JRException | GenerateReportException e) {
             loggerBHH.error("Error generating report. Reason: " + e.getMessage());
+            result = ReportProgressPanel.ReportStatus.ERROR;
         } catch (IOException e) {
             loggerBHH.error("Error writing on disk. Reason: " + e.getMessage());
+            result = ReportProgressPanel.ReportStatus.ERROR;
+        } finally {
+            DataWarehouseConnection.closeConnection();
+            reportProgressPanel.complete(result);
         }
-        reportProgressPanel.complete(ReportProgressPanel.ReportStatus.COMPLETE);
     }
 
     @Override

@@ -115,7 +115,7 @@ public class DatasetRepository {
         ResultSet rs = statement.executeQuery(
                 "SELECT  logins_email, logins_domain, count(*) as total " +
                         "FROM t_clean_logins " +
-                        "group by email " +
+                        "group by logins_email " +
                         "order by total desc ");
 
         while (rs.next()) {
@@ -129,9 +129,9 @@ public class DatasetRepository {
         List<Login> emails = new ArrayList<>();
 
         ResultSet rs = statement.executeQuery(
-                "SELECT  logins_email, logins_domain count(*) as total " +
+                "SELECT  logins_email, logins_domain, count(*) as total " +
                         "FROM t_clean_logins " +
-                        "WHERE url_user_origin = '" + username + "' " +
+                        "WHERE logins_user_origin = '" + username + "' " +
                         "group by logins_email " +
                         "order by total desc ");
 
@@ -145,7 +145,7 @@ public class DatasetRepository {
     public List<Word> getWordsUsed() throws SQLException {
         List<Word> words = new ArrayList<>();
         ResultSet rs = statement.executeQuery(
-                "SELECT  search_in_engines_words, count(word) as times_used, search_in_engines_user_origin, search_in_engines_domain " +
+                "SELECT  search_in_engines_words, count(search_in_engines_words) as times_used, search_in_engines_user_origin, search_in_engines_domain " +
                         " FROM t_clean_search_in_engines " +
                         " group by search_in_engines_words " +
                         " order by times_used desc ");
@@ -159,9 +159,9 @@ public class DatasetRepository {
     public List<Word> getWordsUsed(String username) throws SQLException {
         List<Word> words = new ArrayList<>();
         ResultSet rs = statement.executeQuery(
-                "SELECT  search_in_engines_words, count(word) as times_used, search_in_engines_user_origin, search_in_engines_domain " +
+                "SELECT  search_in_engines_words, count(search_in_engines_words) as times_used, search_in_engines_user_origin, search_in_engines_domain " +
                         " FROM t_clean_search_in_engines " +
-                        "WHERE url_user_origin='" + username + "' " +
+                        "WHERE search_in_engines_user_origin='" + username + "' " +
                         " group by search_in_engines_words " +
                         " order by times_used desc ");
 
