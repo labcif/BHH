@@ -30,6 +30,7 @@
  */
 package main.pt.ipleiria.estg.dei.labcif.bhh.panels.ingestModulePanel;
 
+import main.pt.ipleiria.estg.dei.labcif.bhh.utils.Utils;
 import org.sleuthkit.autopsy.ingest.IngestModuleIngestJobSettings;
 import org.sleuthkit.autopsy.ingest.IngestModuleIngestJobSettingsPanel;
 
@@ -224,31 +225,12 @@ public class BrowserHistoryModuleIngestJobSettingsPanel extends IngestModuleInge
     }// </editor-fold>//GEN-END:initComponents
 
     private void fileChooserButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_fileChooserButtonActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("CSV Files", "csv");
-        chooser.setFileFilter(filter);
-
-        int returnVal = chooser.showOpenDialog(this);
-
-        if(returnVal == JFileChooser.APPROVE_OPTION) {
-            fileChoosed = chooser.getSelectedFile().getAbsolutePath();
-        }
+        fileChoosed = Utils.importCSVFile(this);
         pathText.setText(fileChoosed);
     }//GEN-LAST:event_fileChooserButtonActionPerformed
 
     private void downloadTemplateBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_downloadTemplateBtnActionPerformed
-        JFileChooser chooser = new JFileChooser();
-        int returnValue = chooser.showSaveDialog(BrowserHistoryModuleIngestJobSettingsPanel.this);
-        if (returnValue ==  JFileChooser.APPROVE_OPTION) {
-            File file = chooser.getSelectedFile();
-            String example = "google.com\nfacebook.com";
-            try (PrintWriter writer = new PrintWriter(file)) {
-                writer.write(example);
-                JOptionPane.showMessageDialog(this, "Download with success");
-            } catch (IOException e) {
-                JOptionPane.showMessageDialog(this, "Error downloading: " + e.getMessage());
-            }
-        }
+        Utils.downloadExtractTemplate(this);
     }//GEN-LAST:event_downloadTemplateBtnActionPerformed
     
     // Variables declaration - do not modify//GEN-BEGIN:variables

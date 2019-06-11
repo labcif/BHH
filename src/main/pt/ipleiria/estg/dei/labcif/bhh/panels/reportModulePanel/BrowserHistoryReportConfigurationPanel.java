@@ -23,6 +23,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatasetRepository;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.BrowserHistoryReportModuleExpection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
+import org.openide.util.NbBundle;
 import org.sleuthkit.autopsy.casemodule.Case;
 
 import javax.swing.*;
@@ -44,14 +45,14 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     /**
      * Creates new form BrowserHistoryReportConfigurationPanel
      */
-    public BrowserHistoryReportConfigurationPanel() {
+    public BrowserHistoryReportConfigurationPanel(String databaseDirectory) {
         initComponents();
         users.addListSelectionListener(e -> {
             if(!e.getValueIsAdjusting()) {
                 usersSelected= users.getSelectedValuesList();
             }
         });
-        fillUsers();
+        fillUsers(databaseDirectory);
         fillQueries();
         fillWebsites();
         Date date = new GregorianCalendar(2014, Calendar.DECEMBER, 12).getTime();
@@ -82,18 +83,23 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         queries.put(alias, query);
     }
 
-    private void fillUsers() {
+    public void fillUsers(String databaseDirectory) {
+        if (databaseDirectory == null || databaseDirectory.isEmpty()) {
+            return;
+        }
         DefaultListModel dlm = new DefaultListModel();
         try {
-            DatasetRepository datasetRepository = new DatasetRepository(Case.getCurrentCase().getCaseDirectory());
+            DatasetRepository datasetRepository = new DatasetRepository(databaseDirectory);
             List<String> users = datasetRepository.getUsers();
-            //TODO: check list is not empty
-
+            if (users.isEmpty()) {
+                return;
+            }
             users.forEach(dlm::addElement);
             this.users.setModel(dlm);
             this.users.setSelectedIndex(0);
+            datasetRepository.close();
         } catch (ConnectionException | SQLException e) {
-            e.printStackTrace();//TODO: If the ingest module has been run yet it can't be executed
+            JOptionPane.showMessageDialog(this, "Error while getting users: " + e.getMessage());
         }
     }
 
@@ -788,4 +794,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     public Date getDate() {
         return datePickerGanttChart.getDate();
     }
+
+
 }

@@ -1,0 +1,21 @@
+<ivy-module version="2.0">
+    <info organisation="pt.ipleiria.estg.dei.labcif.bhh" module="browser-history-histogram" />
+    <configurations>
+        <conf name="compile" description="everything needed to compile this module" />
+        <conf name="runtime" extends="compile" description="everything needed to run this module" />
+        <conf name="loader" description="Spring Boot loader used when manually building an executable archive" />
+    </configurations>
+    <dependencies>
+        <!-- https://mvnrepository.com/artifact/org.junit/junit5-engine -->
+        <dependency org="org.junit" name="junit5-engine" rev="5.0.0-ALPHA"/>
+        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
+        <dependency org="org.junit.jupiter" name="junit-jupiter-api" rev="5.5.0-M1"/>
+
+        <!-- https://mvnrepository.com/artifact/org.netbeans.api/org-openide-util -->
+        <dependency org="org.netbeans.api" name="org-openide-util" rev="RELEASE110"/>
+
+        <!--&lt;!&ndash; https://mvnrepository.com/artifact/org.xerial/sqlite-jdbc &ndash;&gt;-->
+        <dependency org="org.xerial" name="sqlite-jdbc" rev="3.27.2.1"/>
+    </dependencies>
+
+</ivy-module>

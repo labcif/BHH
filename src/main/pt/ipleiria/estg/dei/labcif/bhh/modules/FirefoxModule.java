@@ -3,6 +3,7 @@ package main.pt.ipleiria.estg.dei.labcif.bhh.modules;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ExtractionException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.OperatingSystemNotSupportedException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.TransformationException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.models.LoginOriginEnum;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
@@ -16,11 +17,18 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.*;
+import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.isUnix;
+
 public class FirefoxModule extends BrowserModule {
     private LoggerBHH<FirefoxModule> loggerBHH = new LoggerBHH<>(FirefoxModule.class);
 
     public FirefoxModule(IngestJobContext context, String databaseDirectory) {
         super(context, databaseDirectory);
+    }
+
+    public FirefoxModule(String databaseDirectory) {
+        super(databaseDirectory);
     }
 
     @Override
@@ -44,10 +52,10 @@ public class FirefoxModule extends BrowserModule {
     }
 
     @Override
-    public void transformAllTables(String user) throws ConnectionException {
-        transformUrlTable(user);
-        transformWordsTable(user);
-        transformEmailsTable(user);
+    public void transformAllTables(String user, String profileName, String fullLocationFile) throws ConnectionException {
+        transformUrlTable(user, profileName, fullLocationFile);
+        transformWordsTable(user, profileName, fullLocationFile);
+        transformEmailsTable(user, profileName, fullLocationFile);
         //TODO: missing transformDOwnload Tables.
     }
 
@@ -72,13 +80,13 @@ public class FirefoxModule extends BrowserModule {
         }
     }
 
-    private void transformUrlTable(String user) throws ConnectionException {
+    private void transformUrlTable(String user, String profileName, String fullLocationFile) throws ConnectionException {
         try {
             PreparedStatement preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed, " +
                                                     "url_visit_full_date_start, url_visit_date_start, url_visit_time_start, " +
                                                     "url_user_origin, url_browser_origin, url_visit_duration, url_natural_key, " +
-                                                    "url_visit_full_date_end, url_visit_date_end, url_visit_time_end,url_hidden ) " +
+                                                    "url_visit_full_date_end, url_visit_date_end, url_visit_time_end,url_hidden, url_profile_name, url_filename_location ) " +
                             "SELECT  mp.url as url_full, " +
                                     extractDomainFromFullUrlInSqliteQuery("mp.url", "url_domain") + ", " +
                                     "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_path, " +
@@ -94,7 +102,9 @@ public class FirefoxModule extends BrowserModule {
                                     extractDateFromColumn("mh.visit_date", "url_visit_full_date_end", FULL_DATE_FORMAT) + ", " +
                                     extractDateFromColumn("mh.visit_date", "url_visit_date_end", DATE_FORMAT) + ", " +
                                     extractDateFromColumn("mh.visit_date", "url_visit_time_end", TIME_FORMAT) + ", " +
-                                    "hidden as url_hidden " +
+                                    "hidden as url_hidden, " +
+                                    "'" + profileName + "', " +
+                                    "'" + fullLocationFile + "' " +
                             "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                             "WHERE mp.id = mh.place_id " +
                             "and url_domain <> ''; ");
@@ -104,7 +114,7 @@ public class FirefoxModule extends BrowserModule {
         }
     }
 
-    private void transformWordsTable(String user){
+    private void transformWordsTable(String user, String profileName, String fullLocationFile){
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
             ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
@@ -113,14 +123,14 @@ public class FirefoxModule extends BrowserModule {
                     "where url like '%google.%' and url like '%?q=%'");
 
 
-            insertWordInTable(rs, user);
+            insertWordInTable(rs, user, profileName, fullLocationFile);
 
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_search_in_engines", "Error cleaning extracted - " + e.getMessage());
         }
     }
 
-    private void transformEmailsTable(String user) {
+    private void transformEmailsTable(String user, String profileName, String fullLocationFile) {
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
 
@@ -136,8 +146,8 @@ public class FirefoxModule extends BrowserModule {
                             "and url_domain <> ''; ");
 
             PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
-                    " INSERT INTO t_clean_logins (logins_email, logins_domain, logins_username_value, logins_available_password, logins_date, logins_user_origin, logins_browser_origin, logins_table_origin) " +
-                            " VALUES (?,?,?,?,?,?,?,?)");
+                    " INSERT INTO t_clean_logins (logins_email, logins_domain, logins_username_value, logins_available_password, logins_date, logins_user_origin, logins_browser_origin, logins_table_origin, logins_profile_name, logins_filename_location) " +
+                            " VALUES (?,?,?,?,?,?,?,?,?,?)");
 
             Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
 
@@ -165,6 +175,8 @@ public class FirefoxModule extends BrowserModule {
                     preparedStatement.setString(6, user);
                     preparedStatement.setString(7, getModuleName());
                     preparedStatement.setString(8, LoginOriginEnum.URL_ORIGIN.name());
+                    preparedStatement.setString(9, profileName);
+                    preparedStatement.setString(10, fullLocationFile);
 
                     preparedStatement.addBatch();
                 }
@@ -186,8 +198,19 @@ public class FirefoxModule extends BrowserModule {
     }
 
     @Override
-    public String getPathToBrowserHistory() {
+    public String getPathToBrowserInstallation() {
         return "AppData/Roaming/Mozilla/Firefox/Profiles";
+    }
+
+    @Override
+    public String getFullPathToBrowserInstallationInCurrentMachine() {
+        if (isWindows()) {
+            return getRoot() + "Users\\" + USER + "\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles";
+        } else if (isUnix()) {
+            return "TODO"; //TODO: implement linux directory
+        } else {
+            throw new OperatingSystemNotSupportedException();
+        }
     }
 
     @Override

@@ -3,10 +3,12 @@ package main.pt.ipleiria.estg.dei.labcif.bhh.modules;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ExtractionException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.OperatingSystemNotSupportedException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.models.LoginOriginEnum;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
 
+import java.io.File;
 import java.net.URLDecoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,11 +17,17 @@ import java.sql.Statement;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.*;
+
 public class ChromeModule extends BrowserModule {
     private LoggerBHH<ChromeModule> loggerBHH = new LoggerBHH<>(ChromeModule.class);
 
     public ChromeModule(IngestJobContext context, String databaseDirectory) {
         super(context, databaseDirectory);
+    }
+
+    public ChromeModule(String databaseDirectory) {
+        super(databaseDirectory);
     }
 
     @Override
@@ -42,16 +50,16 @@ public class ChromeModule extends BrowserModule {
     }
 
     @Override
-    public void runTransformation(String user) throws ConnectionException {
-        transformAllTables(user);
+    public void runTransformation(String user, String profileName, String fullLocationFile) throws ConnectionException {
+        transformAllTables(user, profileName, fullLocationFile);
     }
 
     @Override
-    public void transformAllTables(String user) throws ConnectionException {
-        transformUrlTable(user);
-        transformDownloadsTable(user);
-        transformEmailsTable(user);
-        transformWordsTable(user);
+    public void transformAllTables(String user, String profileName,  String fullLocationFile) throws ConnectionException {
+        transformUrlTable(user, profileName, fullLocationFile);
+        transformDownloadsTable(user, profileName, fullLocationFile);
+        transformEmailsTable(user, profileName, fullLocationFile);
+        transformWordsTable(user, profileName, fullLocationFile);
     }
 
     @Override
@@ -74,12 +82,12 @@ public class ChromeModule extends BrowserModule {
         }
     }
 
-    private void transformUrlTable(String user) {
+    private void transformUrlTable(String user, String profileName, String fullLocationFile) {
         try {
             PreparedStatement preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
                     "INSERT INTO t_clean_url (url_full, url_domain, url_path, url_title, url_typed, url_visit_full_date_start, url_visit_date_start, " +
                                                 "url_visit_time_start, url_user_origin, url_browser_origin, url_visit_duration, url_natural_key, url_visit_full_date_end, " +
-                                                "url_visit_date_end, url_visit_time_end, url_hidden ) " +
+                                                "url_visit_date_end, url_visit_time_end, url_hidden, url_profile_name, url_filename_location) " +
                             "SELECT teu.url as url_full, " +
                             extractDomainFromFullUrlInSqliteQuery("teu.url", "url_domain") + ", " +
                             "substr( replace(teu.url, SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), ''), instr(teu.url, '://')+3) as url_path, " +
@@ -95,7 +103,9 @@ public class ChromeModule extends BrowserModule {
                             "strftime('" + FULL_DATE_FORMAT + "' , datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
                             "strftime('" + DATE_FORMAT + "' ,datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end, " +
                             "strftime('" + TIME_FORMAT + "' ,datetime(strftime('" + FULL_DATE_FORMAT + "', datetime(((visit_time/1000000)-11644473600), 'unixepoch')), '+' || strftime('" + TIME_FORMAT +"', datetime(((visit_duration/1000000)-11644473600), 'unixepoch')))) as url_visit_end," +
-                            "hidden as ur_hidden " +
+                            "hidden as ur_hidden," +
+                            "'" + profileName + "', " +
+                            "'" + fullLocationFile + "' " +
                             "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
                             "WHERE teu.id = tev.url " +
                             "and url_domain <> ''; ");
@@ -106,7 +116,7 @@ public class ChromeModule extends BrowserModule {
 
     }
 
-    private void transformDownloadsTable(String user) {
+    private void transformDownloadsTable(String user, String profileName, String fullLocationFile) {
         PreparedStatement preparedStatement = null;
         try {
             preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
@@ -124,7 +134,9 @@ public class ChromeModule extends BrowserModule {
                                                         "downloads_received_bytes, " +
                                                         "downloads_total_bytes,  " +
                                                         "downloads_user_origin, " +
-                                                        "downloads_browser_origin) " +
+                                                        "downloads_browser_origin," +
+                                                        "downloads_profile_name," +
+                                                        "downloads_filename_location) " +
                                 " SELECT id as downloads_natural_key, " +
                                         extractDomainFromFullUrlInSqliteQuery("referrer", "downloads_domain") + ", " +
                                         "referrer as downloads_full_url, " +
@@ -139,7 +151,9 @@ public class ChromeModule extends BrowserModule {
                                         "received_bytes as downloads_received_bytes,  " +
                                         "total_bytes as downloads_total_bytes,  " +
                                         "'" + user + "',  " +
-                                        "'" + getModuleName() + "'" +
+                                        "'" + getModuleName() + "', " +
+                                        "'" + profileName + "', " +
+                                        "'" + fullLocationFile + "' " +
                                 " FROM t_ext_chrome_downloads ");
             preparedStatement.executeUpdate();
         } catch (SQLException | ClassNotFoundException | ConnectionException e) {
@@ -148,7 +162,7 @@ public class ChromeModule extends BrowserModule {
     }
 
 
-    private void transformEmailsTable(String user) {
+    private void transformEmailsTable(String user, String profileName, String fullLocationFile) {
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
 
@@ -159,8 +173,8 @@ public class ChromeModule extends BrowserModule {
                     " and url_domain <> '' ");
 
             PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
-                    " INSERT INTO t_clean_logins (logins_email, logins_domain, logins_username_value, logins_available_password, logins_date, logins_user_origin, logins_browser_origin, logins_table_origin) " +
-                            " VALUES (?,?,?,?,?,?,?,?)");
+                    " INSERT INTO t_clean_logins (logins_email, logins_domain, logins_username_value, logins_available_password, logins_date, logins_user_origin, logins_browser_origin, logins_table_origin, logins_profile_name, logins_filename_location) " +
+                            " VALUES (?,?,?,?,?,?,?,?,?,?)");
 
             Pattern emailVerification = Pattern.compile("[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\\.[a-zA-Z0-9-.]+");
 
@@ -188,6 +202,8 @@ public class ChromeModule extends BrowserModule {
                     preparedStatement.setString(6, user);
                     preparedStatement.setString(7, getModuleName());
                     preparedStatement.setString(8, LoginOriginEnum.URL_ORIGIN.name());
+                    preparedStatement.setString(9, profileName);
+                    preparedStatement.setString(10, fullLocationFile);
                     preparedStatement.addBatch();
                 }
             }
@@ -213,6 +229,8 @@ public class ChromeModule extends BrowserModule {
                     preparedStatement.setString(6, user);
                     preparedStatement.setString(7, getModuleName());
                     preparedStatement.setString(8, LoginOriginEnum.LOGIN_ORIGIN.name());
+                    preparedStatement.setString(9, profileName);
+                    preparedStatement.setString(10, fullLocationFile);
                     preparedStatement.addBatch();
                 }
             }
@@ -224,14 +242,14 @@ public class ChromeModule extends BrowserModule {
     }
 
 
-    private void transformWordsTable(String user){
+    private void transformWordsTable(String user, String profileName, String fullLocationFile){
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
             ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
                                             "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
                     "FROM t_ext_chrome_urls " +
                     "where url like '%google.%' and url like '%?q=%'");
-            insertWordInTable(rs, user);
+            insertWordInTable(rs, user, profileName, fullLocationFile);
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_search_in_engines", "Error cleaning extracted - " + e.getMessage());
         }
@@ -246,8 +264,19 @@ public class ChromeModule extends BrowserModule {
     }
 
     @Override
-    public String getPathToBrowserHistory() {
-        return "AppData/Local/Google/Chrome/User Data/Default";
+    public String getPathToBrowserInstallation() {
+        return "AppData/Local/Google/Chrome/User Data/Default";//TODO: This is probably wrong... because this way we are not having other profiles into consideration
+    }
+
+    @Override
+    public String getFullPathToBrowserInstallationInCurrentMachine() {
+        if (isWindows()) {
+            return getRoot() + "Users\\" + USER + "\\AppData\\Local\\Google\\Chrome\\User Data";
+        } else if (isUnix()) {
+            return "TODO"; //TODO: implement linux directory
+        } else {
+            throw new OperatingSystemNotSupportedException();
+        }
     }
 
     @Override

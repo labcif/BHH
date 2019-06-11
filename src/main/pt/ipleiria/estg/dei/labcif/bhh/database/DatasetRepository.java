@@ -315,4 +315,10 @@ public class DatasetRepository {
             return null;
         }
     }
+
+    public void close() throws SQLException {
+        if (statement != null) {
+            statement.close();
+        }
+    }
 }

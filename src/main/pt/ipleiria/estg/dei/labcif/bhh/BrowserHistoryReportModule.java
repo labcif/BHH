@@ -34,10 +34,10 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
             fileGenerator.generateServer();
             fileGenerator.generateCSV();
             fileGenerator.generatePDF();
-        } catch (SQLException | ConnectionException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             loggerBHH.error(NbBundle.getMessage(this.getClass(), "BrowserHistory.connectionError"));
             result = ReportProgressPanel.ReportStatus.ERROR;
-        } catch (JRException | GenerateReportException e) {
+        } catch (GenerateReportException e) {
             loggerBHH.error("Error generating report. Reason: " + e.getMessage());
             result = ReportProgressPanel.ReportStatus.ERROR;
         } catch (IOException e) {
@@ -67,7 +67,7 @@ public class BrowserHistoryReportModule implements GeneralReportModule {
     @Override
     public JPanel getConfigurationPanel() {
         if (configPanel == null) {
-            configPanel = new BrowserHistoryReportConfigurationPanel();
+            configPanel = new BrowserHistoryReportConfigurationPanel(Case.getCurrentCase().getCaseDirectory());
         }
         return configPanel;
     }

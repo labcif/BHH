@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:ivy="antlib:org.apache.ivy.ant"  name="Browser-History-Histogram" default="netbeans" basedir=".">
+    <description>Running Browser History Histogram as a standalone application.
+        Please run ant -buildfile standalone.xml main
+    </description>
+    <property name="projectName" value="Browser-History-Histogram" />
+    <property name="src.dir" location="src/main" />
+    <property name="resources.dir" location="src/resources" />
+    <property name="build.dir" location="build/bin" />
+    <property name="dist.dir" location="build/dist" />
+    <property name="dist.lib.dir" location="build/dist/lib" />
+    <property name="lib.ext.dir" value="release/modules/ext" />
+    <property name="lib.main.dir" value="release/zlib" />
+    <property name="main-class" value="main.pt.ipleiria.estg.dei.labcif.bhh.Main" />
+
+    <!-- ivy to get dependencies and copy to project lib folder automatically -->
+    <target name="resolve" description="retrieve dependencies with ivy">
+        <ivy:retrieve />
+    </target>
+
+    <!-- install ivy -->
+    <target name="ivy" description="Install ivy">
+        <mkdir dir="${user.home}/.ant/lib" />
+        <get dest="${user.home}/.ant/lib/ivy.jar"
+             src="http://search.maven.org/remotecontent?filepath=org/apache/ivy/ivy/2.4.0-rc1/ivy-2.4.0-rc1.jar" />
+    </target>
+    <!-- ivy end -->
+
+    <target name="init">
+        <mkdir dir="${build.dir}" />
+    </target>
+
+    <!-- external libraries classpath, we don't need sources and javadoc -->
+    <path id="classpath">
+        <fileset dir="${basedir}/">
+            <include name="${lib.main.dir}/*.jar" />
+            <include name="${lib.ext.dir}/*.jar" />
+
+            <exclude name="${lib.ext.dir}/*sources.jar"/>
+            <exclude name="${lib.main.dir}/*sources.jar"/>
+            <exclude name="${lib.ext.dir}/*javadoc.jar"/>
+            <exclude name="${lib.main.dir}/*javadoc.jar"/>
+        </fileset>
+    </path>
+
+    <!-- To work with external libraries, need classpath to compile -->
+    <target name="compile" depends="init" description="compile the source ">
+        <javac includeantruntime="false" srcdir="${src.dir}" destdir="${build.dir}" classpathref="classpath" />
+    </target>
+
+    <target name="copy-resources">
+        <copy todir="${build.dir}/resources">
+            <fileset dir="${resources.dir}" /><!-- from -->
+        </copy>
+    </target>
+
+    <target name="copy-extras">
+        <copy todir="${build.dir}/main">
+            <fileset dir="${src.dir}"  includes="**/*.xml,**/*.properties,**/*.txt,**/*.ico,**/*.form"/>
+        </copy>
+    </target>
+
+    <!-- constructs the external libraries classpath name -->
+    <pathconvert property="classpath.name" pathsep=" ">
+        <path refid="classpath" />
+        <mapper>
+            <chainedmapper>
+                <flattenmapper />
+                <globmapper from="*.jar" to="lib/*.jar" />
+            </chainedmapper>
+        </mapper>
+    </pathconvert>
+
+    <target name="copy-dependencies">
+        <copy todir="${dist.lib.dir}">
+            <fileset dir="${lib.ext.dir}" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
+            <fileset dir="release/zlib" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
+        </copy>
+    </target>
+
+
+
+    <!-- jar it, and declares the ext libraries in manifest.mf file -->
+    <target name="jar" depends="compile, copy-dependencies, copy-resources, copy-extras" description="package, output to JAR">
+        <echo message="classpath.name : ${classpath.name} " />
+
+        <mkdir dir="${dist.dir}" />
+        <mkdir dir="${dist.lib.dir}" />
+
+        <jar jarfile="${dist.dir}/${projectName}.jar" basedir="${build.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${main-class}" />
+                <attribute name="Class-Path" value="${classpath.name}" />
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="clean" description="clean up">
+        <delete dir="${build.dir}" />
+        <delete dir="${dist.dir}" />
+    </target>
+
+    <!-- Default, run this -->
+    <target name="main" depends="clean, compile, jar" />
+
+    <target name="run" depends="clean, compile, jar, main">
+        <java jar="${dist.dir}/${projectName}.jar" fork="true"/>
+    </target>
+</project>

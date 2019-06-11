@@ -1,13 +1,13 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh.utils.report;
 
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.GenerateReportException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.export.JRPdfExporter;
 import net.sf.jasperreports.engine.util.LocalJasperReportsContext;
 import net.sf.jasperreports.export.SimpleExporterInput;
 import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
 import net.sf.jasperreports.export.SimplePdfExporterConfiguration;
-import org.sleuthkit.autopsy.coreutils.Logger;
 
 import java.io.File;
 import java.io.InputStream;
@@ -16,7 +16,7 @@ import java.util.*;
 import java.util.logging.Level;
 
 public class ReportBuilder {
-    private static final Logger logger = Logger.getLogger(ReportBuilder.class.getName());
+    private static final LoggerBHH logger = new LoggerBHH<>(ReportBuilder.class);
 
 
     public OutputStream createReport(InputStream templateFile, Map<String, Object> reportDataMap,
@@ -25,24 +25,20 @@ public class ReportBuilder {
 
         // Template compilation
         try {
-            logger.log(Level.FINE, "Compiling the report templates.");
+            logger.info("Compiling the report templates.");
             compiledReport = compileReport(templateFile);
         } catch (JRException e) {
             throw new GenerateReportException("500102", e.getMessage());
         }
 
         try {
-
-            logger.log(Level.FINE, "Loading report's extra data.");
+            logger.info("Loading report's extra data.");
             // Load extra data into the report
             Map<String, Object> reportData = loadReportExtraData(reportDataMap, reportParameters);
-
-            logger.log(Level.FINE, "Writing to the report output directory.");
-            // Prepare output paths
-
+            logger.info("Writing to the report output directory.");
             return writeOutputReport(reportParameters, compiledReport, reportData);
         } catch( Exception e ) {
-            logger.severe("Execution failed: " + e.getMessage());
+            logger.error("Execution failed: " + e.getMessage());
             return null;
         }
 
@@ -65,10 +61,10 @@ public class ReportBuilder {
             JasperFillManager jasperFillManager = JasperFillManager.getInstance(ctx);
 
 
-            logger.log(Level.FINE, "Generating the report.");
+            logger.info("Generating the report.");
             // Fill pdf metadatas
             JasperPrint print = jasperFillManager.fill(compiledReport, reportData, new JREmptyDataSource());
-            logger.log(Level.FINE, "Report Generated.");
+            logger.info("Report Generated.");
 
             // Generate pdf.
             JRPdfExporter exporter = new JRPdfExporter();

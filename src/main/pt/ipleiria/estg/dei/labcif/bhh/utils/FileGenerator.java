@@ -3,6 +3,7 @@ package main.pt.ipleiria.estg.dei.labcif.bhh.utils;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatasetRepository;
 import main.pt.ipleiria.estg.dei.labcif.bhh.dtos.IndexDto;
+import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.BrowserHistoryReportModuleExpection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.GenerateReportException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.models.Login;
@@ -14,6 +15,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.utils.report.ReportParameterMap;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
+import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -41,11 +43,14 @@ public class FileGenerator {
         }
     }
 
-    public void generatePDF() throws ConnectionException, SQLException, ClassNotFoundException, JRException, GenerateReportException, IOException {
+    public void generatePDF() throws SQLException, GenerateReportException, IOException {
         InputStream templateFile = from.getResourceAsStream("/resources/template/autopsy.jrxml");
         Generator generator = new Generator(templateFile);
 
-        List<String> usernames = configPanel.getUsersSelected();//TODO: Be sure that it is not null...
+        List<String> usernames = configPanel.getUsersSelected();
+        if (usernames == null) {
+            throw new BrowserHistoryReportModuleExpection("No users selected");
+        }
         String dayAnalised = Utils.parseToDay(configPanel.getDate());
 
         List<Login> login;
@@ -71,7 +76,7 @@ public class FileGenerator {
             reportData.put("websiteVisitedInDay", dayAnalised);
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, "GlobalSearch");
-            templateFile.reset();
+            templateFile = resetTemplateStream(templateFile);
         }
         for (String username: usernames ) {
             Map<String, Object> reportData = new HashMap<>();
@@ -90,8 +95,17 @@ public class FileGenerator {
             reportData.put("websiteVisitedInDay", dayAnalised);
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, username);
-            templateFile.reset();
+            templateFile = resetTemplateStream(templateFile);
         }
+    }
+
+    private InputStream resetTemplateStream(InputStream templateStream) {
+        try {
+            templateStream.close();
+        } catch (IOException e) {
+            loggerBHH.warn(e.getMessage());
+        }
+        return from.getResourceAsStream("/resources/template/autopsy.jrxml");
     }
 
     private List<IndexDto> generateIndex(double loginSize, double wordsSearch, double activityWebsites ){
@@ -157,7 +171,8 @@ public class FileGenerator {
     public void generateServer() throws IOException {
 
         InputStream from = this.from.getResourceAsStream("/resources/server/browser-history-app-1.0.0.jar");
-        File fileDest = new File(reportDir + "server.jar");
+        Path path = Paths.get(reportDir + "server.jar");
+        File fileDest = new File(path.toString());
         copyFile(from, fileDest);
 
         List<String> databaseDirectory = Collections.singletonList(DataWarehouseConnection.getFullConnection());

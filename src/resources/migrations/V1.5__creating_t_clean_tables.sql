@@ -22,7 +22,9 @@ CREATE TABLE if not exists t_clean_downloads
   downloads_received_bytes        INTEGER,
   downloads_total_bytes           INTEGER,
   downloads_user_origin           VARCHAR(255) NOT NULL,
-  downloads_browser_origin        VARCHAR(255) NOT NULL
+  downloads_browser_origin        VARCHAR(255) NOT NULL,
+  downloads_profile_name          VARCHAR(255),
+  downloads_filename_location     VARCHAR(255)  NOT NULL
 );
 
 create table if not exists t_clean_logins
@@ -36,7 +38,9 @@ create table if not exists t_clean_logins
   logins_date                 INTEGER,
   logins_user_origin          VARCHAR(255) NOT NULL,
   logins_browser_origin       VARCHAR(255) NOT NULL,
-  logins_table_origin               VARCHAR(255) NOT NULL
+  logins_table_origin         VARCHAR(255) NOT NULL,
+  logins_profile_name         VARCHAR(255),
+  logins_filename_location    VARCHAR(255)  NOT NULL
 );
 
 create table if not exists t_clean_search_in_engines
@@ -46,7 +50,9 @@ create table if not exists t_clean_search_in_engines
   search_in_engines_source_full       VARCHAR(255),
   search_in_engines_user_origin       VARCHAR(255) NOT NULL,
   search_in_engines_browser_origin    VARCHAR(255) NOT NULL,
-  search_in_engines_domain            VARCHAR(255)
+  search_in_engines_domain            VARCHAR(255),
+  search_profile_name                 VARCHAR(255),
+  search_filename_location            VARCHAR(255)  NOT NULL
 );
 create table if not exists t_clean_url
 (
@@ -66,5 +72,7 @@ create table if not exists t_clean_url
   url_visit_duration            DATE,
   url_visit_full_date_end       DATE,
   url_visit_date_end            DATE,
-  url_visit_time_end            DATE
+  url_visit_time_end            DATE,
+  url_profile_name              VARCHAR(255),
+  url_filename_location         VARCHAR(255)  NOT NULL
 );

@@ -1,6 +1,7 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh.utils;
 
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.ingestModulePanel.BrowserHistoryIngestModuleFactory;
+import main.pt.ipleiria.estg.dei.labcif.bhh.panels.mainPanel.MainFrame;
 import org.sleuthkit.autopsy.ingest.IngestMessage;
 import org.sleuthkit.autopsy.ingest.IngestServices;
 
@@ -23,6 +24,7 @@ public class LoggerBHH<T>{
         if (isProductionLogger()) {
             executeProductionLogger(Level.SEVERE, IngestMessage.MessageType.ERROR, message);
         } else if (isTestLogger()) {
+            MainFrame.getInstance().postMessage(message);
             loggerTests.log(Level.SEVERE, message);
         }
     }
@@ -31,6 +33,7 @@ public class LoggerBHH<T>{
         if (isProductionLogger()) {
             executeProductionLogger(Level.INFO, IngestMessage.MessageType.INFO, message);
         } else if (isTestLogger()) {
+            MainFrame.getInstance().postMessage(message);
             loggerTests.log(Level.INFO, message);
         }
     }
@@ -39,6 +42,7 @@ public class LoggerBHH<T>{
         if (isProductionLogger()) {
             executeProductionLogger(Level.WARNING, IngestMessage.MessageType.WARNING, message);
         } else if (isTestLogger()) {
+            MainFrame.getInstance().postMessage(message);
             loggerTests.log(Level.WARNING, message);
         }
     }

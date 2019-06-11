@@ -62,12 +62,16 @@
                 <binary-origin>release/modules/ext/com.lowagie.text-2.1.7.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
-                <runtime-relative-path>ext/sqlite-jdbc-3.23.1.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/sqlite-jdbc-3.23.1.jar</binary-origin>
+                <runtime-relative-path>ext/swingx-all-1.6.4.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/swingx-all-1.6.4.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-digester-2.1.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-digester-2.1.jar</binary-origin>
+            </class-path-extension>
+            <class-path-extension>
+                <runtime-relative-path>ext/sqlite-jdbc-3.27.2.1.jar</runtime-relative-path>
+                <binary-origin>release/modules/ext/sqlite-jdbc-3.27.2.1.jar</binary-origin>
             </class-path-extension>
             <class-path-extension>
                 <runtime-relative-path>ext/commons-logging-1.2.jar</runtime-relative-path>
@@ -108,10 +112,6 @@
             <class-path-extension>
                 <runtime-relative-path>ext/commons-collections-20040616.jar</runtime-relative-path>
                 <binary-origin>release/modules/ext/commons-collections-20040616.jar</binary-origin>
-            </class-path-extension>
-            <class-path-extension>
-                <runtime-relative-path>ext/swingx-all-1.6.4.jar</runtime-relative-path>
-                <binary-origin>release/modules/ext/swingx-all-1.6.4.jar</binary-origin>
             </class-path-extension>
         </data>
     </configuration>

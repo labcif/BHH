@@ -3,47 +3,28 @@
 Ingest module for the Autopsy Forensic Analysis platform, developed in JAVA, within the scope of the Computer Science 
 Degree of the 'Escola Superior de Tecnologia e Gestão do Instituto Politécnico de Leiria', Portugal
 
+The main goal of this module is to extract all webactivity of a user to a local database and then generate a report to display this information.
+This module runs on windows and linux and extract information of Google Chrome and Firefox. You can run it as a [Autopsy](https://www.autopsy.com/)
+module or without any dependencies.
+
 ## Getting Started
 
-
-```
-Give examples...
-```
-
 ### Prerequisites
-
-You need to install [Autopsy](https://www.autopsy.com/) if you want to run the module directly 
-on autopsy.
-JDK 8...
-What things you need to install the software and how to install them...
-
-
+* JDK 8 (mandatory)
+* [Autopsy](https://www.autopsy.com/) (Optional - to run it  as a autopsy module) 
+* Ant, ivy (Optional - if you want to contribute)
 
 ### Installing
-
-There are two ways of running the module:
-* Installing .nbm file on Autopsy: 
-    * Download the .nbm file. - Run Autopsy - Plugins - Installed - browse to the file - install
-* TODO: Running independently of autopsy. Feature incoming...
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-
-
-
-
-## Built With
-
-* [Autopsy](https://www.autopsy.com/) - Project is a module that runs with Autopsy
-
+You have 2 options to use this module:
+* As a [Autopsy](https://www.autopsy.com/)  module
+    1. Download Labcif-bhh-autops.nbm
+    2. Tools - Plugins - Downloaded - Add Plugins... 
+    3. Select Labcif-bhh-autops.nbm downloaded previously
+    4. Click Install - Next - Check terms acceptance - Install - Continue - Finish
+    
+    
+* Without any external dependencies 
+    1. Download Labcif-bhh.jar
 
 
 ## Authors

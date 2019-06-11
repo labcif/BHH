@@ -28,12 +28,26 @@ public class SpecialWebsiteModule extends Module implements ETLProcess {
         this.chosenFile = chosenFile;
     }
 
+    public SpecialWebsiteModule(String databaseDirectory) {
+        super(databaseDirectory);
+    }
+
+    //TODO: review this if time
     @Override
     public void run(Content dataSource) throws ConnectionException {
+        run();
+    }
+
+    @Override
+    public void run(String caseDirectory) throws ConnectionException {
+        run();
+    }
+
+    private void run() throws ConnectionException {
         loggerBHH.info("[" + getModuleName() +"] - Started");
         deleteExtractTables();
         extractAllTables();
-        transformAllTables("");
+        transformAllTables("", "", "");
         loggerBHH.info("[" + getModuleName() +"] - Finished");
     }
 
@@ -59,7 +73,7 @@ public class SpecialWebsiteModule extends Module implements ETLProcess {
 
 
     @Override
-    public void transformAllTables(String user) throws ConnectionException {
+    public void transformAllTables(String user, String profileName,  String fullLocationFile) throws ConnectionException {
         try {
             PreparedStatement preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
                 " INSERT INTO t_clean_special_websites (special_websites_domain) " +
