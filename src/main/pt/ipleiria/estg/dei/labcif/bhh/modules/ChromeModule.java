@@ -273,7 +273,9 @@ public class ChromeModule extends BrowserModule {
         if (isWindows()) {
             return getRoot() + "Users\\" + USER + "\\AppData\\Local\\Google\\Chrome\\User Data";
         } else if (isUnix()) {
-            return "TODO"; //TODO: implement linux directory
+            return getRoot() + "home/" + USER + "/.config/google-chrome";
+        } else if (isMacOs()){
+            return getRoot() + "Users/" + USER + "/Library/Application Support/Google/Chrome";
         } else {
             throw new OperatingSystemNotSupportedException();
         }

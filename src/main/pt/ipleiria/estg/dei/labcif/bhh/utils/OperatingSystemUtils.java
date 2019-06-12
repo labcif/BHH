@@ -20,6 +20,10 @@ public class OperatingSystemUtils {
         return (OS.contains("nix") || OS.contains("nux") || OS.indexOf("aix") > 0 );
     }
 
+    public static boolean isMacOs() {
+        return OS.contains("mac");
+    }
+
 
     /**
      * return root location of current disk. Example: C:\ or D:\

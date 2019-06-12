@@ -55,7 +55,7 @@ public final class DataWarehouseConnection {
         }
     }
 
-    public static String getFullConnection() {
+    public static String getFullPathConnection() {
         if (instance == null) {
             throw new IllegalAccessError();
         }

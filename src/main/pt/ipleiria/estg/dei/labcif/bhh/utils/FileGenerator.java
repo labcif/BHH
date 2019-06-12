@@ -12,10 +12,8 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.models.Word;
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.reportModulePanel.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.report.Generator;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.report.ReportParameterMap;
-import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
-import javax.swing.*;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -147,7 +145,8 @@ public class FileGenerator {
         generator.setReportParameters(reportParameters);
 
         generator.generateReport();
-        try(OutputStream outputStream = new FileOutputStream(reportDir + "\\"+ username+".pdf")) {
+        Path path = Paths.get(reportDir, username + ".pdf");
+        try(OutputStream outputStream = new FileOutputStream(path.toString())) {
             byteArrayOutputStream.writeTo(outputStream);
         }
         byteArrayOutputStream.close();
@@ -160,7 +159,8 @@ public class FileGenerator {
         if (!queries.isEmpty()) {
             queries.forEach((key, value) -> {
                 try {
-                    Utils.writeCsv(datasetRepository.execute(value), reportDir + "\\" + key);
+                    Path path = Paths.get(reportDir, key);
+                    Utils.writeCsv(datasetRepository.execute(value), path.toString());
                 } catch (SQLException e) {
                     loggerBHH.warn("Couldn't extract query: " + value);
                 }
@@ -169,14 +169,13 @@ public class FileGenerator {
     }
 
     public void generateServer() throws IOException {
-
         InputStream from = this.from.getResourceAsStream("/resources/server/browser-history-app-1.0.0.jar");
-        Path path = Paths.get(reportDir + "server.jar");
+        Path path = Paths.get(reportDir,  "server.jar");
         File fileDest = new File(path.toString());
         copyFile(from, fileDest);
 
-        List<String> databaseDirectory = Collections.singletonList(DataWarehouseConnection.getFullConnection());
-        Path file = Paths.get(reportDir + "\\bd_location.txt");
+        List<String> databaseDirectory = Collections.singletonList(DataWarehouseConnection.getFullPathConnection());
+        Path file = Paths.get(reportDir , "bd_location.txt");
         Files.write(file, databaseDirectory, Charset.forName("UTF-8"));
     }
 

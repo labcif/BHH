@@ -72,15 +72,15 @@ public class BrowserHistoryStandaloneModule {
         FileGenerator fileGenerator = new FileGenerator(configPanel, getClass(), currentReportDirectory, caseDirectory);
 
         try {
-            loggerBHH.error("[REPORT MODULE]: generating server...");
+            loggerBHH.info("[REPORT MODULE]: generating server...");
             fileGenerator.generateServer();
-            loggerBHH.error("[REPORT MODULE]: server generated with success");
-            loggerBHH.error("[REPORT MODULE]: generating csv...");
+            loggerBHH.info("[REPORT MODULE]: server generated with success");
+            loggerBHH.info("[REPORT MODULE]: generating csv...");
             fileGenerator.generateCSV();
-            loggerBHH.error("[REPORT MODULE]: csv generated with success");
-            loggerBHH.error("[REPORT MODULE]: generating PDF...");
+            loggerBHH.info("[REPORT MODULE]: csv generated with success");
+            loggerBHH.info("[REPORT MODULE]: generating PDF...");
             fileGenerator.generatePDF();
-            loggerBHH.error("[REPORT MODULE]: PDF generated with success");
+            loggerBHH.info("[REPORT MODULE]: PDF generated with success");
         } catch (IOException | SQLException | GenerateReportException | BrowserHistoryReportModuleExpection e) {
             loggerBHH.error(e.getMessage());
         }

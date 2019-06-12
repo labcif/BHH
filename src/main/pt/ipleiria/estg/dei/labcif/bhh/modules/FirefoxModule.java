@@ -207,7 +207,9 @@ public class FirefoxModule extends BrowserModule {
         if (isWindows()) {
             return getRoot() + "Users\\" + USER + "\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles";
         } else if (isUnix()) {
-            return "TODO"; //TODO: implement linux directory
+            return getRoot() + "home/" +  USER  + "/.mozilla/firefox/";
+        } else if (isMacOs()) {
+            return getRoot() + "User/" + USER + "/Library/Application Support/Firefox";
         } else {
             throw new OperatingSystemNotSupportedException();
         }
