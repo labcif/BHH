@@ -77,7 +77,10 @@
             <fileset dir="release/zlib" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
         </copy>
         <jar jarfile="${dist.lib.dir}/all/dependencies-all.jar">
-            <zipgroupfileset dir="${dist.lib.dir}">
+            <zipgroupfileset dir="${lib.ext.dir}">
+                <include name="**/*.jar" />
+            </zipgroupfileset>
+            <zipgroupfileset dir="release/zlib">
                 <include name="**/*.jar" />
             </zipgroupfileset>
         </jar>
