@@ -76,6 +76,11 @@
             <fileset dir="${lib.ext.dir}" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
             <fileset dir="release/zlib" includes="**/*.jar" excludes="**/*sources.jar, **/*javadoc.jar" />
         </copy>
+        <jar jarfile="${dist.lib.dir}/all/dependencies-all.jar">
+            <zipgroupfileset dir="${dist.lib.dir}">
+                <include name="**/*.jar" />
+            </zipgroupfileset>
+        </jar>
     </target>
 
 
@@ -90,8 +95,9 @@
         <jar jarfile="${dist.dir}/${projectName}.jar" basedir="${build.dir}">
             <manifest>
                 <attribute name="Main-Class" value="${main-class}" />
-                <attribute name="Class-Path" value="${classpath.name}" />
             </manifest>
+            <zipfileset src="${dist.lib.dir}/all/dependencies-all.jar"
+                        excludes="META-INF/*.SF" />
         </jar>
     </target>
 
