@@ -205,11 +205,11 @@ public class FirefoxModule extends BrowserModule {
     @Override
     public String getFullPathToBrowserInstallationInCurrentMachine() {
         if (isWindows()) {
-            return getRoot() + "Users\\" + USER + "\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles";
+            return getRoot()  + "\\AppData\\Roaming\\Mozilla\\Firefox\\Profiles";
         } else if (isUnix()) {
-            return getRoot() + "home/" +  USER  + "/.mozilla/firefox/";
+            return getRoot() + "/.mozilla/firefox/";
         } else if (isMacOs()) {
-            return getRoot() + "User/" + USER + "/Library/Application Support/Firefox";
+            return getRoot()  + "/Library/Application Support/Firefox";
         } else {
             throw new OperatingSystemNotSupportedException();
         }

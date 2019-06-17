@@ -26,12 +26,10 @@ public class OperatingSystemUtils {
 
 
     /**
-     * return root location of current disk. Example: C:\ or D:\
+     * return root location of current disk. Example: C:\Users\nameExample or D:\
      * */
     public static String getRoot() {
-        File currDir = new File(System.getProperty("user.dir", "."));
-        Path root = currDir.toPath().getRoot();
-        return root.toString();
+        return System.getProperty("user.home");
     }
 
     public static String getComputerName() {

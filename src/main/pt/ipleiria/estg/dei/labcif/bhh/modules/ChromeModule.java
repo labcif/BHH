@@ -180,7 +180,7 @@ public class ChromeModule extends BrowserModule {
 
             Matcher email;
             String encoded, substring, decode;
-            
+
             while(rs.next()){
                 encoded = rs.getString("url");
 
@@ -271,11 +271,11 @@ public class ChromeModule extends BrowserModule {
     @Override
     public String getFullPathToBrowserInstallationInCurrentMachine() {
         if (isWindows()) {
-            return getRoot() + "Users\\" + USER + "\\AppData\\Local\\Google\\Chrome\\User Data";
+            return getRoot() + "\\AppData\\Local\\Google\\Chrome\\User Data";
         } else if (isUnix()) {
-            return getRoot() + "home/" + USER + "/.config/google-chrome";
+            return  getRoot() + "/.config/google-chrome";
         } else if (isMacOs()){
-            return getRoot() + "Users/" + USER + "/Library/Application Support/Google/Chrome";
+            return  getRoot() + "/Library/Application Support/Google/Chrome";
         } else {
             throw new OperatingSystemNotSupportedException();
         }
