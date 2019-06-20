@@ -21,6 +21,7 @@ import java.net.URLDecoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -174,5 +175,9 @@ public abstract class BrowserModule extends Module {
     public abstract String getHistoryFilename();
     public abstract String getLoginDataFilename();
 
+    public abstract ResultSet transformWordsFromGoogle(Statement statement) throws SQLException;
+    public abstract ResultSet transformWordsFromYahoo(Statement statement) throws SQLException;
+    public abstract ResultSet transformWordsFromBing(Statement statement) throws SQLException;
+    public abstract ResultSet transformWordsFromAsk(Statement statement) throws SQLException;
 
 }

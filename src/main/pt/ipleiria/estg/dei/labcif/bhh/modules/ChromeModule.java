@@ -8,7 +8,6 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.models.LoginOriginEnum;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
 
-import java.io.File;
 import java.net.URLDecoder;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -245,14 +244,42 @@ public class ChromeModule extends BrowserModule {
     private void transformWordsTable(String user, String profileName, String fullLocationFile){
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
-            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                                            "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
-                    "FROM t_ext_chrome_urls " +
-                    "where url like '%google.%' and url like '%?q=%'");
-            insertWordInTable(rs, user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromGoogle(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromYahoo(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromBing(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromAsk(statement), user, profileName, fullLocationFile);
+
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_search_in_engines", "Error cleaning extracted - " + e.getMessage());
         }
+    }
+
+    public ResultSet transformWordsFromGoogle(Statement statement) throws SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
+                "FROM t_ext_chrome_urls " +
+                "where url like '%google.%' and url like '%?q=%'");
+    }
+
+    public ResultSet transformWordsFromYahoo(Statement statement) throws  SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?p=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
+                "FROM t_ext_chrome_urls " +
+                "where url like '%yahoo.%' and url like '%?p=%'");
+    }
+
+    public ResultSet transformWordsFromBing(Statement statement) throws  SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
+                "FROM t_ext_chrome_urls " +
+                "where url like '%bing.%' and url like '%?q=%'");
+    }
+
+    public ResultSet transformWordsFromAsk(Statement statement) throws  SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
+                "FROM t_ext_chrome_urls " +
+                "where url like '%ask.%' and url like '%?q=%'");
     }
 
     protected String extractDateFromColumn(String oldColumn, String newColumn, String format) {

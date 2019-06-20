@@ -18,7 +18,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.*;
-import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.isUnix;
 
 public class FirefoxModule extends BrowserModule {
     private LoggerBHH<FirefoxModule> loggerBHH = new LoggerBHH<>(FirefoxModule.class);
@@ -117,17 +116,45 @@ public class FirefoxModule extends BrowserModule {
     private void transformWordsTable(String user, String profileName, String fullLocationFile){
         try {
             Statement statement = DataWarehouseConnection.getConnection(databaseDirectory).createStatement();
-            ResultSet rs = statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                                                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
-                    "FROM t_ext_mozila_places " +
-                    "where url like '%google.%' and url like '%?q=%'");
-
-
-            insertWordInTable(rs, user, profileName, fullLocationFile);
-
+            insertWordInTable(transformWordsFromGoogle(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromYahoo(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromAsk(statement), user, profileName, fullLocationFile);
+            insertWordInTable(transformWordsFromBing(statement), user, profileName, fullLocationFile);
         }catch (SQLException | ClassNotFoundException | ConnectionException e) {
             throw new ExtractionException(getModuleName(), "t_clean_search_in_engines", "Error cleaning extracted - " + e.getMessage());
         }
+    }
+
+    @Override
+    public ResultSet transformWordsFromGoogle(Statement statement) throws SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                "FROM t_ext_mozila_places " +
+                "where url like '%google.%' and url like '%?q=%'");
+    }
+
+    @Override
+    public ResultSet transformWordsFromYahoo(Statement statement) throws SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?p=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                "FROM t_ext_mozila_places " +
+                "where url like '%yahoo.%' and url like '%?p=%'");
+    }
+
+    @Override
+    public ResultSet transformWordsFromBing(Statement statement) throws SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                "FROM t_ext_mozila_places " +
+                "where url like '%bing.%' and url like '%?q=%'");
+    }
+
+    @Override
+    public ResultSet transformWordsFromAsk(Statement statement) throws SQLException {
+        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
+                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
+                "FROM t_ext_mozila_places " +
+                "where url like '%ask.%' and url like '%?q=%'");
     }
 
     private void transformEmailsTable(String user, String profileName, String fullLocationFile) {
