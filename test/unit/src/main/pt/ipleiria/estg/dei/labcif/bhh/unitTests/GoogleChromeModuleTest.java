@@ -1,15 +1,18 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh.unitTests;
 
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ExtractionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.modules.ChromeModule;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 
 import java.io.IOException;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -77,5 +80,19 @@ class GoogleChromeModuleTest extends ModuleTest{
     @Test
     void extract_all_tables_success()  {
 
+    }
+
+    @Test
+    void original_directory_is_saved_correctly() throws ConnectionException, SQLException {
+        chromeModuleValid.run(CORRECT_DIRECTORY);
+        Statement statement = DriverManager.getConnection(CORRECT_DIRECTORY).createStatement();
+        ResultSet rs = statement.executeQuery(
+                "SELECT url_filename_location " +
+                        "FROM t_clean_url ");
+
+        while (rs.next()) {
+            String location = rs.getString("url_filename_location");
+            assertEquals(location, CORRECT_DIRECTORY);
+        }
     }
 }

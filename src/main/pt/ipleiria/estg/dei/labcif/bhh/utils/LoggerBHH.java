@@ -9,56 +9,56 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class LoggerBHH<T>{
-    private org.sleuthkit.autopsy.coreutils.Logger logger;
-    private Logger loggerTests;
+    private org.sleuthkit.autopsy.coreutils.Logger autopsyLogger;
+    private Logger standaloneLogger;
 
     public LoggerBHH(Class<T> origin) {
         try {
-            this.logger = org.sleuthkit.autopsy.coreutils.Logger.getLogger(origin.getName());
+            this.autopsyLogger = org.sleuthkit.autopsy.coreutils.Logger.getLogger(origin.getName());
         } catch (NoClassDefFoundError ex) {
-            loggerTests = Logger.getLogger(origin.getName());
+            standaloneLogger = Logger.getLogger(origin.getName());
         }
     }
 
     public void error(String message) {
-        if (isProductionLogger()) {
+        if (isAutopsyLogger()) {
             executeProductionLogger(Level.SEVERE, IngestMessage.MessageType.ERROR, message);
-        } else if (isTestLogger()) {
+        } else if (isStandaloneLogger()) {
             MainFrame.getInstance().postMessage(message);
-            loggerTests.log(Level.SEVERE, message);
+            standaloneLogger.log(Level.SEVERE, message);
         }
     }
 
     public void info(String message) {
-        if (isProductionLogger()) {
+        if (isAutopsyLogger()) {
             executeProductionLogger(Level.INFO, IngestMessage.MessageType.INFO, message);
-        } else if (isTestLogger()) {
+        } else if (isStandaloneLogger()) {
             MainFrame.getInstance().postMessage(message);
-            loggerTests.log(Level.INFO, message);
+            standaloneLogger.log(Level.INFO, message);
         }
     }
 
     public void warn(String message) {
-        if (isProductionLogger()) {
+        if (isAutopsyLogger()) {
             executeProductionLogger(Level.WARNING, IngestMessage.MessageType.WARNING, message);
-        } else if (isTestLogger()) {
+        } else if (isStandaloneLogger()) {
             MainFrame.getInstance().postMessage(message);
-            loggerTests.log(Level.WARNING, message);
+            standaloneLogger.log(Level.WARNING, message);
         }
     }
 
     private void executeProductionLogger(Level level, IngestMessage.MessageType messageType, String message) {
-        logger.log(level, message);
+        autopsyLogger.log(level, message);
         IngestMessage ingestMessage = IngestMessage.createMessage( messageType, BrowserHistoryIngestModuleFactory.getModuleName(),
                 message);
         IngestServices.getInstance().postMessage(ingestMessage);
     }
 
-    public boolean isProductionLogger() {
-        return logger != null;
+    private boolean isAutopsyLogger() {
+        return autopsyLogger != null;
     }
 
-    public boolean isTestLogger() {
-        return loggerTests != null;
+    private boolean isStandaloneLogger() {
+        return standaloneLogger != null;
     }
 }
