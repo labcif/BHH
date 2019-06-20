@@ -52,7 +52,10 @@ create table if not exists t_clean_search_in_engines
   search_in_engines_browser_origin    VARCHAR(255) NOT NULL,
   search_in_engines_domain            VARCHAR(255),
   search_profile_name                 VARCHAR(255),
-  search_filename_location            VARCHAR(255)  NOT NULL
+  search_filename_location            VARCHAR(255)  NOT NULL,
+  search_visit_full_date             DATE,
+  search_visit_date                   DATE,
+  search_visit_time                  DATE
 );
 create table if not exists t_clean_url
 (

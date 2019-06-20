@@ -255,31 +255,47 @@ public class ChromeModule extends BrowserModule {
     }
 
     public ResultSet transformWordsFromGoogle(Statement statement) throws SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
-                "FROM t_ext_chrome_urls " +
-                "where url like '%google.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(teu.url, instr(teu.url, '?q=')+3) as word, teu.url as url_full," +
+                "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                extractDateFromColumn("visit_time", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
+                "WHERE teu.id = tev.url " +
+                "AND teu.url LIKE '%google.%' AND teu.url LIKE '%?q=%'");
     }
 
     public ResultSet transformWordsFromYahoo(Statement statement) throws  SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?p=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
-                "FROM t_ext_chrome_urls " +
-                "where url like '%yahoo.%' and url like '%?p=%'");
+        return statement.executeQuery("SELECT substr(teu.url, instr(teu.url, '?p=')+3) as word, teu.url as url_full," +
+                "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                extractDateFromColumn("visit_time", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
+                "WHERE teu.id = tev.url " +
+                "AND teu.url LIKE '%yahoo.%' AND teu.url LIKE '%?p=%'");
     }
 
     public ResultSet transformWordsFromBing(Statement statement) throws  SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
-                "FROM t_ext_chrome_urls " +
-                "where url like '%bing.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(teu.url, instr(teu.url, '?q=')+3) as word, teu.url as url_full," +
+                "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                extractDateFromColumn("visit_time", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
+                "WHERE teu.id = tev.url " +
+                "AND teu.url LIKE '%bing.%' AND teu.url LIKE '%?q=%'");
     }
 
     public ResultSet transformWordsFromAsk(Statement statement) throws  SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0, instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain " +
-                "FROM t_ext_chrome_urls " +
-                "where url like '%ask.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(teu.url, instr(teu.url, '?q=')+3) as word, teu.url as url_full," +
+                "replace( SUBSTR( substr(teu.url, instr(teu.url, '://')+3), 0, instr(substr(teu.url, instr(teu.url, '://')+3),'/')), 'www.', '') as url_domain, " +
+                extractDateFromColumn("visit_time", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("visit_time", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_chrome_urls teu, t_ext_chrome_visits tev " +
+                "WHERE teu.id = tev.url " +
+                "AND teu.url LIKE '%ask.%' AND teu.url LIKE '%?q=%'");
     }
 
     protected String extractDateFromColumn(String oldColumn, String newColumn, String format) {

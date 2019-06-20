@@ -120,8 +120,11 @@ public abstract class BrowserModule extends Module {
 
     protected void insertWordInTable(ResultSet rs, String user, String profileName, String fullLocationFile) throws ConnectionException, SQLException, ClassNotFoundException {
         PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
-                " INSERT INTO t_clean_search_in_engines (search_in_engines_words, search_in_engines_source_full, search_in_engines_user_origin, search_in_engines_browser_origin, search_in_engines_domain, search_profile_name, search_filename_location) " +
-                        " VALUES (?,?,?,?,?,?,?)");
+                " INSERT INTO t_clean_search_in_engines (search_in_engines_words, search_in_engines_source_full, " +
+                                                "search_in_engines_user_origin, search_in_engines_browser_origin," +
+                                                " search_in_engines_domain, search_profile_name, search_filename_location," +
+                                                "search_visit_full_date, search_visit_date, search_visit_time) " +
+                        " VALUES (?,?,?,?,?,?,?,?,?,?)");
 
         String encoded;
         String substring;
@@ -144,6 +147,9 @@ public abstract class BrowserModule extends Module {
             preparedStatement.setString(5, rs.getString("url_domain"));
             preparedStatement.setString(6, profileName);
             preparedStatement.setString(7, fullLocationFile);
+            preparedStatement.setString(8, rs.getString("search_visit_full_date"));
+            preparedStatement.setString(9, rs.getString("search_visit_date"));
+            preparedStatement.setString(10, rs.getString("search_visit_time"));
             preparedStatement.addBatch();
 
         }

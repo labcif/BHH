@@ -127,34 +127,46 @@ public class FirefoxModule extends BrowserModule {
 
     @Override
     public ResultSet transformWordsFromGoogle(Statement statement) throws SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
-                "FROM t_ext_mozila_places " +
-                "where url like '%google.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(mp.url, instr(mp.url, '?q=')+3) as word, mp.url as url_full," +
+                "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain,  " +
+                extractDateFromColumn("mh.visit_date", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
+                "where mp.id = mh.place_id AND url like '%google.%' and url like '%?q=%'");
     }
 
     @Override
     public ResultSet transformWordsFromYahoo(Statement statement) throws SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?p=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
-                "FROM t_ext_mozila_places " +
-                "where url like '%yahoo.%' and url like '%?p=%'");
+        return statement.executeQuery("SELECT substr(mp.url, instr(mp.url, '?p=')+3) as word, mp.url as url_full," +
+                "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain,  " +
+                extractDateFromColumn("mh.visit_date", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
+                "where mp.id = mh.place_id AND url like '%yahoo.%' and url like '%?p=%'");
     }
 
     @Override
     public ResultSet transformWordsFromBing(Statement statement) throws SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
-                "FROM t_ext_mozila_places " +
-                "where url like '%bing.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(mp.url, instr(mp.url, '?q=')+3) as word, mp.url as url_full," +
+                "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain,  " +
+                extractDateFromColumn("mh.visit_date", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
+                "where mp.id = mh.place_id AND url like '%bing.%' and url like '%?q=%'");
     }
 
     @Override
     public ResultSet transformWordsFromAsk(Statement statement) throws SQLException {
-        return statement.executeQuery("SELECT substr(url, instr(url, '?q=')+3) as word, url as url_full," +
-                "replace( SUBSTR( substr(url, instr(url, '://')+3), 0,instr(substr(url, instr(url, '://')+3),'/')), 'www.', '') as url_domain  " +
-                "FROM t_ext_mozila_places " +
-                "where url like '%ask.%' and url like '%?q=%'");
+        return statement.executeQuery("SELECT substr(mp.url, instr(mp.url, '?q=')+3) as word, mp.url as url_full," +
+                "replace( SUBSTR( substr(mp.url, instr(mp.url, '://')+3), 0,instr(substr(mp.url, instr(mp.url, '://')+3),'/')), 'www.', '') as url_domain,  " +
+                extractDateFromColumn("mh.visit_date", "search_visit_full_date", FULL_DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_date", DATE_FORMAT) + ", " +
+                extractDateFromColumn("mh.visit_date", "search_visit_time", TIME_FORMAT) + " " +
+                "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
+                "where mp.id = mh.place_id AND url like '%ask.%' and url like '%?q=%'");
     }
 
     private void transformEmailsTable(String user, String profileName, String fullLocationFile) {
