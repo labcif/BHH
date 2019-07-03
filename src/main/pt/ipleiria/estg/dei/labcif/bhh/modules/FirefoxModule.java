@@ -55,7 +55,7 @@ public class FirefoxModule extends BrowserModule {
         transformUrlTable(user, profileName, fullLocationFile);
         transformWordsTable(user, profileName, fullLocationFile);
         transformEmailsTable(user, profileName, fullLocationFile);
-        //TODO: missing transformDOwnload Tables.
+        transformDownloadsTable(user, profileName, fullLocationFile);
     }
 
     @Override
@@ -167,6 +167,51 @@ public class FirefoxModule extends BrowserModule {
                 extractDateFromColumn("mh.visit_date", "search_visit_time", TIME_FORMAT) + " " +
                 "FROM t_ext_mozila_places mp, t_ext_mozila_historyvisits mh " +
                 "where mp.id = mh.place_id AND url like '%ask.%' and url like '%?q=%'");
+    }
+
+    private void transformDownloadsTable(String user, String profileName, String fullLocationFile) {
+        PreparedStatement preparedStatement = null;
+        try {
+            preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
+                    " INSERT INTO t_clean_downloads (downloads_natural_key, " +
+                            "downloads_domain, " +
+                            "downloads_full_url, " +
+                            "downloads_mime_type,  " +
+                            "downloads_target_path, " +
+                            "downloads_beginning_full_date,  " +
+                            "downloads_beginning_date,  " +
+                            "downloads_beginning_time,  " +
+                            "downloads_ending_full_date,  " +
+                            "downloads_ending_date,  " +
+                            "downloads_ending_time,  " +
+                            "downloads_received_bytes, " +
+                            "downloads_total_bytes,  " +
+                            "downloads_user_origin, " +
+                            "downloads_browser_origin," +
+                            "downloads_profile_name," +
+                            "downloads_filename_location) " +
+                            " SELECT a.id as downloads_natural_key, " +
+                            extractDomainFromFullUrlInSqliteQuery("url", "downloads_domain") + ", " +
+                            "url as downloads_full_url, " +
+                            "name as downloads_mime_type,  " +
+                            "null, " +
+                            extractDateFromColumn("a.dateAdded", "downloads_beginning_full_date", FULL_DATE_FORMAT) + ", " +
+                            extractDateFromColumn("a.dateAdded", "downloads_beginning_date", DATE_FORMAT) + ", " +
+                            extractDateFromColumn("a.dateAdded", "downloads_beginning_time", TIME_FORMAT) + ", " +
+                            extractDateFromColumn("a.lastModified", "downloads_ending_full_date", FULL_DATE_FORMAT) + ", " +
+                            extractDateFromColumn("a.lastModified", "downloads_ending_date", DATE_FORMAT) + ", " +
+                            extractDateFromColumn("a.lastModified", "downloads_ending_time", TIME_FORMAT) + ", " +
+                            "null,  " +
+                            "null,  " +
+                            "'" + user + "',  " +
+                            "'" + getModuleName() + "', " +
+                            "'" + profileName + "', " +
+                            "'" + fullLocationFile + "' " +
+                            "FROM t_ext_mozila_annos a join t_ext_mozila_places p on a.place_id = p.id join t_ext_mozila_anno_attributes at on a.anno_attribute_id == at.id");
+            preparedStatement.executeUpdate();
+        } catch (SQLException | ClassNotFoundException | ConnectionException e) {
+            throw new ExtractionException(getModuleName(), "t_clean_downloads", "Error cleaning extracted - " + e.getMessage());
+        }
     }
 
     private void transformEmailsTable(String user, String profileName, String fullLocationFile) {
