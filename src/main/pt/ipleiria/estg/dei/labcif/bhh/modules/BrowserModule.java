@@ -35,6 +35,7 @@ public abstract class BrowserModule extends Module {
     private IngestJobContext context;
     private Content dataSource;
     private List<File> historyFilesFound;
+    private List<File> loginFilesFound;
 
     protected BrowserModule(IngestJobContext context, String databaseDirectory) {
         super(databaseDirectory);
@@ -52,6 +53,7 @@ public abstract class BrowserModule extends Module {
     BrowserModule(String databaseDirectory) {
         super(databaseDirectory);
         historyFilesFound = new ArrayList<>();
+        loginFilesFound = new ArrayList<>();
     }
     @Override
     public void run(Content dataSource) throws ConnectionException {
@@ -67,6 +69,7 @@ public abstract class BrowserModule extends Module {
     public void run(String caseDirectory) throws ConnectionException {
         loggerBHH.info("[" + getModuleName() +"] - Started");
         historyFilesFound.clear();
+        loginFilesFound.clear();
         runOwnMachine(caseDirectory);
         loggerBHH.info("[" + getModuleName() +"] - Finished");
     }
@@ -77,12 +80,17 @@ public abstract class BrowserModule extends Module {
         String temporaryDirectory = Utils.createDirectoryIfNotExists(caseDirectory + "/temp");
 
         loggerBHH.info("[" + getModuleName() +"]" + " - Found " + historyFilesFound.size() + " different profiles" );
-        historyFilesFound.forEach(file -> {
+
+        List<File> filesToProcess = new ArrayList<>(historyFilesFound);
+        filesToProcess.addAll(loginFilesFound);
+
+        filesToProcess.forEach(file -> {
             try {
                 String profileName = file.getParentFile().getName().trim();
                 String temporaryDatabaseFile = temporaryDirectory + File.separator + file.getName() + "-" + USER +"-" + profileName + ".db";
                 Utils.copyFile(file.getAbsolutePath(), temporaryDatabaseFile);
                 runETLProcess(temporaryDatabaseFile, USER, profileName, file.getAbsolutePath());
+
             } catch (IOException | ConnectionException e) {
                 loggerBHH.error(e.getMessage());
             }
@@ -170,6 +178,8 @@ public abstract class BrowserModule extends Module {
                     findAllHistoryFilesInParentDirectory(file);
                 } else if (file.getName().equals(getHistoryFilename())){
                     historyFilesFound.add(file);
+                } else if (file.getName().equals(getLoginDataFilename())){
+                    loginFilesFound.add(file);
                 }
             });
         }
