@@ -42,8 +42,7 @@ public class FileGenerator {
     }
 
     public void generatePDF() throws SQLException, GenerateReportException, IOException {
-        InputStream templateFile = from.getResourceAsStream("/resources/template/autopsy.jrxml");
-        Generator generator = new Generator(templateFile);
+        Generator generator = new Generator(from.getResourceAsStream("/resources/template/autopsy.jrxml"));
 
         List<String> usernames = configPanel.getUsersSelected();
         if (usernames == null) {
@@ -69,12 +68,10 @@ public class FileGenerator {
                 activityInWebsite =  datasetRepository.getActivityInWebsite(configPanel.getWebsites());
                 reportData.put("websiteDetailDataSource", new JRBeanCollectionDataSource(activityInWebsite));
             }
-
             reportData.put("websiteVisitedInPeriodOfTimeDataSource", new JRBeanCollectionDataSource(datasetRepository.getVisitedWebsiteInDay(configPanel.getDate())));
             reportData.put("websiteVisitedInDay", dayAnalised);
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, "GlobalSearch");
-            templateFile = resetTemplateStream(templateFile);
         }
         for (String username: usernames ) {
             Map<String, Object> reportData = new HashMap<>();
@@ -93,17 +90,15 @@ public class FileGenerator {
             reportData.put("websiteVisitedInDay", dayAnalised);
             reportData.put("indexDataSource", new JRBeanCollectionDataSource(generateIndex(new Double(login.size()), new Double(wordsUsed.size()), new Double(activityInWebsite != null ? activityInWebsite.size() : 0) )));
             generate(generator, reportData, username);
-            templateFile = resetTemplateStream(templateFile);
         }
     }
 
-    private InputStream resetTemplateStream(InputStream templateStream) {
+    private void resetTemplateStream(Generator generator) {
         try {
-            templateStream.close();
-        } catch (IOException e) {
-            loggerBHH.warn(e.getMessage());
+            generator.getTemplateFile().reset();
+        } catch (IOException ignored) {
+            generator.setTemplateFile(from.getResourceAsStream("/resources/template/autopsy.jrxml"));
         }
-        return from.getResourceAsStream("/resources/template/autopsy.jrxml");
     }
 
     private List<IndexDto> generateIndex(double loginSize, double wordsSearch, double activityWebsites ){
@@ -143,6 +138,8 @@ public class FileGenerator {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         reportParameters.setOutputStream(byteArrayOutputStream);
         generator.setReportParameters(reportParameters);
+
+        resetTemplateStream(generator);
 
         generator.generateReport();
         Path path = Paths.get(reportDir, username + ".pdf");
