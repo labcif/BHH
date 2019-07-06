@@ -194,15 +194,15 @@ public class FirefoxModule extends BrowserModule {
                             extractDomainFromFullUrlInSqliteQuery("url", "downloads_domain") + ", " +
                             "url as downloads_full_url, " +
                             "name as downloads_mime_type,  " +
-                            "null, " +
+                            "0, " +
                             extractDateFromColumn("a.dateAdded", "downloads_beginning_full_date", FULL_DATE_FORMAT) + ", " +
                             extractDateFromColumn("a.dateAdded", "downloads_beginning_date", DATE_FORMAT) + ", " +
                             extractDateFromColumn("a.dateAdded", "downloads_beginning_time", TIME_FORMAT) + ", " +
                             extractDateFromColumn("a.lastModified", "downloads_ending_full_date", FULL_DATE_FORMAT) + ", " +
                             extractDateFromColumn("a.lastModified", "downloads_ending_date", DATE_FORMAT) + ", " +
                             extractDateFromColumn("a.lastModified", "downloads_ending_time", TIME_FORMAT) + ", " +
-                            "null,  " +
-                            "null,  " +
+                            "0,  " +
+                            "0,  " +
                             "'" + user + "',  " +
                             "'" + getModuleName() + "', " +
                             "'" + profileName + "', " +
