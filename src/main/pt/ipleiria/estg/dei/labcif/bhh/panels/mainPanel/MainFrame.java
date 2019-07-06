@@ -5,11 +5,8 @@
  */
 package main.pt.ipleiria.estg.dei.labcif.bhh.panels.mainPanel;
 
-import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatabaseCreator;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatasetRepository;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
-import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.DatabaseInitializationException;
-import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.MigrationException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.reportModulePanel.BrowserHistoryReportConfigurationPanel;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.BrowserHistoryStandaloneModule;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
@@ -411,8 +408,9 @@ public class MainFrame extends javax.swing.JFrame {
 
     private boolean hasExtractionBeenDone() {
         try {
+            datasetRepository = new DatasetRepository(txtFieldDirectory.getText());
             return !datasetRepository.isFirstRunningImage(OperatingSystemUtils.getComputerName());
-        } catch (SQLException e) {
+        } catch (SQLException | ConnectionException e) {
             loggerBHH.error("couldn't connect to database...");
             return false;
         }

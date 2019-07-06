@@ -205,6 +205,7 @@ public class DatasetRepository {
         while (rs.next()) {
             tablesToDelete.add(rs.getString("name"));
         }
+        statement.close();
         rs.close();
         for (String table : tablesToDelete) {
             stmn.execute("DROP TABLE '"+ table + "'");
@@ -320,5 +321,7 @@ public class DatasetRepository {
         if (statement != null) {
             statement.close();
         }
+        DataWarehouseConnection.closeConnection();
+
     }
 }
