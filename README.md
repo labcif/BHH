@@ -17,14 +17,14 @@ module or without any dependencies.
 ### Installing
 You have 2 options to use this module:
 * As a [Autopsy](https://www.autopsy.com/)  module
-    1. Download [Labcif-bhh-autopsy.nbm](https://github.com/labcif/BHH/releases/download/1.0.0/Labcif-bhh-autopsy.nbm) 
+    1. Download [Labcif-bhh-autopsy.nbm](https://github.com/labcif/BHH/releases/download/1.0.1/Labcif-bhh-autopsy.nbm) 
     2. Tools - Plugins - Downloaded - Add Plugins... 
     3. Select Labcif-bhh-autopsy.nbm downloaded previously
     4. Click Install - Next - Check terms acceptance - Install - Continue - Finish
     
     
 * As a standalone application
-    1. Download [Browser-History-Histogram.jar](https://github.com/labcif/BHH/releases/download/1.0.0/Browser-History-Histogram.jar)
+    1. Download [Browser-History-Histogram.jar](https://github.com/labcif/BHH/releases/download/1.0.1/Browser-History-Histogram.jar)
 
 ### Run
 * As a [Autopsy](https://www.autopsy.com/)  module
