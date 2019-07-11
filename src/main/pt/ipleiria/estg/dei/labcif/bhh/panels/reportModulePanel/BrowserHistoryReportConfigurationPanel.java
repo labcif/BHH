@@ -103,24 +103,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         }
     }
 
-    public boolean isMostVisitedSitesEnabled() {
-        return mostVisitedSites.isSelected();
-    }
-    public boolean isBlokedSitesEnabled() {
-        return highlightedWebsites.isSelected();
-    }
-    public boolean isWordsSearchEnabled() {
-        return wordsSearch.isSelected();
-    }
-    public boolean isDomainDailyVisitsEnabled() {
-        return domainDailyVisits.isSelected();
-    }
-    public boolean isChartBarTipe() {
-        return histogram.isSelected();
-    }
-    public boolean isChartPieTipe() {
-        return pieChart.isSelected();
-    }
 
     public boolean isMultipleUsers(){
         return this.users.getModel().getSize() > 1;
@@ -155,7 +137,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        users = new javax.swing.JList<String>();
+        users = new javax.swing.JList<>();
         selectDefaultUsers = new javax.swing.JRadioButton();
         selectAllUsers = new javax.swing.JRadioButton();
         jLabel5 = new javax.swing.JLabel();
@@ -163,15 +145,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jLabel6 = new javax.swing.JLabel();
         visitsChartOptionAmountOfElementsChart = new javax.swing.JSpinner();
         maxSizeOf35Label = new javax.swing.JLabel();
-        panel1 = new java.awt.Panel();
-        histogram = new javax.swing.JRadioButton();
-        pieChart = new javax.swing.JRadioButton();
-        jLabel1 = new javax.swing.JLabel();
-        jLabel3 = new javax.swing.JLabel();
-        mostVisitedSites = new javax.swing.JCheckBox();
-        highlightedWebsites = new javax.swing.JCheckBox();
-        wordsSearch = new javax.swing.JCheckBox();
-        domainDailyVisits = new javax.swing.JCheckBox();
         jPanel3 = new javax.swing.JPanel();
         jScrollPane4 = new javax.swing.JScrollPane();
         websiteTable = new javax.swing.JTable();
@@ -182,7 +155,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jPanel2 = new javax.swing.JPanel();
         importFilterButton = new javax.swing.JButton();
         exportFilterButton = new javax.swing.JButton();
-        querieFilePath = new javax.swing.JTextField();
         jScrollPane3 = new javax.swing.JScrollPane();
         queriesTable = new javax.swing.JTable();
         deleteRowQueries = new javax.swing.JButton();
@@ -257,7 +229,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 160, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 27, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(selectDefaultUsers, javax.swing.GroupLayout.PREFERRED_SIZE, 166, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(selectAllUsers))
@@ -297,93 +269,10 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                     .addComponent(datePickerGanttChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(maxSizeOf35Label)
                     .addComponent(visitsChartOptionAmountOfElementsChart, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(86, Short.MAX_VALUE))
+                .addContainerGap(92, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel1.TabConstraints.tabTitle"), jPanel1); // NOI18N
-
-        buttonGroup2.add(histogram);
-        histogram.setSelected(true);
-        histogram.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.histogram.text")); // NOI18N
-        histogram.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                histogramActionPerformed(evt);
-            }
-        });
-
-        buttonGroup2.add(pieChart);
-        pieChart.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.pieChart.text")); // NOI18N
-
-        jLabel1.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jLabel1.text")); // NOI18N
-
-        jLabel3.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jLabel3.text")); // NOI18N
-
-        mostVisitedSites.setSelected(true);
-        mostVisitedSites.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.mostVisitedSites.text")); // NOI18N
-
-        highlightedWebsites.setSelected(true);
-        highlightedWebsites.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.highlightedWebsites.text")); // NOI18N
-        highlightedWebsites.setActionCommand(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.highlightedWebsites.actionCommand")); // NOI18N
-        highlightedWebsites.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                highlightedWebsitesActionPerformed(evt);
-            }
-        });
-
-        wordsSearch.setSelected(true);
-        wordsSearch.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.wordsSearch.text")); // NOI18N
-
-        domainDailyVisits.setSelected(true);
-        domainDailyVisits.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.domainDailyVisits.text")); // NOI18N
-
-        javax.swing.GroupLayout panel1Layout = new javax.swing.GroupLayout(panel1);
-        panel1.setLayout(panel1Layout);
-        panel1Layout.setHorizontalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addContainerGap()
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(pieChart)
-                            .addComponent(histogram))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel3)
-                    .addGroup(panel1Layout.createSequentialGroup()
-                        .addGap(10, 10, 10)
-                        .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(mostVisitedSites)
-                            .addComponent(highlightedWebsites)
-                            .addComponent(wordsSearch)
-                            .addComponent(domainDailyVisits))))
-                .addGap(29, 29, 29))
-        );
-        panel1Layout.setVerticalGroup(
-            panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(panel1Layout.createSequentialGroup()
-                .addGap(24, 24, 24)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(jLabel1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(mostVisitedSites)
-                    .addComponent(histogram))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(panel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(highlightedWebsites)
-                    .addComponent(pieChart))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(wordsSearch)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(domainDailyVisits)
-                .addContainerGap(76, Short.MAX_VALUE))
-        );
-
-        jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.panel1.TabConstraints.tabTitle"), panel1); // NOI18N
 
         websiteTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -445,25 +334,25 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jPanel3Layout.setHorizontalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
-                .addContainerGap(45, Short.MAX_VALUE)
-                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
+                .addContainerGap(35, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel3Layout.createSequentialGroup()
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(deleteRowWebsite, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(importWebsitesBtn, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(exportWebsitesBtn, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
-                            .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
-                .addGap(45, 45, 45))
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(deleteRowWebsite, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(importWebsitesBtn, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(exportWebsitesBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 163, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addGap(34, 34, 34))
         );
         jPanel3Layout.setVerticalGroup(
             jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel3Layout.createSequentialGroup()
                 .addGap(21, 21, 21)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 85, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(exportWebsitesBtn)
                     .addComponent(importWebsitesBtn))
@@ -471,7 +360,7 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                 .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deleteRowWebsite)
                     .addComponent(jButton3))
-                .addContainerGap(50, Short.MAX_VALUE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel3.TabConstraints.tabTitle_1"), jPanel3); // NOI18N
@@ -489,9 +378,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
                 exportQuerieButtonActionPerformed(evt);
             }
         });
-
-        querieFilePath.setText(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.querieFilePath.text")); // NOI18N
-        querieFilePath.setEnabled(false);
 
         queriesTable.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -540,36 +426,33 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(46, 46, 46)
+                .addGap(34, 34, 34)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                            .addComponent(deleteRowQueries, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(importFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 151, Short.MAX_VALUE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(importFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(deleteRowQueries, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                            .addComponent(exportFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 157, Short.MAX_VALUE)
+                            .addComponent(exportFilterButton, javax.swing.GroupLayout.DEFAULT_SIZE, 163, Short.MAX_VALUE)
                             .addComponent(deleteAllQueries, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
-                .addGap(67, 67, 67)
-                .addComponent(querieFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, 361, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 339, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(23, 23, 23)
-                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 84, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(18, 18, 18)
+                .addGap(21, 21, 21)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(querieFilePath, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(exportFilterButton)
-                    .addComponent(importFilterButton))
+                    .addComponent(importFilterButton)
+                    .addComponent(exportFilterButton))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(deleteRowQueries)
                     .addComponent(deleteAllQueries))
-                .addContainerGap(43, Short.MAX_VALUE))
+                .addContainerGap(52, Short.MAX_VALUE))
         );
 
         jTabbedPane1.addTab(org.openide.util.NbBundle.getMessage(BrowserHistoryReportConfigurationPanel.class, "BrowserHistoryReportConfigurationPanel.jPanel2.TabConstraints.tabTitle"), jPanel2); // NOI18N
@@ -625,7 +508,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         chooser.setFileFilter(filter);
         if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String chosenFile = chooser.getSelectedFile().getAbsolutePath();
-            querieFilePath.setText(chosenFile);
             String line;
             try(BufferedReader buffer = new BufferedReader(new FileReader(chosenFile))) {
                 while ((line = buffer.readLine()) != null) {
@@ -686,7 +568,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         chooser.setFileFilter(filter);
         if(chooser.showOpenDialog(this) == JFileChooser.APPROVE_OPTION) {
             String chosenFile = chooser.getSelectedFile().getAbsolutePath();
-            querieFilePath.setText(chosenFile);
             String domain;
             try(BufferedReader buffer = new BufferedReader(new FileReader(chosenFile))) {
                 while ((domain = buffer.readLine()) != null) {
@@ -712,14 +593,6 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
         }
     }//GEN-LAST:event_websiteTablePropertyChange
 
-    private void highlightedWebsitesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_highlightedWebsitesActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_highlightedWebsitesActionPerformed
-
-    private void histogramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_histogramActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_histogramActionPerformed
-
     private void datePickerGanttChartActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_datePickerGanttChartActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_datePickerGanttChartActionPerformed
@@ -744,19 +617,14 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JButton deleteAllQueries;
     private javax.swing.JButton deleteRowQueries;
     private javax.swing.JButton deleteRowWebsite;
-    private javax.swing.JCheckBox domainDailyVisits;
     private javax.swing.JButton exportFilterButton;
     private javax.swing.JButton exportWebsitesBtn;
     private javax.swing.Box.Filler filler1;
-    private javax.swing.JCheckBox highlightedWebsites;
-    private javax.swing.JRadioButton histogram;
     private javax.swing.JButton importFilterButton;
     private javax.swing.JButton importWebsitesBtn;
     private javax.swing.JButton jButton3;
     private javax.swing.JFrame jFrame1;
     private javax.swing.JFrame jFrame2;
-    private javax.swing.JLabel jLabel1;
-    private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel5;
     private javax.swing.JLabel jLabel6;
     private javax.swing.JOptionPane jOptionPane1;
@@ -769,17 +637,12 @@ public class BrowserHistoryReportConfigurationPanel extends javax.swing.JPanel {
     private javax.swing.JTabbedPane jTabbedPane1;
     private org.jdesktop.swingx.JXDatePicker jXDatePicker1;
     private javax.swing.JLabel maxSizeOf35Label;
-    private javax.swing.JCheckBox mostVisitedSites;
-    private java.awt.Panel panel1;
-    private javax.swing.JRadioButton pieChart;
-    private javax.swing.JTextField querieFilePath;
     private javax.swing.JTable queriesTable;
     private javax.swing.JRadioButton selectAllUsers;
     private javax.swing.JRadioButton selectDefaultUsers;
     private javax.swing.JList<String> users;
     private javax.swing.JSpinner visitsChartOptionAmountOfElementsChart;
     private javax.swing.JTable websiteTable;
-    private javax.swing.JCheckBox wordsSearch;
     // End of variables declaration//GEN-END:variables
 
 
