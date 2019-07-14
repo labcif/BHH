@@ -1,8 +1,6 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh.utils;
 
 
-import main.pt.ipleiria.estg.dei.labcif.bhh.panels.mainPanel.MainFrame;
-
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
@@ -56,12 +54,12 @@ public abstract class Utils{
     }
 
     public static String parse(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd  HH:mm:ss");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
         return dateFormat.format(date);
     }
 
     public static String parseToDay(Date date) {
-        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         return dateFormat.format(date);
     }
 

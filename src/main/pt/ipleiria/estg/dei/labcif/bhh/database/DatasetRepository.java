@@ -290,7 +290,7 @@ public class DatasetRepository {
 
     private List<Website> getWebsitesInADay(ResultSet rs) throws SQLException {
         try {
-            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy  HH:mm:ss");
+            DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy'T'HH:mm:ss");
             List<Website> websites = new ArrayList<>();
             Calendar calendar = Calendar.getInstance();
             long timeStart, timeEnd;
