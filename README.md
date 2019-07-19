@@ -29,7 +29,7 @@ You have 2 options to use this module:
 ### Run
 * As a [Autopsy](https://www.autopsy.com/)  module
     1. Running the ingest module will create a database browser-history.db in the same directory as the case opened
-        1. Tools - Run Ingest Modules - "Select image" Ex: PC01.EO1
+        1. Tools - Run Ingest Modules - "Select image" Ex: PC01.E01
         2. Select Labcif - Browser History Histogram
         3. Finish
     2. After running the ingest module, you will be able to run the report Module. 

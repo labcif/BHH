@@ -4,6 +4,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ExtractionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.TransformationException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -47,7 +48,7 @@ public class SpecialWebsiteModule extends Module implements ETLProcess {
         loggerBHH.info("[" + getModuleName() +"] - Started");
         deleteExtractTables();
         extractAllTables();
-        transformAllTables("", "", "");
+        transformAllTables("", "", "", null);
         loggerBHH.info("[" + getModuleName() +"] - Finished");
     }
 
@@ -73,7 +74,7 @@ public class SpecialWebsiteModule extends Module implements ETLProcess {
 
 
     @Override
-    public void transformAllTables(String user, String profileName,  String fullLocationFile) throws ConnectionException {
+    public void transformAllTables(String user, String profileName, String fullLocationFile, OperatingSystem os) throws ConnectionException {
         try {
             PreparedStatement preparedStatement = DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
                 " INSERT INTO t_clean_special_websites (special_websites_domain) " +

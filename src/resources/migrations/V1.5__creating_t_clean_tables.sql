@@ -1,7 +1,7 @@
 create table if not exists t_clean_special_websites
 (
 	special_websites_id           INTEGER not null constraint t_clean_special_websites_pk primary key autoincrement,
-  special_websites_domain       VARCHAR(255) NOT NULL
+	special_websites_domain       VARCHAR(255) NOT NULL
 );
 
 
@@ -24,7 +24,8 @@ CREATE TABLE if not exists t_clean_downloads
   downloads_user_origin           VARCHAR(255) NOT NULL,
   downloads_browser_origin        VARCHAR(255) NOT NULL,
   downloads_profile_name          VARCHAR(255),
-  downloads_filename_location     VARCHAR(255)  NOT NULL
+  downloads_filename_location     VARCHAR(255)  NOT NULL,
+  downloads_operating_system     VARCHAR(255)  NOT NULL
 );
 
 create table if not exists t_clean_logins
@@ -40,7 +41,8 @@ create table if not exists t_clean_logins
   logins_browser_origin       VARCHAR(255) NOT NULL,
   logins_table_origin         VARCHAR(255) NOT NULL,
   logins_profile_name         VARCHAR(255),
-  logins_filename_location    VARCHAR(255)  NOT NULL
+  logins_filename_location    VARCHAR(255)  NOT NULL,
+  logins_operating_system    VARCHAR(255)  NOT NULL
 );
 
 create table if not exists t_clean_search_in_engines
@@ -55,7 +57,8 @@ create table if not exists t_clean_search_in_engines
   search_filename_location            VARCHAR(255)  NOT NULL,
   search_visit_full_date             DATE,
   search_visit_date                   DATE,
-  search_visit_time                  DATE
+  search_visit_time                  DATE,
+  search_operating_system            VARCHAR(255)  NOT NULL
 );
 create table if not exists t_clean_url
 (
@@ -77,5 +80,6 @@ create table if not exists t_clean_url
   url_visit_date_end            DATE,
   url_visit_time_end            DATE,
   url_profile_name              VARCHAR(255),
-  url_filename_location         VARCHAR(255)  NOT NULL
+  url_filename_location         VARCHAR(255)  NOT NULL,
+  url_operating_system         VARCHAR(255)  NOT NULL
 );

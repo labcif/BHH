@@ -4,6 +4,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.database.DataWarehouseConnection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.BrowserHistoryIngestModuleExpection;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.NoCriticalException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.Utils;
 import org.sleuthkit.autopsy.casemodule.Case;
@@ -11,9 +12,7 @@ import org.sleuthkit.autopsy.casemodule.NoCurrentCaseException;
 import org.sleuthkit.autopsy.casemodule.services.FileManager;
 import org.sleuthkit.autopsy.datamodel.ContentUtils;
 import org.sleuthkit.autopsy.ingest.IngestJobContext;
-import org.sleuthkit.datamodel.AbstractFile;
-import org.sleuthkit.datamodel.Content;
-import org.sleuthkit.datamodel.TskCoreException;
+import org.sleuthkit.datamodel.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -22,11 +21,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import static main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem.LINUX;
+import static main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem.WINDOWS_10;
 import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.USER;
+import static main.pt.ipleiria.estg.dei.labcif.bhh.utils.OperatingSystemUtils.getOS;
 
 
 public abstract class BrowserModule extends Module {
@@ -89,7 +89,7 @@ public abstract class BrowserModule extends Module {
                 String profileName = file.getParentFile().getName().trim();
                 String temporaryDatabaseFile = temporaryDirectory + File.separator + file.getName() + "-" + USER +"-" + profileName + ".db";
                 Utils.copyFile(file.getAbsolutePath(), temporaryDatabaseFile);
-                runETLProcess(temporaryDatabaseFile, USER, profileName, file.getAbsolutePath());
+                runETLProcess(temporaryDatabaseFile, USER, profileName, file.getAbsolutePath(), getOS());
 
             } catch (IOException | ConnectionException e) {
                 loggerBHH.error(e.getMessage());
@@ -101,16 +101,26 @@ public abstract class BrowserModule extends Module {
     private void runHistory() throws ConnectionException {
         try {
             FileManager fileManager = currentCase.getServices().getFileManager();
-            List<AbstractFile> history = fileManager.findFiles(dataSource,  getHistoryFilename(), getPathToBrowserInstallation());
-            execute(history, getHistoryFilename());
 
-            List<AbstractFile> loginData = fileManager.findFiles(dataSource, getLoginDataFilename(), getPathToBrowserInstallation());
-            execute(loginData, getLoginDataFilename());
+            execute(fileManager.findFiles(dataSource,  getHistoryFilename(), getPathToBrowserInstallationInWindows10()),
+                    getHistoryFilename(),
+                    WINDOWS_10);
+            execute(fileManager.findFiles(dataSource,  getHistoryFilename(), getPathToBrowserInstallationInLinux()),
+                    getHistoryFilename(),
+                    LINUX);
+
+            execute(fileManager.findFiles(dataSource, getLoginDataFilename(), getPathToBrowserInstallationInWindows10()),
+                    getLoginDataFilename(),
+                    WINDOWS_10);
+
+            execute(fileManager.findFiles(dataSource, getLoginDataFilename(), getPathToBrowserInstallationInLinux()),
+                    getLoginDataFilename(),
+                    LINUX);
         } catch (TskCoreException e) {
             loggerBHH.warn("[" + getModuleName() +"] Issue when running: " + e.getMessage());
         }
     }
-    private void execute(List<AbstractFile> files, String prefixName) throws ConnectionException {
+    private void execute(List<AbstractFile> files, String prefixName, OperatingSystem operatingSystem) throws ConnectionException {
         for (AbstractFile file: files) {
             String username = file.getParentPath().split("/")[2];//TODO:::: review this line of code.,...
             String fullLocationFile = file.getParentPath() + prefixName;
@@ -119,20 +129,20 @@ public abstract class BrowserModule extends Module {
             try {
                 String profileName = file.getParent().getName();
                 ContentUtils.writeToFile(file, new File(tempPath), context::dataSourceIngestIsCancelled);
-                runETLProcess(tempPath, username, profileName, fullLocationFile);
+                runETLProcess(tempPath, username, profileName, fullLocationFile, operatingSystem);
             } catch (IOException | NoCriticalException | TskCoreException e) {
                 loggerBHH.warn(e.getMessage());//We don't want to stop the process when it is a non critical exception
             }
         }
     }
 
-    protected void insertWordInTable(ResultSet rs, String user, String profileName, String fullLocationFile) throws ConnectionException, SQLException, ClassNotFoundException {
+    protected void insertWordInTable(ResultSet rs, String user, String profileName, String fullLocationFile, OperatingSystem os) throws ConnectionException, SQLException, ClassNotFoundException {
         PreparedStatement preparedStatement =  DataWarehouseConnection.getConnection(databaseDirectory).prepareStatement(
                 " INSERT INTO t_clean_search_in_engines (search_in_engines_words, search_in_engines_source_full, " +
                                                 "search_in_engines_user_origin, search_in_engines_browser_origin," +
                                                 " search_in_engines_domain, search_profile_name, search_filename_location," +
-                                                "search_visit_full_date, search_visit_date, search_visit_time) " +
-                        " VALUES (?,?,?,?,?,?,?,?,?,?)");
+                                                "search_visit_full_date, search_visit_date, search_visit_time, search_operating_system) " +
+                        " VALUES (?,?,?,?,?,?,?,?,?,?,?)");
 
         String encoded;
         String substring;
@@ -158,6 +168,7 @@ public abstract class BrowserModule extends Module {
             preparedStatement.setString(8, rs.getString("search_visit_full_date"));
             preparedStatement.setString(9, rs.getString("search_visit_date"));
             preparedStatement.setString(10, rs.getString("search_visit_time"));
+            preparedStatement.setString(11, os.name());
             preparedStatement.addBatch();
 
         }
@@ -184,9 +195,31 @@ public abstract class BrowserModule extends Module {
             });
         }
     }
+    static Map<Long, String> getOperatingSystems() {
+        Map<Long, String> osDetailMap = new HashMap<>();
+        try {
+            SleuthkitCase skCase = Case.getCurrentCaseThrows().getSleuthkitCase();
+            ArrayList<BlackboardArtifact> osInfoArtifacts = skCase.getBlackboardArtifacts(BlackboardArtifact.ARTIFACT_TYPE.TSK_OS_INFO);
+            for (BlackboardArtifact osInfo : osInfoArtifacts) {
+                BlackboardAttribute programName = osInfo.getAttribute(new BlackboardAttribute.Type(BlackboardAttribute.ATTRIBUTE_TYPE.TSK_PROG_NAME));
+                if (programName != null) {
+                    String currentOsString = osDetailMap.get(osInfo.getDataSource().getId());
+                    if (currentOsString == null || currentOsString.isEmpty()) {
+                        currentOsString = programName.getValueString();
+                    } else {
+                        currentOsString = currentOsString + ", " + programName.getValueString();
+                    }
+                    osDetailMap.put(osInfo.getDataSource().getId(), currentOsString);
+                }
+            }
+        } catch (TskCoreException | NoCurrentCaseException ex) {
+        }
+        return osDetailMap;
+    }
 
     protected abstract String extractDateFromColumn(String oldColumn, String newColumn, String format);
-    public abstract String getPathToBrowserInstallation();
+    public abstract String getPathToBrowserInstallationInWindows10();
+    public abstract String getPathToBrowserInstallationInLinux();
     public abstract String getFullPathToBrowserInstallationInCurrentMachine();
     public abstract String getHistoryFilename();
     public abstract String getLoginDataFilename();

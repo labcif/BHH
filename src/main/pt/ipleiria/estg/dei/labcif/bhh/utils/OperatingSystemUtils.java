@@ -1,5 +1,8 @@
 package main.pt.ipleiria.estg.dei.labcif.bhh.utils;
 
+import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.NotSupportedException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -37,6 +40,18 @@ public class OperatingSystemUtils {
             return InetAddress.getLocalHost().getHostName();
         } catch (UnknownHostException e) {
             return "NO_NAME";
+        }
+    }
+
+    public static OperatingSystem getOS() {
+        if (isWindows()) {
+            return OperatingSystem.WINDOWS_10;//TODO: change it to support windows xp and 8
+        } else if (isUnix()) {
+            return OperatingSystem.LINUX;
+        } else if (isMacOs()) {
+            return OperatingSystem.MAC_OS;
+        } else {
+            throw new NotSupportedException("Operating system not supported");
         }
     }
 }

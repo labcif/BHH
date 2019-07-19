@@ -5,6 +5,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.events.IngestModuleProgress;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ExtractionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.TransformationException;
+import main.pt.ipleiria.estg.dei.labcif.bhh.models.OperatingSystem;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.Utils;
 import org.sleuthkit.autopsy.casemodule.Case;
 
@@ -25,11 +26,11 @@ public abstract class Module implements ETLProcess {
         this.databaseDirectory = databaseDirectory;
     }
 
-    public void runETLProcess(String databaseOriginFullPath, String user, String profileName, String fullLocationFile) throws ConnectionException {
+    public void runETLProcess(String databaseOriginFullPath, String user, String profileName, String fullLocationFile, OperatingSystem os) throws ConnectionException {
         IngestModuleProgress.getInstance().incrementProgress(user, getModuleName(),"extraction");
         runExtraction(databaseOriginFullPath);
         IngestModuleProgress.getInstance().incrementProgress(user, getModuleName(),"tranformation");
-        runTransformation(user, profileName, fullLocationFile);
+        runTransformation(user, profileName, fullLocationFile, os);
     }
 
     public void runExtraction(String path) throws ConnectionException {
@@ -48,9 +49,9 @@ public abstract class Module implements ETLProcess {
     }
 
     @Override
-    public void runTransformation(String user, String profileName, String fullLocationFile) throws ConnectionException {
+    public void runTransformation(String user, String profileName, String fullLocationFile, OperatingSystem os) throws ConnectionException {
 //        deleteCleanTables();
-        transformAllTables(user, profileName, fullLocationFile);
+        transformAllTables(user, profileName, fullLocationFile, os);
     }
 
     public void startTransaction(String path) throws SQLException, ClassNotFoundException, ConnectionException {
@@ -86,7 +87,7 @@ public abstract class Module implements ETLProcess {
             if (connection == null) {
                 throw new ExtractionException(getModuleName(), newTable, "Connection to old table couldn't be established");
             }
-            
+
             //Get columns of old table
             rs = connection.createStatement().executeQuery("PRAGMA table_info (" + oldTable + ");");
             List<String> columnsHeaderOldTable = new ArrayList<>();
