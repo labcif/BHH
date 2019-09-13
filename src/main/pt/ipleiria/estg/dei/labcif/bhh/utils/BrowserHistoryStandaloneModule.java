@@ -3,12 +3,8 @@ package main.pt.ipleiria.estg.dei.labcif.bhh.utils;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatabaseCreator;
 import main.pt.ipleiria.estg.dei.labcif.bhh.database.DatasetRepository;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.*;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.ChromeModule;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.FirefoxModule;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.Module;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.SpecialWebsiteModule;
+import main.pt.ipleiria.estg.dei.labcif.bhh.modules.*;
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.reportModulePanel.BrowserHistoryReportConfigurationPanel;
-import net.sf.jasperreports.engine.JRException;
 
 import java.io.IOException;
 import java.sql.SQLException;
@@ -56,6 +52,8 @@ public class BrowserHistoryStandaloneModule {
     private void setupModules(boolean isCustomListSelected, String locationCustomWebsiteList) {
         modules.add(new ChromeModule(caseDirectory));
         modules.add(new FirefoxModule(caseDirectory));
+        modules.add(new BraveModule(caseDirectory));
+        modules.add(new VivaldiModule(caseDirectory));
         if (isCustomListSelected) {
             modules.add(new SpecialWebsiteModule(locationCustomWebsiteList, caseDirectory));
         } else {

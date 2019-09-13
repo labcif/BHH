@@ -10,10 +10,7 @@ import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.BrowserHistoryIngestModul
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.ConnectionException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.DatabaseInitializationException;
 import main.pt.ipleiria.estg.dei.labcif.bhh.exceptions.MigrationException;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.ChromeModule;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.FirefoxModule;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.Module;
-import main.pt.ipleiria.estg.dei.labcif.bhh.modules.SpecialWebsiteModule;
+import main.pt.ipleiria.estg.dei.labcif.bhh.modules.*;
 import main.pt.ipleiria.estg.dei.labcif.bhh.panels.ingestModulePanel.BrowserHistoryModuleIngestJobSettings;
 import main.pt.ipleiria.estg.dei.labcif.bhh.utils.LoggerBHH;
 import org.openide.util.NbBundle;
@@ -47,6 +44,8 @@ public class BrowserHistoryDataSourceIngestModule implements DataSourceIngestMod
             modulesToRun = new ArrayList<>();
             modulesToRun.add(new ChromeModule(context, databaseDirectory));
             modulesToRun.add(new FirefoxModule(context, databaseDirectory));
+            modulesToRun.add(new BraveModule(context, databaseDirectory));
+            modulesToRun.add(new VivaldiModule(context, databaseDirectory));
             if (!settings.isNoneChoosed()) {
                 modulesToRun.add(new SpecialWebsiteModule(settings.getFileChoosed(), databaseDirectory));
             }
