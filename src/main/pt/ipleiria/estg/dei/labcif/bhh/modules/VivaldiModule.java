@@ -21,7 +21,7 @@ public class VivaldiModule extends ChromeModule {
 
 	@Override
 	public String getPathToBrowserInstallationInWindows10() {
-		return "AppData/Local/VivaldiModule/User Data";
+		return "AppData/Local/Vivaldi/User Data";
 	}
 
 	@Override
@@ -32,7 +32,7 @@ public class VivaldiModule extends ChromeModule {
 	@Override
 	public String getFullPathToBrowserInstallationInCurrentMachine() {
 		if (isWindows()) {
-			return getRoot() + "AppData\\Local\\VivaldiModule\\User Data";
+			return getRoot() + "\\AppData\\Local\\Vivaldi\\User Data";
 		} else if (isUnix()) {
 			return  getRoot() + "/.config/vivaldi";
 		} else {
